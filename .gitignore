@@ -60,6 +60,8 @@ key.properties
 /artifacts/
 /audioDiag.txt
 
-/docs/
+# Private plans, setup notes and test evidence
 Quran_Audio_App_V1_Plan.md
+/docs/
 TEST_REPORT.md
+/CHANGELOG.md

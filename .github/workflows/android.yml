@@ -1,0 +1,49 @@
+name: Android foundation checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install the verified Flutter commit
+        shell: bash
+        run: |
+          sdk="$RUNNER_TEMP/al-murajaah-flutter"
+          git init "$sdk"
+          git -C "$sdk" remote add origin https://github.com/flutter/flutter.git
+          git -C "$sdk" fetch --depth 1 origin 6a19cca56475dbfba1478ee68d7bd0c2ef891da1
+          git -C "$sdk" checkout --detach FETCH_HEAD
+          echo "$sdk/bin" >> "$GITHUB_PATH"
+          echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
+      - name: Prepare Android SDK
+        shell: bash
+        run: |
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
+          flutter config --android-sdk "$ANDROID_HOME" --jdk-dir "$JAVA_HOME"
+          flutter --version
+      - name: Resolve locked dependencies
+        run: flutter pub get --enforce-lockfile
+      - name: Check generated database code
+        run: |
+          dart run build_runner build
+          git diff --exit-code -- lib/core/database/app_database.g.dart
+      - name: Analyze
+        run: flutter analyze --no-pub
+      - name: Test repositories, migrations and UI
+        run: flutter test --no-pub
+      - name: Build Android debug APK
+        run: flutter build apk --debug --no-pub
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-debug-check
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
+          retention-days: 7
