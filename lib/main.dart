@@ -10,6 +10,8 @@ import 'core/audio/android_diagnostics.dart';
 import 'core/audio/prototype_store.dart';
 import 'core/audio/sample_catalog.dart';
 import 'core/audio/session_spec.dart';
+import 'core/theme/appearance_screen.dart';
+import 'core/theme/themed_app.dart';
 
 Future<PrototypeHandler> createHandler(PrototypeStore store) async {
   final handler = await AudioService.init<PrototypeHandler>(
@@ -82,8 +84,10 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
 
   @override
   Widget build(BuildContext context) {
-    if (handler != null) return DiagnosticApp(handler: handler!);
-    return MaterialApp(
+    if (handler != null) {
+      return DiagnosticApp(handler: handler!);
+    }
+    return ThemedApp(
       home: Scaffold(
         appBar: AppBar(title: const Text("Al-Muraja'ah • Audio proof")),
         body: Padding(
@@ -107,16 +111,14 @@ class DiagnosticApp extends StatelessWidget {
   const DiagnosticApp({super.key, required this.handler});
   final PrototypeHandler handler;
   @override
-  Widget build(BuildContext context) => MaterialApp(
-    title: "Al-Muraja'ah diagnostic",
-    theme: ThemeData(colorSchemeSeed: const Color(0xff087c7b)),
-    home: DiagnosticScreen(handler: handler),
-  );
+  Widget build(BuildContext context) =>
+      ThemedApp(home: DiagnosticScreen(handler: handler));
 }
 
 class DiagnosticScreen extends StatefulWidget {
-  const DiagnosticScreen({super.key, required this.handler});
+  const DiagnosticScreen({super.key, required this.handler, this.onAppearance});
   final PrototypeHandler handler;
+  final VoidCallback? onAppearance;
   @override
   State<DiagnosticScreen> createState() => _DiagnosticScreenState();
 }
@@ -241,7 +243,27 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Al-Muraja'ah • Audio proof")),
+    appBar: AppBar(
+      title: const Text("Al-Muraja'ah"),
+      actions: [
+        IconButton(
+          tooltip: 'Appearance',
+          icon: const Icon(Icons.palette_outlined),
+          onPressed: () {
+            FocusScope.of(context).unfocus();
+            if (widget.onAppearance != null) {
+              widget.onAppearance!();
+            } else {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const AppearanceScreen(),
+                ),
+              );
+            }
+          },
+        ),
+      ],
+    ),
     body: ValueListenableBuilder<int>(
       valueListenable: h.revision,
       builder: (context, _, child) => ListView(

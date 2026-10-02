@@ -63,6 +63,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/fonts/noto-sans-arabic/OFL.txt
+  fonts:
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/noto-sans-arabic/NotoSansArabic-Variable.ttf
+          weight: 400
 
   # To add assets to your application, add an assets section, like this:
   # assets:
