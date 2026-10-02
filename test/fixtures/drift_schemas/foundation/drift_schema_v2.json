@@ -1,0 +1,1582 @@
+{
+  "_meta": {
+    "description": "This file contains a serialized version of schema entities for drift.",
+    "version": "1.3.0"
+  },
+  "options": {
+    "store_date_time_values_as_text": false
+  },
+  "entities": [
+    {
+      "id": 0,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "reciters",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "display_name",
+            "getter_name": "displayName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (length(trim(display_name)) > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "arabic_name",
+            "getter_name": "arabicName",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "attribution",
+            "getter_name": "attribution",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "source_info",
+            "getter_name": "sourceInfo",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 1,
+      "references": [
+        0
+      ],
+      "type": "table",
+      "data": {
+        "name": "app_settings",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY CHECK (id = 1)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "theme",
+            "getter_name": "theme",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 'system' CHECK (theme IN ('system', 'light', 'dark'))",
+            "default_dart": "const CustomExpression('\\'system\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "reduced_motion",
+            "getter_name": "reducedMotion",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 0 CHECK (reduced_motion IN (0, 1))",
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "network_policy",
+            "getter_name": "networkPolicy",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 'wifi' CHECK (network_policy IN ('wifi', 'any'))",
+            "default_dart": "const CustomExpression('\\'wifi\\'')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "default_reciter_id",
+            "getter_name": "defaultReciterId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "REFERENCES reciters(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "reciters",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "daily_goal_ms",
+            "getter_name": "dailyGoalMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 300000 CHECK (daily_goal_ms >= 0)",
+            "default_dart": "const CustomExpression('300000')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "preferences_version",
+            "getter_name": "preferencesVersion",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 1 CHECK (preferences_version > 0)",
+            "default_dart": "const CustomExpression('1')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_utc_ms",
+            "getter_name": "updatedUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 0",
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 2,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "surahs",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "number",
+            "getter_name": "number",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY CHECK (number BETWEEN 1 AND 114)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "arabic_name",
+            "getter_name": "arabicName",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (length(trim(arabic_name)) > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "transliteration",
+            "getter_name": "transliteration",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (length(trim(transliteration)) > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "search_aliases",
+            "getter_name": "searchAliases",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (json_valid(search_aliases))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 3,
+      "references": [
+        0
+      ],
+      "type": "table",
+      "data": {
+        "name": "recording_editions",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "reciter_id",
+            "getter_name": "reciterId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES reciters(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "reciters",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "riwayah",
+            "getter_name": "riwayah",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "source_notes",
+            "getter_name": "sourceNotes",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 4,
+      "references": [
+        3,
+        2
+      ],
+      "type": "table",
+      "data": {
+        "name": "audio_assets",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "edition_id",
+            "getter_name": "editionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES recording_editions(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "recording_editions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "surah_number",
+            "getter_name": "surahNumber",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES surahs(number)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "surahs",
+                    "column": "number"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "version",
+            "getter_name": "version",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (version > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "url",
+            "getter_name": "url",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (url LIKE 'https://%')",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "mime_type",
+            "getter_name": "mimeType",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "duration_ms",
+            "getter_name": "durationMs",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": "CHECK (duration_ms > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "byte_size",
+            "getter_name": "byteSize",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": "CHECK (byte_size > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "sha256",
+            "getter_name": "sha256",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "CHECK (length(sha256) = 64 AND sha256 NOT GLOB '*[^0-9a-f]*')",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "availability",
+            "getter_name": "availability",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (availability IN ('unavailable', 'published', 'retired'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK(availability <> 'published' OR(duration_ms IS NOT NULL AND byte_size IS NOT NULL AND sha256 IS NOT NULL))",
+          "UNIQUE(edition_id, surah_number, version)"
+        ],
+        "unique_keys": [
+          [
+            "edition_id",
+            "surah_number",
+            "version"
+          ]
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "references": [
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "saved_passages",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "asset_id",
+            "getter_name": "assetId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES audio_assets(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "audio_assets",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "title",
+            "getter_name": "title",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (length(trim(title)) > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "start_ms",
+            "getter_name": "startMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (start_ms >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "end_ms",
+            "getter_name": "endMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (end_ms - start_ms >= 1000)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "repeat_mode",
+            "getter_name": "repeatMode",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (repeat_mode IN ('finite', 'continuous'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "play_count",
+            "getter_name": "playCount",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "gap_ms",
+            "getter_name": "gapMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 0 CHECK (gap_ms IN (0, 2000, 5000, 10000))",
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "speed",
+            "getter_name": "speed",
+            "moor_type": "double",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.0)",
+            "default_dart": "const CustomExpression('1.0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "note",
+            "getter_name": "note",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_utc_ms",
+            "getter_name": "createdUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_utc_ms",
+            "getter_name": "updatedUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (updated_utc_ms >= created_utc_ms)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK((repeat_mode = 'finite' AND play_count IS NOT NULL AND play_count BETWEEN 1 AND 999)OR(repeat_mode = 'continuous' AND play_count IS NULL))"
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "references": [
+        5,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 5,
+        "references_in_body": [
+          5,
+          4
+        ],
+        "name": "passage_insert_bounds",
+        "sql": "CREATE TRIGGER passage_insert_bounds BEFORE INSERT ON saved_passages BEGIN\n  SELECT RAISE(ABORT, 'Passage requires verified duration and valid bounds')\n  WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);\nEND;"
+      }
+    },
+    {
+      "id": 7,
+      "references": [
+        5,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 5,
+        "references_in_body": [
+          5,
+          4
+        ],
+        "name": "passage_update_bounds",
+        "sql": "CREATE TRIGGER passage_update_bounds BEFORE UPDATE ON saved_passages BEGIN\n  SELECT RAISE(ABORT, 'Passage requires verified duration and valid bounds')\n  WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);\nEND;"
+      }
+    },
+    {
+      "id": 8,
+      "references": [
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 4,
+        "references_in_body": [
+          4
+        ],
+        "name": "asset_identity_immutable",
+        "sql": "CREATE TRIGGER asset_identity_immutable BEFORE UPDATE ON audio_assets BEGIN\n  SELECT RAISE(ABORT, 'Recording bytes and identity are immutable')\n  WHERE OLD.id <> NEW.id OR OLD.edition_id <> NEW.edition_id OR OLD.surah_number <> NEW.surah_number OR\n    OLD.version <> NEW.version OR (OLD.sha256 IS NOT NULL AND (NEW.sha256 IS NOT OLD.sha256 OR\n    NEW.byte_size IS NOT OLD.byte_size OR NEW.duration_ms IS NOT OLD.duration_ms OR NEW.url IS NOT OLD.url));\nEND;"
+      }
+    },
+    {
+      "id": 9,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "favorites",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "type",
+            "getter_name": "type",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (type IN ('surah', 'passage'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "target_id",
+            "getter_name": "targetId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "created_utc_ms",
+            "getter_name": "createdUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "PRIMARY KEY(type, target_id)"
+        ],
+        "explicit_pk": [
+          "type",
+          "target_id"
+        ]
+      }
+    },
+    {
+      "id": 10,
+      "references": [
+        9,
+        2,
+        5
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 9,
+        "references_in_body": [
+          9,
+          2,
+          5
+        ],
+        "name": "favorite_insert_target",
+        "sql": "CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN\n  SELECT RAISE(ABORT, 'Unknown favorite target') WHERE\n    (NEW.type = 'surah' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id)) OR\n    (NEW.type = 'passage' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id));\nEND;"
+      }
+    },
+    {
+      "id": 11,
+      "references": [
+        9
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 9,
+        "references_in_body": [
+          9
+        ],
+        "name": "favorite_update_target",
+        "sql": "CREATE TRIGGER favorite_update_target BEFORE UPDATE ON favorites BEGIN\n  SELECT RAISE(ABORT, 'Favorite target is immutable') WHERE NEW.type <> OLD.type OR NEW.target_id <> OLD.target_id;\nEND;"
+      }
+    },
+    {
+      "id": 12,
+      "references": [
+        5,
+        9
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 5,
+        "references_in_body": [
+          5,
+          9
+        ],
+        "name": "passage_delete_favorite",
+        "sql": "CREATE TRIGGER passage_delete_favorite AFTER DELETE ON saved_passages BEGIN\n  DELETE FROM favorites WHERE type = 'passage' AND target_id = OLD.id;\nEND;"
+      }
+    },
+    {
+      "id": 13,
+      "references": [
+        2,
+        9
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 2,
+        "references_in_body": [
+          2,
+          9
+        ],
+        "name": "surah_delete_favorite",
+        "sql": "CREATE TRIGGER surah_delete_favorite AFTER DELETE ON surahs BEGIN\n  DELETE FROM favorites WHERE type = 'surah' AND target_id = CAST(OLD.number AS TEXT);\nEND;"
+      }
+    },
+    {
+      "id": 14,
+      "references": [
+        4
+      ],
+      "type": "table",
+      "data": {
+        "name": "downloads",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "asset_id",
+            "getter_name": "assetId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY REFERENCES audio_assets(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key",
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "audio_assets",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "relative_path",
+            "getter_name": "relativePath",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "CHECK (relative_path <> '' AND relative_path NOT LIKE '/%' AND relative_path NOT LIKE '%..%' AND relative_path NOT LIKE '%:%' AND relative_path NOT LIKE '%\\%')",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "native_task_id",
+            "getter_name": "nativeTaskId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "state",
+            "getter_name": "state",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (state IN ('queued', 'running', 'verifying', 'verified', 'failed', 'cancelled'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "received_bytes",
+            "getter_name": "receivedBytes",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (received_bytes >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "verified_sha256",
+            "getter_name": "verifiedSha256",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_utc_ms",
+            "getter_name": "updatedUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": [
+          "CHECK(state <> 'verified' OR(relative_path IS NOT NULL AND verified_sha256 IS NOT NULL))"
+        ]
+      }
+    },
+    {
+      "id": 15,
+      "references": [
+        14,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 14,
+        "references_in_body": [
+          14,
+          4
+        ],
+        "name": "download_insert_verified",
+        "sql": "CREATE TRIGGER download_insert_verified BEFORE INSERT ON downloads BEGIN\n  SELECT RAISE(ABORT, 'Download integrity mismatch') WHERE NEW.state = 'verified' AND NOT EXISTS\n    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);\nEND;"
+      }
+    },
+    {
+      "id": 16,
+      "references": [
+        14,
+        4
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 14,
+        "references_in_body": [
+          14,
+          4
+        ],
+        "name": "download_update_verified",
+        "sql": "CREATE TRIGGER download_update_verified BEFORE UPDATE ON downloads BEGIN\n  SELECT RAISE(ABORT, 'Download integrity mismatch') WHERE NEW.state = 'verified' AND NOT EXISTS\n    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);\nEND;"
+      }
+    },
+    {
+      "id": 17,
+      "references": [
+        4,
+        5
+      ],
+      "type": "table",
+      "data": {
+        "name": "playback_checkpoints",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "session_id",
+            "getter_name": "sessionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "scope",
+            "getter_name": "scope",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (scope IN ('full', 'passage'))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "asset_id",
+            "getter_name": "assetId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES audio_assets(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "audio_assets",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "passage_id",
+            "getter_name": "passageId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "REFERENCES saved_passages(id)ON DELETE SET NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "saved_passages",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "setNull"
+                }
+              }
+            ]
+          },
+          {
+            "name": "current_pass",
+            "getter_name": "currentPass",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (current_pass > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "remaining_count",
+            "getter_name": "remainingCount",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": "CHECK (remaining_count >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "source_position_ms",
+            "getter_name": "sourcePositionMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (source_position_ms >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "settings_snapshot",
+            "getter_name": "settingsSnapshot",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (json_valid(settings_snapshot))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "updated_utc_ms",
+            "getter_name": "updatedUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 18,
+      "references": [
+        17,
+        4,
+        5
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 17,
+        "references_in_body": [
+          17,
+          4,
+          5
+        ],
+        "name": "checkpoint_insert_bounds",
+        "sql": "CREATE TRIGGER checkpoint_insert_bounds BEFORE INSERT ON playback_checkpoints BEGIN\n  SELECT RAISE(ABORT, 'Invalid checkpoint asset/position') WHERE NOT EXISTS\n    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);\n  SELECT RAISE(ABORT, 'Checkpoint passage asset mismatch') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS\n    (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);\nEND;"
+      }
+    },
+    {
+      "id": 19,
+      "references": [
+        17,
+        4,
+        5
+      ],
+      "type": "trigger",
+      "data": {
+        "on": 17,
+        "references_in_body": [
+          17,
+          4,
+          5
+        ],
+        "name": "checkpoint_update_bounds",
+        "sql": "CREATE TRIGGER checkpoint_update_bounds BEFORE UPDATE ON playback_checkpoints BEGIN\n  SELECT RAISE(ABORT, 'Invalid checkpoint asset/position') WHERE NOT EXISTS\n    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);\n  SELECT RAISE(ABORT, 'Checkpoint passage asset mismatch') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS\n    (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);\nEND;"
+      }
+    },
+    {
+      "id": 20,
+      "references": [
+        4,
+        5
+      ],
+      "type": "table",
+      "data": {
+        "name": "listening_sessions",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "asset_id",
+            "getter_name": "assetId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES audio_assets(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "audio_assets",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "passage_id",
+            "getter_name": "passageId",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "REFERENCES saved_passages(id)ON DELETE SET NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "saved_passages",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": "setNull"
+                }
+              }
+            ]
+          },
+          {
+            "name": "started_utc_ms",
+            "getter_name": "startedUtcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "ended_utc_ms",
+            "getter_name": "endedUtcMs",
+            "moor_type": "int",
+            "nullable": true,
+            "customConstraints": "CHECK (ended_utc_ms >= started_utc_ms)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "played_wall_ms",
+            "getter_name": "playedWallMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 0 CHECK (played_wall_ms >= 0)",
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "speed",
+            "getter_name": "speed",
+            "moor_type": "double",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (speed BETWEEN 0.5 AND 2.0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "completion_reason",
+            "getter_name": "completionReason",
+            "moor_type": "string",
+            "nullable": true,
+            "customConstraints": "",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 21,
+      "references": [],
+      "type": "table",
+      "data": {
+        "name": "daily_activity",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "local_date",
+            "getter_name": "localDate",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY CHECK (length(local_date) = 10)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "timezone_policy",
+            "getter_name": "timezonePolicy",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "played_wall_ms",
+            "getter_name": "playedWallMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL DEFAULT 0 CHECK (played_wall_ms >= 0)",
+            "default_dart": "const CustomExpression('0')",
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "goal_ms",
+            "getter_name": "goalMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (goal_ms >= 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "qualified",
+            "getter_name": "qualified",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (qualified IN (0, 1))",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    },
+    {
+      "id": 22,
+      "references": [
+        20,
+        21
+      ],
+      "type": "table",
+      "data": {
+        "name": "activity_events",
+        "was_declared_in_moor": true,
+        "columns": [
+          {
+            "name": "id",
+            "getter_name": "id",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL PRIMARY KEY",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              "primary-key"
+            ]
+          },
+          {
+            "name": "session_id",
+            "getter_name": "sessionId",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES listening_sessions(id)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "listening_sessions",
+                    "column": "id"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "local_date",
+            "getter_name": "localDate",
+            "moor_type": "string",
+            "nullable": false,
+            "customConstraints": "NOT NULL REFERENCES daily_activity(local_date)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": [
+              {
+                "foreign_key": {
+                  "to": {
+                    "table": "daily_activity",
+                    "column": "local_date"
+                  },
+                  "initially_deferred": false,
+                  "on_update": null,
+                  "on_delete": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "played_wall_ms",
+            "getter_name": "playedWallMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL CHECK (played_wall_ms > 0)",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          },
+          {
+            "name": "utc_ms",
+            "getter_name": "utcMs",
+            "moor_type": "int",
+            "nullable": false,
+            "customConstraints": "NOT NULL",
+            "default_dart": null,
+            "default_client_dart": null,
+            "dsl_features": []
+          }
+        ],
+        "is_virtual": false,
+        "without_rowid": false,
+        "constraints": []
+      }
+    }
+  ],
+  "fixed_sql": [
+    {
+      "name": "reciters",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"reciters\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"display_name\" TEXT NOT NULL CHECK (length(trim(display_name)) > 0), \"arabic_name\" TEXT, \"attribution\" TEXT NOT NULL, \"source_info\" TEXT NOT NULL);"
+        }
+      ]
+    },
+    {
+      "name": "app_settings",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"app_settings\" (\"id\" INTEGER NOT NULL PRIMARY KEY CHECK (id = 1), \"theme\" TEXT NOT NULL DEFAULT 'system' CHECK (theme IN ('system', 'light', 'dark')), \"reduced_motion\" INTEGER NOT NULL DEFAULT 0 CHECK (reduced_motion IN (0, 1)), \"network_policy\" TEXT NOT NULL DEFAULT 'wifi' CHECK (network_policy IN ('wifi', 'any')), \"default_reciter_id\" TEXT REFERENCES reciters(id), \"daily_goal_ms\" INTEGER NOT NULL DEFAULT 300000 CHECK (daily_goal_ms >= 0), \"preferences_version\" INTEGER NOT NULL DEFAULT 1 CHECK (preferences_version > 0), \"updated_utc_ms\" INTEGER NOT NULL DEFAULT 0);"
+        }
+      ]
+    },
+    {
+      "name": "surahs",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"surahs\" (\"number\" INTEGER NOT NULL PRIMARY KEY CHECK (number BETWEEN 1 AND 114), \"arabic_name\" TEXT NOT NULL CHECK (length(trim(arabic_name)) > 0), \"transliteration\" TEXT NOT NULL CHECK (length(trim(transliteration)) > 0), \"search_aliases\" TEXT NOT NULL CHECK (json_valid(search_aliases)));"
+        }
+      ]
+    },
+    {
+      "name": "recording_editions",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"recording_editions\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"reciter_id\" TEXT NOT NULL REFERENCES reciters(id), \"riwayah\" TEXT, \"source_notes\" TEXT NOT NULL);"
+        }
+      ]
+    },
+    {
+      "name": "audio_assets",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"audio_assets\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"edition_id\" TEXT NOT NULL REFERENCES recording_editions(id), \"surah_number\" INTEGER NOT NULL REFERENCES surahs(number), \"version\" INTEGER NOT NULL CHECK (version > 0), \"url\" TEXT NOT NULL CHECK (url LIKE 'https://%'), \"mime_type\" TEXT NOT NULL, \"duration_ms\" INTEGER CHECK (duration_ms > 0), \"byte_size\" INTEGER CHECK (byte_size > 0), \"sha256\" TEXT CHECK (length(sha256) = 64 AND sha256 NOT GLOB '*[^0-9a-f]*'), \"availability\" TEXT NOT NULL CHECK (availability IN ('unavailable', 'published', 'retired')), CHECK(availability <> 'published' OR(duration_ms IS NOT NULL AND byte_size IS NOT NULL AND sha256 IS NOT NULL)), UNIQUE(edition_id, surah_number, version));"
+        }
+      ]
+    },
+    {
+      "name": "saved_passages",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"saved_passages\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"asset_id\" TEXT NOT NULL REFERENCES audio_assets(id), \"title\" TEXT NOT NULL CHECK (length(trim(title)) > 0), \"start_ms\" INTEGER NOT NULL CHECK (start_ms >= 0), \"end_ms\" INTEGER NOT NULL CHECK (end_ms - start_ms >= 1000), \"repeat_mode\" TEXT NOT NULL CHECK (repeat_mode IN ('finite', 'continuous')), \"play_count\" INTEGER, \"gap_ms\" INTEGER NOT NULL DEFAULT 0 CHECK (gap_ms IN (0, 2000, 5000, 10000)), \"speed\" REAL NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.0), \"note\" TEXT, \"created_utc_ms\" INTEGER NOT NULL, \"updated_utc_ms\" INTEGER NOT NULL CHECK (updated_utc_ms >= created_utc_ms), CHECK((repeat_mode = 'finite' AND play_count IS NOT NULL AND play_count BETWEEN 1 AND 999)OR(repeat_mode = 'continuous' AND play_count IS NULL)));"
+        }
+      ]
+    },
+    {
+      "name": "passage_insert_bounds",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER passage_insert_bounds BEFORE INSERT ON saved_passages BEGIN SELECT RAISE (ABORT, 'Passage requires verified duration and valid bounds') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);END"
+        }
+      ]
+    },
+    {
+      "name": "passage_update_bounds",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER passage_update_bounds BEFORE UPDATE ON saved_passages BEGIN SELECT RAISE (ABORT, 'Passage requires verified duration and valid bounds') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);END"
+        }
+      ]
+    },
+    {
+      "name": "asset_identity_immutable",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER asset_identity_immutable BEFORE UPDATE ON audio_assets BEGIN SELECT RAISE (ABORT, 'Recording bytes and identity are immutable') WHERE OLD.id <> NEW.id OR OLD.edition_id <> NEW.edition_id OR OLD.surah_number <> NEW.surah_number OR OLD.version <> NEW.version OR(OLD.sha256 IS NOT NULL AND(NEW.sha256 IS NOT OLD.sha256 OR NEW.byte_size IS NOT OLD.byte_size OR NEW.duration_ms IS NOT OLD.duration_ms OR NEW.url IS NOT OLD.url));END"
+        }
+      ]
+    },
+    {
+      "name": "favorites",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"favorites\" (\"type\" TEXT NOT NULL CHECK (type IN ('surah', 'passage')), \"target_id\" TEXT NOT NULL, \"created_utc_ms\" INTEGER NOT NULL, PRIMARY KEY(type, target_id));"
+        }
+      ]
+    },
+    {
+      "name": "favorite_insert_target",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN SELECT RAISE (ABORT, 'Unknown favorite target') WHERE(NEW.type = 'surah' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id))OR(NEW.type = 'passage' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id));END"
+        }
+      ]
+    },
+    {
+      "name": "favorite_update_target",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER favorite_update_target BEFORE UPDATE ON favorites BEGIN SELECT RAISE (ABORT, 'Favorite target is immutable') WHERE NEW.type <> OLD.type OR NEW.target_id <> OLD.target_id;END"
+        }
+      ]
+    },
+    {
+      "name": "passage_delete_favorite",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER passage_delete_favorite AFTER DELETE ON saved_passages BEGIN DELETE FROM favorites WHERE type = 'passage' AND target_id = OLD.id;END"
+        }
+      ]
+    },
+    {
+      "name": "surah_delete_favorite",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER surah_delete_favorite AFTER DELETE ON surahs BEGIN DELETE FROM favorites WHERE type = 'surah' AND target_id = CAST(OLD.number AS TEXT);END"
+        }
+      ]
+    },
+    {
+      "name": "downloads",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"downloads\" (\"asset_id\" TEXT NOT NULL PRIMARY KEY REFERENCES audio_assets(id), \"relative_path\" TEXT CHECK (relative_path <> '' AND relative_path NOT LIKE '/%' AND relative_path NOT LIKE '%..%' AND relative_path NOT LIKE '%:%' AND relative_path NOT LIKE '%\\%'), \"native_task_id\" TEXT, \"state\" TEXT NOT NULL CHECK (state IN ('queued', 'running', 'verifying', 'verified', 'failed', 'cancelled')), \"received_bytes\" INTEGER NOT NULL CHECK (received_bytes >= 0), \"verified_sha256\" TEXT, \"updated_utc_ms\" INTEGER NOT NULL, CHECK(state <> 'verified' OR(relative_path IS NOT NULL AND verified_sha256 IS NOT NULL)));"
+        }
+      ]
+    },
+    {
+      "name": "download_insert_verified",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER download_insert_verified BEFORE INSERT ON downloads BEGIN SELECT RAISE (ABORT, 'Download integrity mismatch') WHERE NEW.state = 'verified' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);END"
+        }
+      ]
+    },
+    {
+      "name": "download_update_verified",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER download_update_verified BEFORE UPDATE ON downloads BEGIN SELECT RAISE (ABORT, 'Download integrity mismatch') WHERE NEW.state = 'verified' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);END"
+        }
+      ]
+    },
+    {
+      "name": "playback_checkpoints",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"playback_checkpoints\" (\"session_id\" TEXT NOT NULL PRIMARY KEY, \"scope\" TEXT NOT NULL CHECK (scope IN ('full', 'passage')), \"asset_id\" TEXT NOT NULL REFERENCES audio_assets(id), \"passage_id\" TEXT REFERENCES saved_passages(id)ON DELETE SET NULL, \"current_pass\" INTEGER NOT NULL CHECK (current_pass > 0), \"remaining_count\" INTEGER CHECK (remaining_count >= 0), \"source_position_ms\" INTEGER NOT NULL CHECK (source_position_ms >= 0), \"settings_snapshot\" TEXT NOT NULL CHECK (json_valid(settings_snapshot)), \"updated_utc_ms\" INTEGER NOT NULL);"
+        }
+      ]
+    },
+    {
+      "name": "checkpoint_insert_bounds",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER checkpoint_insert_bounds BEFORE INSERT ON playback_checkpoints BEGIN SELECT RAISE (ABORT, 'Invalid checkpoint asset/position') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);SELECT RAISE (ABORT, 'Checkpoint passage asset mismatch') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);END"
+        }
+      ]
+    },
+    {
+      "name": "checkpoint_update_bounds",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TRIGGER checkpoint_update_bounds BEFORE UPDATE ON playback_checkpoints BEGIN SELECT RAISE (ABORT, 'Invalid checkpoint asset/position') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);SELECT RAISE (ABORT, 'Checkpoint passage asset mismatch') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);END"
+        }
+      ]
+    },
+    {
+      "name": "listening_sessions",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"listening_sessions\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"asset_id\" TEXT NOT NULL REFERENCES audio_assets(id), \"passage_id\" TEXT REFERENCES saved_passages(id)ON DELETE SET NULL, \"started_utc_ms\" INTEGER NOT NULL, \"ended_utc_ms\" INTEGER CHECK (ended_utc_ms >= started_utc_ms), \"played_wall_ms\" INTEGER NOT NULL DEFAULT 0 CHECK (played_wall_ms >= 0), \"speed\" REAL NOT NULL CHECK (speed BETWEEN 0.5 AND 2.0), \"completion_reason\" TEXT);"
+        }
+      ]
+    },
+    {
+      "name": "daily_activity",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"daily_activity\" (\"local_date\" TEXT NOT NULL PRIMARY KEY CHECK (length(local_date) = 10), \"timezone_policy\" TEXT NOT NULL, \"played_wall_ms\" INTEGER NOT NULL DEFAULT 0 CHECK (played_wall_ms >= 0), \"goal_ms\" INTEGER NOT NULL CHECK (goal_ms >= 0), \"qualified\" INTEGER NOT NULL CHECK (qualified IN (0, 1)));"
+        }
+      ]
+    },
+    {
+      "name": "activity_events",
+      "sql": [
+        {
+          "dialect": "sqlite",
+          "sql": "CREATE TABLE IF NOT EXISTS \"activity_events\" (\"id\" TEXT NOT NULL PRIMARY KEY, \"session_id\" TEXT NOT NULL REFERENCES listening_sessions(id), \"local_date\" TEXT NOT NULL REFERENCES daily_activity(local_date), \"played_wall_ms\" INTEGER NOT NULL CHECK (played_wall_ms > 0), \"utc_ms\" INTEGER NOT NULL);"
+        }
+      ]
+    }
+  ]
+}

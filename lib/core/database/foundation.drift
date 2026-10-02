@@ -1,0 +1,160 @@
+CREATE TABLE app_settings (
+  id INTEGER NOT NULL PRIMARY KEY CHECK (id = 1),
+  theme TEXT NOT NULL DEFAULT 'system' CHECK (theme IN ('system','light','dark')),
+  reduced_motion INTEGER NOT NULL DEFAULT 0 CHECK (reduced_motion IN (0,1)),
+  network_policy TEXT NOT NULL DEFAULT 'wifi' CHECK (network_policy IN ('wifi','any')),
+  default_reciter_id TEXT REFERENCES reciters(id),
+  daily_goal_ms INTEGER NOT NULL DEFAULT 300000 CHECK (daily_goal_ms >= 0),
+  preferences_version INTEGER NOT NULL DEFAULT 1 CHECK (preferences_version > 0),
+  updated_utc_ms INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE surahs (
+  number INTEGER NOT NULL PRIMARY KEY CHECK (number BETWEEN 1 AND 114),
+  arabic_name TEXT NOT NULL CHECK (length(trim(arabic_name)) > 0),
+  transliteration TEXT NOT NULL CHECK (length(trim(transliteration)) > 0),
+  search_aliases TEXT NOT NULL CHECK (json_valid(search_aliases))
+);
+CREATE TABLE reciters (
+  id TEXT NOT NULL PRIMARY KEY,
+  display_name TEXT NOT NULL CHECK (length(trim(display_name)) > 0),
+  arabic_name TEXT,
+  attribution TEXT NOT NULL,
+  source_info TEXT NOT NULL
+);
+CREATE TABLE recording_editions (
+  id TEXT NOT NULL PRIMARY KEY,
+  reciter_id TEXT NOT NULL REFERENCES reciters(id),
+  riwayah TEXT,
+  source_notes TEXT NOT NULL
+);
+CREATE TABLE audio_assets (
+  id TEXT NOT NULL PRIMARY KEY,
+  edition_id TEXT NOT NULL REFERENCES recording_editions(id),
+  surah_number INTEGER NOT NULL REFERENCES surahs(number),
+  version INTEGER NOT NULL CHECK (version > 0),
+  url TEXT NOT NULL CHECK (url LIKE 'https://%'),
+  mime_type TEXT NOT NULL,
+  duration_ms INTEGER CHECK (duration_ms > 0),
+  byte_size INTEGER CHECK (byte_size > 0),
+  sha256 TEXT CHECK (length(sha256) = 64 AND sha256 NOT GLOB '*[^0-9a-f]*'),
+  availability TEXT NOT NULL CHECK (availability IN ('unavailable','published','retired')),
+  CHECK (availability <> 'published' OR (duration_ms IS NOT NULL AND byte_size IS NOT NULL AND sha256 IS NOT NULL)),
+  UNIQUE (edition_id, surah_number, version)
+);
+CREATE TABLE saved_passages (
+  id TEXT NOT NULL PRIMARY KEY,
+  asset_id TEXT NOT NULL REFERENCES audio_assets(id),
+  title TEXT NOT NULL CHECK (length(trim(title)) > 0),
+  start_ms INTEGER NOT NULL CHECK (start_ms >= 0),
+  end_ms INTEGER NOT NULL CHECK (end_ms - start_ms >= 1000),
+  repeat_mode TEXT NOT NULL CHECK (repeat_mode IN ('finite','continuous')),
+  play_count INTEGER,
+  gap_ms INTEGER NOT NULL DEFAULT 0 CHECK (gap_ms IN (0,2000,5000,10000)),
+  speed REAL NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.0),
+  note TEXT,
+  created_utc_ms INTEGER NOT NULL,
+  updated_utc_ms INTEGER NOT NULL CHECK (updated_utc_ms >= created_utc_ms),
+  CHECK ((repeat_mode = 'finite' AND play_count IS NOT NULL AND play_count BETWEEN 1 AND 999) OR
+         (repeat_mode = 'continuous' AND play_count IS NULL))
+);
+CREATE TRIGGER passage_insert_bounds BEFORE INSERT ON saved_passages BEGIN
+  SELECT RAISE(ABORT, 'Passage requires verified duration and valid bounds')
+  WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);
+END;
+CREATE TRIGGER passage_update_bounds BEFORE UPDATE ON saved_passages BEGIN
+  SELECT RAISE(ABORT, 'Passage requires verified duration and valid bounds')
+  WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);
+END;
+CREATE TRIGGER asset_identity_immutable BEFORE UPDATE ON audio_assets BEGIN
+  SELECT RAISE(ABORT, 'Recording bytes and identity are immutable')
+  WHERE OLD.id <> NEW.id OR OLD.edition_id <> NEW.edition_id OR OLD.surah_number <> NEW.surah_number OR
+    OLD.version <> NEW.version OR (OLD.sha256 IS NOT NULL AND (NEW.sha256 IS NOT OLD.sha256 OR
+    NEW.byte_size IS NOT OLD.byte_size OR NEW.duration_ms IS NOT OLD.duration_ms OR NEW.url IS NOT OLD.url));
+END;
+CREATE TABLE favorites (
+  type TEXT NOT NULL CHECK (type IN ('surah','passage')),
+  target_id TEXT NOT NULL,
+  created_utc_ms INTEGER NOT NULL,
+  PRIMARY KEY (type,target_id)
+);
+CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN
+  SELECT RAISE(ABORT, 'Unknown favorite target') WHERE
+    (NEW.type = 'surah' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id)) OR
+    (NEW.type = 'passage' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id));
+END;
+CREATE TRIGGER favorite_update_target BEFORE UPDATE ON favorites BEGIN
+  SELECT RAISE(ABORT, 'Favorite target is immutable') WHERE NEW.type <> OLD.type OR NEW.target_id <> OLD.target_id;
+END;
+CREATE TRIGGER passage_delete_favorite AFTER DELETE ON saved_passages BEGIN
+  DELETE FROM favorites WHERE type = 'passage' AND target_id = OLD.id;
+END;
+CREATE TRIGGER surah_delete_favorite AFTER DELETE ON surahs BEGIN
+  DELETE FROM favorites WHERE type = 'surah' AND target_id = CAST(OLD.number AS TEXT);
+END;
+CREATE TABLE downloads (
+  asset_id TEXT NOT NULL PRIMARY KEY REFERENCES audio_assets(id),
+  relative_path TEXT CHECK (relative_path <> '' AND relative_path NOT LIKE '/%' AND relative_path NOT LIKE '%..%' AND relative_path NOT LIKE '%:%' AND relative_path NOT LIKE '%\%'),
+  native_task_id TEXT,
+  state TEXT NOT NULL CHECK (state IN ('queued','running','verifying','verified','failed','cancelled')),
+  received_bytes INTEGER NOT NULL CHECK (received_bytes >= 0),
+  verified_sha256 TEXT,
+  updated_utc_ms INTEGER NOT NULL,
+  CHECK (state <> 'verified' OR (relative_path IS NOT NULL AND verified_sha256 IS NOT NULL))
+);
+CREATE TRIGGER download_insert_verified BEFORE INSERT ON downloads BEGIN
+  SELECT RAISE(ABORT, 'Download integrity mismatch') WHERE NEW.state = 'verified' AND NOT EXISTS
+    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);
+END;
+CREATE TRIGGER download_update_verified BEFORE UPDATE ON downloads BEGIN
+  SELECT RAISE(ABORT, 'Download integrity mismatch') WHERE NEW.state = 'verified' AND NOT EXISTS
+    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);
+END;
+CREATE TABLE playback_checkpoints (
+  session_id TEXT NOT NULL PRIMARY KEY,
+  scope TEXT NOT NULL CHECK (scope IN ('full','passage')),
+  asset_id TEXT NOT NULL REFERENCES audio_assets(id),
+  passage_id TEXT REFERENCES saved_passages(id) ON DELETE SET NULL,
+  current_pass INTEGER NOT NULL CHECK (current_pass > 0),
+  remaining_count INTEGER CHECK (remaining_count >= 0),
+  source_position_ms INTEGER NOT NULL CHECK (source_position_ms >= 0),
+  settings_snapshot TEXT NOT NULL CHECK (json_valid(settings_snapshot)),
+  updated_utc_ms INTEGER NOT NULL
+);
+CREATE TRIGGER checkpoint_insert_bounds BEFORE INSERT ON playback_checkpoints BEGIN
+  SELECT RAISE(ABORT, 'Invalid checkpoint asset/position') WHERE NOT EXISTS
+    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);
+  SELECT RAISE(ABORT, 'Checkpoint passage asset mismatch') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS
+    (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);
+END;
+CREATE TRIGGER checkpoint_update_bounds BEFORE UPDATE ON playback_checkpoints BEGIN
+  SELECT RAISE(ABORT, 'Invalid checkpoint asset/position') WHERE NOT EXISTS
+    (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);
+  SELECT RAISE(ABORT, 'Checkpoint passage asset mismatch') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS
+    (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);
+END;
+CREATE TABLE listening_sessions (
+  id TEXT NOT NULL PRIMARY KEY,
+  asset_id TEXT NOT NULL REFERENCES audio_assets(id),
+  passage_id TEXT REFERENCES saved_passages(id) ON DELETE SET NULL,
+  started_utc_ms INTEGER NOT NULL,
+  ended_utc_ms INTEGER CHECK (ended_utc_ms >= started_utc_ms),
+  played_wall_ms INTEGER NOT NULL DEFAULT 0 CHECK (played_wall_ms >= 0),
+  speed REAL NOT NULL CHECK (speed BETWEEN 0.5 AND 2.0),
+  completion_reason TEXT
+);
+CREATE TABLE daily_activity (
+  local_date TEXT NOT NULL PRIMARY KEY CHECK (length(local_date) = 10),
+  timezone_policy TEXT NOT NULL,
+  played_wall_ms INTEGER NOT NULL DEFAULT 0 CHECK (played_wall_ms >= 0),
+  goal_ms INTEGER NOT NULL CHECK (goal_ms >= 0),
+  qualified INTEGER NOT NULL CHECK (qualified IN (0,1))
+);
+-- Idempotency is enforced at the shared writer, not by a UI counter.
+CREATE TABLE activity_events (
+  id TEXT NOT NULL PRIMARY KEY,
+  session_id TEXT NOT NULL REFERENCES listening_sessions(id),
+  local_date TEXT NOT NULL REFERENCES daily_activity(local_date),
+  played_wall_ms INTEGER NOT NULL CHECK (played_wall_ms > 0),
+  utc_ms INTEGER NOT NULL
+);

@@ -12,6 +12,7 @@ import 'core/audio/sample_catalog.dart';
 import 'core/audio/session_spec.dart';
 import 'core/theme/appearance_screen.dart';
 import 'core/theme/themed_app.dart';
+import 'app/foundation_app.dart';
 
 Future<PrototypeHandler> createHandler(PrototypeStore store) async {
   final handler = await AudioService.init<PrototypeHandler>(
@@ -42,6 +43,7 @@ class DiagnosticBootstrap extends StatefulWidget {
 
 class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
   PrototypeHandler? handler;
+  FoundationDependencies? foundation;
   Object? error;
   String status = 'Starting audio diagnostics…';
   final clock = Stopwatch()..start();
@@ -65,6 +67,8 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
       if (load != null) {
         result = await load(_status);
       } else {
+        _status('Opening saved preferences…');
+        foundation = await FoundationDependencies.open();
         _status('Opening saved audio data…');
         final store = await PrototypeStore.open();
         _status('Starting the native player and restoring a paused session…');
@@ -85,9 +89,13 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
   @override
   Widget build(BuildContext context) {
     if (handler != null) {
+      if (foundation != null) {
+        return FoundationApp(handler: handler!, dependencies: foundation!);
+      }
       return DiagnosticApp(handler: handler!);
     }
     return ThemedApp(
+      appearance: foundation?.appearance,
       home: Scaffold(
         appBar: AppBar(title: const Text("Al-Muraja'ah • Audio proof")),
         body: Padding(
