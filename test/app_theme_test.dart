@@ -34,6 +34,16 @@ void main() {
       expect(theme.scaffoldBackgroundColor, palette.background);
       expect(theme.colorScheme.primary, palette.action);
       expect(theme.colorScheme.onSurface, palette.text);
+      for (final foreground in [
+        theme.colorScheme.onPrimaryContainer,
+        theme.colorScheme.onSurfaceVariant,
+        theme.colorScheme.primary,
+      ]) {
+        expect(
+          contrast(foreground, theme.colorScheme.primaryContainer),
+          greaterThanOrEqualTo(4.5),
+        );
+      }
     });
   }
 }

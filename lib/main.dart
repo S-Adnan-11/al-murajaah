@@ -10,19 +10,65 @@ import 'core/audio/android_diagnostics.dart';
 import 'core/audio/prototype_store.dart';
 import 'core/audio/sample_catalog.dart';
 import 'core/audio/session_spec.dart';
+import 'core/audio/transport_seek_bar.dart';
 import 'core/theme/appearance_screen.dart';
 import 'core/theme/themed_app.dart';
 import 'app/foundation_app.dart';
+import 'app/product_dependencies.dart';
 
-Future<PrototypeHandler> createHandler(PrototypeStore store) async {
+Future<PrototypeHandler> createHandler(
+  PrototypeStore store, {
+  ProductDependencies? product,
+}) async {
   final handler = await AudioService.init<PrototypeHandler>(
-    builder: () => PrototypeHandler(store),
+    builder: () => PrototypeHandler(
+      store,
+      listeningRecorder: product?.listening,
+      assetResolver: product == null
+          ? null
+          : (id) =>
+                product.assets[id] ??
+                (throw StateError('Recording unavailable: $id')),
+      localResolver: product?.downloads.verifiedFile,
+      verifiedDownloads: product?.downloads.verifiedDownloads,
+      nextSession: product == null
+          ? null
+          : (current) {
+              final number = product.catalog.recordings
+                  .where((r) => r.assetId == current.assetId)
+                  .map((r) => r.number)
+                  .firstOrNull;
+              if (number == null || number >= 114) return null;
+              final next = product.catalog.recordings
+                  .where((r) => r.number == number + 1)
+                  .firstOrNull;
+              if (next == null || !next.available || next.durationMs == null) {
+                throw StateError(
+                  'The next surah is unavailable. Open Surahs to choose a recording.',
+                );
+              }
+              return SessionSpec(
+                assetId: next.assetId,
+                durationMs: next.durationMs!,
+                speed: current.speed,
+              );
+            },
+      streamAllowed: product == null
+          ? null
+          : (asset) => !product.retiredAssets.contains(asset.id),
+    ),
     config: const AudioServiceConfig(
       androidNotificationChannelId: 'dev.almurajaah.diagnostic.audio',
       androidNotificationChannelName: 'Passage playback',
       androidStopForegroundOnPause: false,
+      rewindInterval: Duration(seconds: 10),
+      fastForwardInterval: Duration(seconds: 10),
     ),
   );
+  AudioService.asyncError.listen((error) {
+    handler.recordDiagnostic('media-service-error: $error');
+    debugPrint('MEDIA_SERVICE_ERROR $error');
+  });
   await handler.initialize();
   return handler;
 }
@@ -45,7 +91,7 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
   PrototypeHandler? handler;
   FoundationDependencies? foundation;
   Object? error;
-  String status = 'Starting audio diagnostics…';
+  String status = 'Opening your listening library…';
   final clock = Stopwatch()..start();
 
   @override
@@ -71,8 +117,13 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
         foundation = await FoundationDependencies.open();
         _status('Opening saved audio data…');
         final store = await PrototypeStore.open();
+        _status('Opening the surah library…');
+        foundation!.product = await ProductDependencies.open(
+          foundation!.database,
+          store,
+        );
         _status('Starting the native player and restoring a paused session…');
-        result = await createHandler(store);
+        result = await createHandler(store, product: foundation!.product);
       }
       result.recordDiagnostic(
         'startup-ui-firstFrameMs=$firstFrameMs readyMs=${clock.elapsedMilliseconds}',
@@ -97,7 +148,7 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
     return ThemedApp(
       appearance: foundation?.appearance,
       home: Scaffold(
-        appBar: AppBar(title: const Text("Al-Muraja'ah • Audio proof")),
+        appBar: AppBar(title: const Text("Al-Muraja'ah")),
         body: Padding(
           padding: const EdgeInsets.all(24),
           child: ListView(
@@ -133,6 +184,12 @@ class DiagnosticScreen extends StatefulWidget {
 
 class _DiagnosticScreenState extends State<DiagnosticScreen> {
   PrototypeHandler get h => widget.handler;
+  String _diagnosticName(String id) =>
+      samples
+          .where((asset) => asset.id == id)
+          .map((asset) => asset.name)
+          .firstOrNull ??
+      id;
   SampleAsset selected = samples.first;
   final a = TextEditingController(text: '2');
   final b = TextEditingController(text: '5');
@@ -278,7 +335,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           const Text(
-            'Stage 1 diagnostic. Physical-phone acceptance is pending.',
+            'Audio diagnostic. The physical bounded-loop gate passed; broader audio hardening remains pending.',
           ),
           DropdownButton<SampleAsset>(
             value: selected,
@@ -392,7 +449,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           Text(
             h.spec == null
                 ? 'No session'
-                : '${assetById(h.spec!.assetId).name} • ${h.spec!.isPassage ? 'Passage Loop' : 'Full surah'} • pass ${h.pass} of ${h.spec!.playCount ?? 'continuous'} • ${h.usingLocal ? 'local' : 'stream'}',
+                : '${h.diagnostics['assetName'] ?? _diagnosticName(h.spec!.assetId)} • ${h.spec!.isPassage ? 'Passage Loop' : 'Full surah'} • pass ${h.pass} of ${h.spec!.playCount ?? 'continuous'} • ${h.usingLocal ? 'local' : 'stream'}',
           ),
           StreamBuilder<Duration>(
             stream: h.positionStream,
@@ -402,22 +459,17 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
               // StreamBuilder value can briefly belong to the previous item.
               final relative = h.position.inMilliseconds;
               final length = h.spec?.lengthMs ?? 1;
-              return Column(
-                children: [
-                  Text(
-                    'Scope ${(relative / 1000).toStringAsFixed(1)}s / ${(length / 1000).toStringAsFixed(1)}s; source ${((h.spec?.relativeToSource(relative) ?? 0) / 1000).toStringAsFixed(1)}s',
-                  ),
-                  Slider(
-                    value: relative.clamp(0, length).toDouble(),
-                    min: 0,
-                    max: length.toDouble(),
-                    onChanged: busy || h.spec == null
-                        ? null
-                        : (v) => action(
-                            () => h.seek(Duration(milliseconds: v.round())),
-                          ),
-                  ),
-                ],
+              return TransportSeekBar(
+                spec: h.spec,
+                positionMs: relative,
+                enabled: !busy && h.spec != null,
+                onSeek: (value) =>
+                    action(() => h.seek(Duration(milliseconds: value))),
+                semanticFormatter: (value) =>
+                    '${(value / 1000).toStringAsFixed(1)} seconds into scope',
+                positionLabels: (relative) => Text(
+                  'Scope ${(relative / 1000).toStringAsFixed(1)}s / ${(length / 1000).toStringAsFixed(1)}s; source ${((h.spec?.relativeToSource(relative) ?? 0) / 1000).toStringAsFixed(1)}s',
+                ),
               );
             },
           ),
@@ -458,7 +510,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
           for (final passage in saved)
             ListTile(
               title: Text(passage.title),
-              subtitle: Text(assetById(passage.spec.assetId).name),
+              subtitle: Text(_diagnosticName(passage.spec.assetId)),
               onTap: busy
                   ? null
                   : () => action(() async {
@@ -471,7 +523,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
             child: const Text('Download and verify full recording'),
           ),
           const Text(
-            'Foreground download experiment; keep this screen open. Gaps, speed controls and sleep timer are pending.',
+            'Legacy foreground download experiment; keep this screen open. Use Player for saved passages, gaps and sleep timer.',
           ),
           const Divider(),
           Text(

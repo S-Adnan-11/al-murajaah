@@ -6,16 +6,22 @@ import 'appearance_controller.dart';
 
 /// Appearance lives above navigation; changing it never recreates the player.
 class ThemedApp extends StatefulWidget {
-  const ThemedApp({super.key, required this.home, this.appearance})
-    : router = null;
+  const ThemedApp({
+    super.key,
+    required this.home,
+    this.appearance,
+    this.builder,
+  }) : router = null;
   const ThemedApp.router({
     super.key,
     required this.router,
     required this.appearance,
+    this.builder,
   }) : home = null;
   final Widget? home;
   final RouterConfig<Object>? router;
   final AppearanceController? appearance;
+  final TransitionBuilder? builder;
 
   @override
   State<ThemedApp> createState() => _ThemedAppState();
@@ -60,6 +66,7 @@ class _ThemedAppState extends State<ThemedApp> {
               darkTheme: AppTheme.forBrightness(Brightness.dark),
               themeMode: value,
               routerConfig: widget.router,
+              builder: widget.builder,
             )
           : MaterialApp(
               title: "Al-Muraja'ah",
@@ -68,6 +75,7 @@ class _ThemedAppState extends State<ThemedApp> {
               darkTheme: AppTheme.forBrightness(Brightness.dark),
               themeMode: value,
               home: widget.home,
+              builder: widget.builder,
             ),
     ),
   );
