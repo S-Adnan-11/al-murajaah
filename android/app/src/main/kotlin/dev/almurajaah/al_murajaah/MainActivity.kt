@@ -21,16 +21,28 @@ class MainActivity : AudioServiceActivity() {
         val result: MethodChannel.Result,
     )
     private var pendingSave: PendingSave? = null
+    private var audioDownloads: AudioDownloads? = null
+    private var metadataDocuments: MetadataDocuments? = null
 
     override fun onDestroy() {
         pendingSave?.result?.error("export_activity_closed", "Activity closed; internal export retained.", null)
         pendingSave = null
         diagnosticIo.shutdown()
+        audioDownloads?.close()
+        metadataDocuments?.close()
         super.onDestroy()
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        val documents = MetadataDocuments(this)
+        metadataDocuments = documents
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "dev.almurajaah/metadata")
+            .setMethodCallHandler(documents::handle)
+        val downloads = AudioDownloads(applicationContext) { action -> runOnUiThread(action) }
+        audioDownloads = downloads
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "dev.almurajaah/downloads")
+            .setMethodCallHandler(downloads::handle)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "dev.almurajaah/diagnostics")
             .setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -75,6 +87,7 @@ class MainActivity : AudioServiceActivity() {
     @Deprecated("Uses the existing Activity result API supported by AudioServiceActivity")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (metadataDocuments?.onResult(requestCode, resultCode, data) == true) return
         if (requestCode != 6205) return
         val save = pendingSave ?: return
         pendingSave = null

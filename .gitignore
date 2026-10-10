@@ -63,5 +63,7 @@ key.properties
 # Private plans, setup notes and test evidence
 Quran_Audio_App_V1_Plan.md
 /docs/
+/docs
 TEST_REPORT.md
 /CHANGELOG.md
+AGENTS.md

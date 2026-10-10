@@ -2,6 +2,50 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:al_murajaah/core/audio/session_spec.dart';
 
 void main() {
+  test('item identity distinguishes scope and saved IDs, independent of settings or full-surah padding', () {
+    final full = SessionSpec(assetId: 'recording', durationMs: 10000);
+    final padded = SessionSpec(
+      assetId: 'recording',
+      durationMs: 10001,
+      playCount: 33,
+      speed: .9,
+    );
+    expect(full.sameItem(padded), true);
+    final passage = SessionSpec(
+      assetId: 'recording',
+      durationMs: 10000,
+      isPassage: true,
+    );
+    expect(full.sameItem(passage), false);
+    expect(passage.sameItem(passage.withCount(33)), true);
+    final saved = passage.withPassage('one', 'Title');
+    expect(saved.sameItem(passage), false);
+    expect(saved.sameItem(passage.withPassage('two', 'Title')), false);
+    expect(
+      saved.sameItem(
+        SessionSpec(
+          assetId: 'recording',
+          durationMs: 10000,
+          startMs: 2000,
+          endMs: 5000,
+          isPassage: true,
+          passageId: 'one',
+        ),
+      ),
+      true,
+    );
+    expect(
+      saved.sameItem(
+        SessionSpec(
+          assetId: 'other',
+          durationMs: 10000,
+          isPassage: true,
+          passageId: 'one',
+        ),
+      ),
+      false,
+    );
+  });
   test('counts include first pass and queue indices are bounded', () {
     for (final count in [1, 3, 10, 999]) {
       final spec = SessionSpec(

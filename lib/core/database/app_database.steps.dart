@@ -1066,8 +1066,609 @@ i1.GeneratedColumn<int> _column_68(String aliasedName) =>
       type: i1.DriftSqlType.int,
       $customConstraints: 'NOT NULL',
     );
+
+final class Schema3 extends i0.VersionedSchema {
+  Schema3({required super.database}) : super(version: 3);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    reciters,
+    appSettings,
+    surahs,
+    recordingEditions,
+    audioAssets,
+    savedPassages,
+    passageInsertBounds,
+    passageUpdateBounds,
+    assetIdentityImmutable,
+    favorites,
+    favoriteInsertTarget,
+    favoriteUpdateTarget,
+    passageDeleteFavorite,
+    surahDeleteFavorite,
+    downloads,
+    downloadInsertVerified,
+    downloadUpdateVerified,
+    playbackCheckpoints,
+    checkpointInsertBounds,
+    checkpointUpdateBounds,
+    listeningSessions,
+    dailyActivity,
+    activityEvents,
+  ];
+  late final Shape0 reciters = Shape0(
+    source: i0.VersionedTable(
+      entityName: 'reciters',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_0, _column_1, _column_2, _column_3, _column_4],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 appSettings = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'app_settings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_9,
+        _column_10,
+        _column_11,
+        _column_12,
+        _column_69,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape2 surahs = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'surahs',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_13, _column_14, _column_15, _column_16],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape3 recordingEditions = Shape3(
+    source: i0.VersionedTable(
+      entityName: 'recording_editions',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_0, _column_17, _column_18, _column_19],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape4 audioAssets = Shape4(
+    source: i0.VersionedTable(
+      entityName: 'audio_assets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'CHECK(availability <> \'published\' OR(duration_ms IS NOT NULL AND byte_size IS NOT NULL AND sha256 IS NOT NULL))',
+        'UNIQUE(edition_id, surah_number, version)',
+      ],
+      columns: [
+        _column_0,
+        _column_20,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_26,
+        _column_27,
+        _column_28,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape5 savedPassages = Shape5(
+    source: i0.VersionedTable(
+      entityName: 'saved_passages',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'CHECK((repeat_mode = \'finite\' AND play_count IS NOT NULL AND play_count BETWEEN 1 AND 999)OR(repeat_mode = \'continuous\' AND play_count IS NULL))',
+      ],
+      columns: [
+        _column_0,
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_32,
+        _column_33,
+        _column_34,
+        _column_35,
+        _column_36,
+        _column_37,
+        _column_38,
+        _column_39,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger passageInsertBounds = i1.Trigger(
+    'CREATE TRIGGER passage_insert_bounds BEFORE INSERT ON saved_passages BEGIN SELECT RAISE (ABORT, \'Passage requires verified duration and valid bounds\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);END',
+    'passage_insert_bounds',
+  );
+  final i1.Trigger passageUpdateBounds = i1.Trigger(
+    'CREATE TRIGGER passage_update_bounds BEFORE UPDATE ON saved_passages BEGIN SELECT RAISE (ABORT, \'Passage requires verified duration and valid bounds\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);END',
+    'passage_update_bounds',
+  );
+  final i1.Trigger assetIdentityImmutable = i1.Trigger(
+    'CREATE TRIGGER asset_identity_immutable BEFORE UPDATE ON audio_assets BEGIN SELECT RAISE (ABORT, \'Recording bytes and identity are immutable\') WHERE OLD.id <> NEW.id OR OLD.edition_id <> NEW.edition_id OR OLD.surah_number <> NEW.surah_number OR OLD.version <> NEW.version OR(OLD.sha256 IS NOT NULL AND(NEW.sha256 IS NOT OLD.sha256 OR NEW.byte_size IS NOT OLD.byte_size OR NEW.duration_ms IS NOT OLD.duration_ms OR NEW.url IS NOT OLD.url));END',
+    'asset_identity_immutable',
+  );
+  late final Shape6 favorites = Shape6(
+    source: i0.VersionedTable(
+      entityName: 'favorites',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(type, target_id)'],
+      columns: [_column_40, _column_41, _column_38],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger favoriteInsertTarget = i1.Trigger(
+    'CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN SELECT RAISE (ABORT, \'Unknown favorite target\') WHERE(NEW.type = \'surah\' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id))OR(NEW.type = \'passage\' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id));END',
+    'favorite_insert_target',
+  );
+  final i1.Trigger favoriteUpdateTarget = i1.Trigger(
+    'CREATE TRIGGER favorite_update_target BEFORE UPDATE ON favorites BEGIN SELECT RAISE (ABORT, \'Favorite target is immutable\') WHERE NEW.type <> OLD.type OR NEW.target_id <> OLD.target_id;END',
+    'favorite_update_target',
+  );
+  final i1.Trigger passageDeleteFavorite = i1.Trigger(
+    'CREATE TRIGGER passage_delete_favorite AFTER DELETE ON saved_passages BEGIN DELETE FROM favorites WHERE type = \'passage\' AND target_id = OLD.id;END',
+    'passage_delete_favorite',
+  );
+  final i1.Trigger surahDeleteFavorite = i1.Trigger(
+    'CREATE TRIGGER surah_delete_favorite AFTER DELETE ON surahs BEGIN DELETE FROM favorites WHERE type = \'surah\' AND target_id = CAST(OLD.number AS TEXT);END',
+    'surah_delete_favorite',
+  );
+  late final Shape7 downloads = Shape7(
+    source: i0.VersionedTable(
+      entityName: 'downloads',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'CHECK(state <> \'verified\' OR(relative_path IS NOT NULL AND verified_sha256 IS NOT NULL))',
+      ],
+      columns: [
+        _column_42,
+        _column_43,
+        _column_44,
+        _column_45,
+        _column_46,
+        _column_47,
+        _column_48,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger downloadInsertVerified = i1.Trigger(
+    'CREATE TRIGGER download_insert_verified BEFORE INSERT ON downloads BEGIN SELECT RAISE (ABORT, \'Download integrity mismatch\') WHERE NEW.state = \'verified\' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);END',
+    'download_insert_verified',
+  );
+  final i1.Trigger downloadUpdateVerified = i1.Trigger(
+    'CREATE TRIGGER download_update_verified BEFORE UPDATE ON downloads BEGIN SELECT RAISE (ABORT, \'Download integrity mismatch\') WHERE NEW.state = \'verified\' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);END',
+    'download_update_verified',
+  );
+  late final Shape8 playbackCheckpoints = Shape8(
+    source: i0.VersionedTable(
+      entityName: 'playback_checkpoints',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_49,
+        _column_50,
+        _column_29,
+        _column_51,
+        _column_52,
+        _column_53,
+        _column_54,
+        _column_55,
+        _column_48,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger checkpointInsertBounds = i1.Trigger(
+    'CREATE TRIGGER checkpoint_insert_bounds BEFORE INSERT ON playback_checkpoints BEGIN SELECT RAISE (ABORT, \'Invalid checkpoint asset/position\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);SELECT RAISE (ABORT, \'Checkpoint passage asset mismatch\') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);END',
+    'checkpoint_insert_bounds',
+  );
+  final i1.Trigger checkpointUpdateBounds = i1.Trigger(
+    'CREATE TRIGGER checkpoint_update_bounds BEFORE UPDATE ON playback_checkpoints BEGIN SELECT RAISE (ABORT, \'Invalid checkpoint asset/position\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);SELECT RAISE (ABORT, \'Checkpoint passage asset mismatch\') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);END',
+    'checkpoint_update_bounds',
+  );
+  late final Shape9 listeningSessions = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'listening_sessions',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_0,
+        _column_29,
+        _column_51,
+        _column_56,
+        _column_57,
+        _column_58,
+        _column_59,
+        _column_60,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape10 dailyActivity = Shape10(
+    source: i0.VersionedTable(
+      entityName: 'daily_activity',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_61, _column_62, _column_58, _column_63, _column_64],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 activityEvents = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'activity_events',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_0, _column_65, _column_66, _column_67, _column_68],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+}
+
+class Shape12 extends i0.VersionedTable {
+  Shape12({required super.source, required super.alias}) : super.aliased();
+  i1.GeneratedColumn<int> get id =>
+      columnsByName['id']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get theme =>
+      columnsByName['theme']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get reducedMotion =>
+      columnsByName['reduced_motion']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<String> get networkPolicy =>
+      columnsByName['network_policy']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<String> get defaultReciterId =>
+      columnsByName['default_reciter_id']! as i1.GeneratedColumn<String>;
+  i1.GeneratedColumn<int> get dailyGoalMs =>
+      columnsByName['daily_goal_ms']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get preferencesVersion =>
+      columnsByName['preferences_version']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get updatedUtcMs =>
+      columnsByName['updated_utc_ms']! as i1.GeneratedColumn<int>;
+  i1.GeneratedColumn<int> get auroraEnabled =>
+      columnsByName['aurora_enabled']! as i1.GeneratedColumn<int>;
+}
+
+i1.GeneratedColumn<int> _column_69(String aliasedName) =>
+    i1.GeneratedColumn<int>(
+      'aurora_enabled',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.int,
+      $customConstraints: 'NOT NULL DEFAULT 0 CHECK (aurora_enabled IN (0, 1))',
+      defaultValue: const i1.CustomExpression('0'),
+    );
+
+final class Schema4 extends i0.VersionedSchema {
+  Schema4({required super.database}) : super(version: 4);
+  @override
+  late final List<i1.DatabaseSchemaEntity> entities = [
+    reciters,
+    appSettings,
+    surahs,
+    recordingEditions,
+    audioAssets,
+    savedPassages,
+    passageInsertBounds,
+    passageUpdateBounds,
+    assetIdentityImmutable,
+    favorites,
+    favoriteInsertTarget,
+    favoriteUpdateTarget,
+    passageDeleteFavorite,
+    surahDeleteFavorite,
+    downloads,
+    downloadInsertVerified,
+    downloadUpdateVerified,
+    playbackCheckpoints,
+    checkpointInsertBounds,
+    checkpointUpdateBounds,
+    listeningSessions,
+    dailyActivity,
+    activityEvents,
+  ];
+  late final Shape0 reciters = Shape0(
+    source: i0.VersionedTable(
+      entityName: 'reciters',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_0, _column_1, _column_2, _column_3, _column_4],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape12 appSettings = Shape12(
+    source: i0.VersionedTable(
+      entityName: 'app_settings',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_5,
+        _column_6,
+        _column_7,
+        _column_8,
+        _column_9,
+        _column_10,
+        _column_11,
+        _column_12,
+        _column_69,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape2 surahs = Shape2(
+    source: i0.VersionedTable(
+      entityName: 'surahs',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_13, _column_14, _column_15, _column_16],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape3 recordingEditions = Shape3(
+    source: i0.VersionedTable(
+      entityName: 'recording_editions',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_0, _column_17, _column_18, _column_19],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape4 audioAssets = Shape4(
+    source: i0.VersionedTable(
+      entityName: 'audio_assets',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'CHECK(availability <> \'published\' OR(duration_ms IS NOT NULL AND byte_size IS NOT NULL AND sha256 IS NOT NULL))',
+        'UNIQUE(edition_id, surah_number, version)',
+      ],
+      columns: [
+        _column_0,
+        _column_20,
+        _column_21,
+        _column_22,
+        _column_23,
+        _column_24,
+        _column_25,
+        _column_26,
+        _column_27,
+        _column_28,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape5 savedPassages = Shape5(
+    source: i0.VersionedTable(
+      entityName: 'saved_passages',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'CHECK((repeat_mode = \'finite\' AND play_count IS NOT NULL AND play_count BETWEEN 1 AND 999)OR(repeat_mode = \'continuous\' AND play_count IS NULL))',
+      ],
+      columns: [
+        _column_0,
+        _column_29,
+        _column_30,
+        _column_31,
+        _column_32,
+        _column_33,
+        _column_34,
+        _column_35,
+        _column_70,
+        _column_37,
+        _column_38,
+        _column_39,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger passageInsertBounds = i1.Trigger(
+    'CREATE TRIGGER passage_insert_bounds BEFORE INSERT ON saved_passages BEGIN SELECT RAISE (ABORT, \'Passage requires verified duration and valid bounds\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);END',
+    'passage_insert_bounds',
+  );
+  final i1.Trigger passageUpdateBounds = i1.Trigger(
+    'CREATE TRIGGER passage_update_bounds BEFORE UPDATE ON saved_passages BEGIN SELECT RAISE (ABORT, \'Passage requires verified duration and valid bounds\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.end_ms <= duration_ms);END',
+    'passage_update_bounds',
+  );
+  final i1.Trigger assetIdentityImmutable = i1.Trigger(
+    'CREATE TRIGGER asset_identity_immutable BEFORE UPDATE ON audio_assets BEGIN SELECT RAISE (ABORT, \'Recording bytes and identity are immutable\') WHERE OLD.id <> NEW.id OR OLD.edition_id <> NEW.edition_id OR OLD.surah_number <> NEW.surah_number OR OLD.version <> NEW.version OR(OLD.sha256 IS NOT NULL AND(NEW.sha256 IS NOT OLD.sha256 OR NEW.byte_size IS NOT OLD.byte_size OR NEW.duration_ms IS NOT OLD.duration_ms OR NEW.url IS NOT OLD.url));END',
+    'asset_identity_immutable',
+  );
+  late final Shape6 favorites = Shape6(
+    source: i0.VersionedTable(
+      entityName: 'favorites',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: ['PRIMARY KEY(type, target_id)'],
+      columns: [_column_40, _column_41, _column_38],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger favoriteInsertTarget = i1.Trigger(
+    'CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN SELECT RAISE (ABORT, \'Unknown favorite target\') WHERE(NEW.type = \'surah\' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id))OR(NEW.type = \'passage\' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id));END',
+    'favorite_insert_target',
+  );
+  final i1.Trigger favoriteUpdateTarget = i1.Trigger(
+    'CREATE TRIGGER favorite_update_target BEFORE UPDATE ON favorites BEGIN SELECT RAISE (ABORT, \'Favorite target is immutable\') WHERE NEW.type <> OLD.type OR NEW.target_id <> OLD.target_id;END',
+    'favorite_update_target',
+  );
+  final i1.Trigger passageDeleteFavorite = i1.Trigger(
+    'CREATE TRIGGER passage_delete_favorite AFTER DELETE ON saved_passages BEGIN DELETE FROM favorites WHERE type = \'passage\' AND target_id = OLD.id;END',
+    'passage_delete_favorite',
+  );
+  final i1.Trigger surahDeleteFavorite = i1.Trigger(
+    'CREATE TRIGGER surah_delete_favorite AFTER DELETE ON surahs BEGIN DELETE FROM favorites WHERE type = \'surah\' AND target_id = CAST(OLD.number AS TEXT);END',
+    'surah_delete_favorite',
+  );
+  late final Shape7 downloads = Shape7(
+    source: i0.VersionedTable(
+      entityName: 'downloads',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [
+        'CHECK(state <> \'verified\' OR(relative_path IS NOT NULL AND verified_sha256 IS NOT NULL))',
+      ],
+      columns: [
+        _column_42,
+        _column_43,
+        _column_44,
+        _column_45,
+        _column_46,
+        _column_47,
+        _column_48,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger downloadInsertVerified = i1.Trigger(
+    'CREATE TRIGGER download_insert_verified BEFORE INSERT ON downloads BEGIN SELECT RAISE (ABORT, \'Download integrity mismatch\') WHERE NEW.state = \'verified\' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);END',
+    'download_insert_verified',
+  );
+  final i1.Trigger downloadUpdateVerified = i1.Trigger(
+    'CREATE TRIGGER download_update_verified BEFORE UPDATE ON downloads BEGIN SELECT RAISE (ABORT, \'Download integrity mismatch\') WHERE NEW.state = \'verified\' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND byte_size = NEW.received_bytes AND sha256 = NEW.verified_sha256);END',
+    'download_update_verified',
+  );
+  late final Shape8 playbackCheckpoints = Shape8(
+    source: i0.VersionedTable(
+      entityName: 'playback_checkpoints',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_49,
+        _column_50,
+        _column_29,
+        _column_51,
+        _column_52,
+        _column_53,
+        _column_54,
+        _column_55,
+        _column_48,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  final i1.Trigger checkpointInsertBounds = i1.Trigger(
+    'CREATE TRIGGER checkpoint_insert_bounds BEFORE INSERT ON playback_checkpoints BEGIN SELECT RAISE (ABORT, \'Invalid checkpoint asset/position\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);SELECT RAISE (ABORT, \'Checkpoint passage asset mismatch\') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);END',
+    'checkpoint_insert_bounds',
+  );
+  final i1.Trigger checkpointUpdateBounds = i1.Trigger(
+    'CREATE TRIGGER checkpoint_update_bounds BEFORE UPDATE ON playback_checkpoints BEGIN SELECT RAISE (ABORT, \'Invalid checkpoint asset/position\') WHERE NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.asset_id AND duration_ms IS NOT NULL AND NEW.source_position_ms <= duration_ms);SELECT RAISE (ABORT, \'Checkpoint passage asset mismatch\') WHERE NEW.passage_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.passage_id AND asset_id = NEW.asset_id);END',
+    'checkpoint_update_bounds',
+  );
+  late final Shape9 listeningSessions = Shape9(
+    source: i0.VersionedTable(
+      entityName: 'listening_sessions',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [
+        _column_0,
+        _column_29,
+        _column_51,
+        _column_56,
+        _column_57,
+        _column_58,
+        _column_71,
+        _column_60,
+      ],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape10 dailyActivity = Shape10(
+    source: i0.VersionedTable(
+      entityName: 'daily_activity',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_61, _column_62, _column_58, _column_63, _column_64],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+  late final Shape11 activityEvents = Shape11(
+    source: i0.VersionedTable(
+      entityName: 'activity_events',
+      withoutRowId: false,
+      isStrict: false,
+      tableConstraints: [],
+      columns: [_column_0, _column_65, _column_66, _column_67, _column_68],
+      attachedDatabase: database,
+    ),
+    alias: null,
+  );
+}
+
+i1.GeneratedColumn<double> _column_70(String aliasedName) =>
+    i1.GeneratedColumn<double>(
+      'speed',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.double,
+      $customConstraints:
+          'NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.2)',
+      defaultValue: const i1.CustomExpression('1.0'),
+    );
+i1.GeneratedColumn<double> _column_71(String aliasedName) =>
+    i1.GeneratedColumn<double>(
+      'speed',
+      aliasedName,
+      false,
+      type: i1.DriftSqlType.double,
+      $customConstraints: 'NOT NULL CHECK (speed BETWEEN 0.5 AND 2.2)',
+    );
 i0.MigrationStepWithVersion migrationSteps({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
+  required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
+  required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
 }) {
   return (currentVersion, database) async {
     switch (currentVersion) {
@@ -1076,6 +1677,16 @@ i0.MigrationStepWithVersion migrationSteps({
         final migrator = i1.Migrator(database, schema);
         await from1To2(migrator, schema);
         return 2;
+      case 2:
+        final schema = Schema3(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from2To3(migrator, schema);
+        return 3;
+      case 3:
+        final schema = Schema4(database: database);
+        final migrator = i1.Migrator(database, schema);
+        await from3To4(migrator, schema);
+        return 4;
       default:
         throw ArgumentError.value('Unknown migration from $currentVersion');
     }
@@ -1084,6 +1695,12 @@ i0.MigrationStepWithVersion migrationSteps({
 
 i1.OnUpgrade stepByStep({
   required Future<void> Function(i1.Migrator m, Schema2 schema) from1To2,
+  required Future<void> Function(i1.Migrator m, Schema3 schema) from2To3,
+  required Future<void> Function(i1.Migrator m, Schema4 schema) from3To4,
 }) => i0.VersionedSchema.stepByStepHelper(
-  step: migrationSteps(from1To2: from1To2),
+  step: migrationSteps(
+    from1To2: from1To2,
+    from2To3: from2To3,
+    from3To4: from3To4,
+  ),
 );

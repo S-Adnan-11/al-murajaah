@@ -92,6 +92,8 @@ class PrototypeStore {
     return jsonDecode(await file.readAsString());
   }
 
+  Future<void> flush() => _writes;
+
   Future<List<SavedPassage>> passages() async {
     final records = await _read('passages.json') as List<dynamic>? ?? [];
     return records.map((record) {

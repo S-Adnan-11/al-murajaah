@@ -477,6 +477,18 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
     $customConstraints: 'NOT NULL DEFAULT 0',
     defaultValue: const CustomExpression('0'),
   );
+  static const VerificationMeta _auroraEnabledMeta = const VerificationMeta(
+    'auroraEnabled',
+  );
+  late final GeneratedColumn<int> auroraEnabled = GeneratedColumn<int>(
+    'aurora_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (aurora_enabled IN (0, 1))',
+    defaultValue: const CustomExpression('0'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -487,6 +499,7 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
     dailyGoalMs,
     preferencesVersion,
     updatedUtcMs,
+    auroraEnabled,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -563,6 +576,15 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
         ),
       );
     }
+    if (data.containsKey('aurora_enabled')) {
+      context.handle(
+        _auroraEnabledMeta,
+        auroraEnabled.isAcceptableOrUnknown(
+          data['aurora_enabled']!,
+          _auroraEnabledMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -604,6 +626,10 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
         DriftSqlType.int,
         data['${effectivePrefix}updated_utc_ms'],
       )!,
+      auroraEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}aurora_enabled'],
+      )!,
     );
   }
 
@@ -625,6 +651,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
   final int dailyGoalMs;
   final int preferencesVersion;
   final int updatedUtcMs;
+  final int auroraEnabled;
   const AppSetting({
     required this.id,
     required this.theme,
@@ -634,6 +661,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     required this.dailyGoalMs,
     required this.preferencesVersion,
     required this.updatedUtcMs,
+    required this.auroraEnabled,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -648,6 +676,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     map['daily_goal_ms'] = Variable<int>(dailyGoalMs);
     map['preferences_version'] = Variable<int>(preferencesVersion);
     map['updated_utc_ms'] = Variable<int>(updatedUtcMs);
+    map['aurora_enabled'] = Variable<int>(auroraEnabled);
     return map;
   }
 
@@ -663,6 +692,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       dailyGoalMs: Value(dailyGoalMs),
       preferencesVersion: Value(preferencesVersion),
       updatedUtcMs: Value(updatedUtcMs),
+      auroraEnabled: Value(auroraEnabled),
     );
   }
 
@@ -682,6 +712,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       dailyGoalMs: serializer.fromJson<int>(json['daily_goal_ms']),
       preferencesVersion: serializer.fromJson<int>(json['preferences_version']),
       updatedUtcMs: serializer.fromJson<int>(json['updated_utc_ms']),
+      auroraEnabled: serializer.fromJson<int>(json['aurora_enabled']),
     );
   }
   @override
@@ -696,6 +727,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       'daily_goal_ms': serializer.toJson<int>(dailyGoalMs),
       'preferences_version': serializer.toJson<int>(preferencesVersion),
       'updated_utc_ms': serializer.toJson<int>(updatedUtcMs),
+      'aurora_enabled': serializer.toJson<int>(auroraEnabled),
     };
   }
 
@@ -708,6 +740,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     int? dailyGoalMs,
     int? preferencesVersion,
     int? updatedUtcMs,
+    int? auroraEnabled,
   }) => AppSetting(
     id: id ?? this.id,
     theme: theme ?? this.theme,
@@ -719,6 +752,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     dailyGoalMs: dailyGoalMs ?? this.dailyGoalMs,
     preferencesVersion: preferencesVersion ?? this.preferencesVersion,
     updatedUtcMs: updatedUtcMs ?? this.updatedUtcMs,
+    auroraEnabled: auroraEnabled ?? this.auroraEnabled,
   );
   AppSetting copyWithCompanion(AppSettingsCompanion data) {
     return AppSetting(
@@ -742,6 +776,9 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       updatedUtcMs: data.updatedUtcMs.present
           ? data.updatedUtcMs.value
           : this.updatedUtcMs,
+      auroraEnabled: data.auroraEnabled.present
+          ? data.auroraEnabled.value
+          : this.auroraEnabled,
     );
   }
 
@@ -755,7 +792,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
           ..write('defaultReciterId: $defaultReciterId, ')
           ..write('dailyGoalMs: $dailyGoalMs, ')
           ..write('preferencesVersion: $preferencesVersion, ')
-          ..write('updatedUtcMs: $updatedUtcMs')
+          ..write('updatedUtcMs: $updatedUtcMs, ')
+          ..write('auroraEnabled: $auroraEnabled')
           ..write(')'))
         .toString();
   }
@@ -770,6 +808,7 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     dailyGoalMs,
     preferencesVersion,
     updatedUtcMs,
+    auroraEnabled,
   );
   @override
   bool operator ==(Object other) =>
@@ -782,7 +821,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
           other.defaultReciterId == this.defaultReciterId &&
           other.dailyGoalMs == this.dailyGoalMs &&
           other.preferencesVersion == this.preferencesVersion &&
-          other.updatedUtcMs == this.updatedUtcMs);
+          other.updatedUtcMs == this.updatedUtcMs &&
+          other.auroraEnabled == this.auroraEnabled);
 }
 
 class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
@@ -794,6 +834,7 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   final Value<int> dailyGoalMs;
   final Value<int> preferencesVersion;
   final Value<int> updatedUtcMs;
+  final Value<int> auroraEnabled;
   const AppSettingsCompanion({
     this.id = const Value.absent(),
     this.theme = const Value.absent(),
@@ -803,6 +844,7 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     this.dailyGoalMs = const Value.absent(),
     this.preferencesVersion = const Value.absent(),
     this.updatedUtcMs = const Value.absent(),
+    this.auroraEnabled = const Value.absent(),
   });
   AppSettingsCompanion.insert({
     this.id = const Value.absent(),
@@ -813,6 +855,7 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     this.dailyGoalMs = const Value.absent(),
     this.preferencesVersion = const Value.absent(),
     this.updatedUtcMs = const Value.absent(),
+    this.auroraEnabled = const Value.absent(),
   });
   static Insertable<AppSetting> custom({
     Expression<int>? id,
@@ -823,6 +866,7 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     Expression<int>? dailyGoalMs,
     Expression<int>? preferencesVersion,
     Expression<int>? updatedUtcMs,
+    Expression<int>? auroraEnabled,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -833,6 +877,7 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
       if (dailyGoalMs != null) 'daily_goal_ms': dailyGoalMs,
       if (preferencesVersion != null) 'preferences_version': preferencesVersion,
       if (updatedUtcMs != null) 'updated_utc_ms': updatedUtcMs,
+      if (auroraEnabled != null) 'aurora_enabled': auroraEnabled,
     });
   }
 
@@ -845,6 +890,7 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     Value<int>? dailyGoalMs,
     Value<int>? preferencesVersion,
     Value<int>? updatedUtcMs,
+    Value<int>? auroraEnabled,
   }) {
     return AppSettingsCompanion(
       id: id ?? this.id,
@@ -855,6 +901,7 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
       dailyGoalMs: dailyGoalMs ?? this.dailyGoalMs,
       preferencesVersion: preferencesVersion ?? this.preferencesVersion,
       updatedUtcMs: updatedUtcMs ?? this.updatedUtcMs,
+      auroraEnabled: auroraEnabled ?? this.auroraEnabled,
     );
   }
 
@@ -885,6 +932,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     if (updatedUtcMs.present) {
       map['updated_utc_ms'] = Variable<int>(updatedUtcMs.value);
     }
+    if (auroraEnabled.present) {
+      map['aurora_enabled'] = Variable<int>(auroraEnabled.value);
+    }
     return map;
   }
 
@@ -898,7 +948,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
           ..write('defaultReciterId: $defaultReciterId, ')
           ..write('dailyGoalMs: $dailyGoalMs, ')
           ..write('preferencesVersion: $preferencesVersion, ')
-          ..write('updatedUtcMs: $updatedUtcMs')
+          ..write('updatedUtcMs: $updatedUtcMs, ')
+          ..write('auroraEnabled: $auroraEnabled')
           ..write(')'))
         .toString();
   }
@@ -2270,7 +2321,7 @@ class SavedPassages extends Table with TableInfo<SavedPassages, SavedPassage> {
     type: DriftSqlType.double,
     requiredDuringInsert: false,
     $customConstraints:
-        'NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.0)',
+        'NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.2)',
     defaultValue: const CustomExpression('1.0'),
   );
   static const VerificationMeta _noteMeta = const VerificationMeta('note');
@@ -4335,7 +4386,7 @@ class ListeningSessions extends Table
     false,
     type: DriftSqlType.double,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL CHECK (speed BETWEEN 0.5 AND 2.0)',
+    $customConstraints: 'NOT NULL CHECK (speed BETWEEN 0.5 AND 2.2)',
   );
   static const VerificationMeta _completionReasonMeta = const VerificationMeta(
     'completionReason',
@@ -6138,6 +6189,7 @@ typedef $AppSettingsCreateCompanionBuilder = AppSettingsCompanion Function({
   Value<int> dailyGoalMs,
   Value<int> preferencesVersion,
   Value<int> updatedUtcMs,
+  Value<int> auroraEnabled,
 });
 typedef $AppSettingsUpdateCompanionBuilder = AppSettingsCompanion Function({
   Value<int> id,
@@ -6148,6 +6200,7 @@ typedef $AppSettingsUpdateCompanionBuilder = AppSettingsCompanion Function({
   Value<int> dailyGoalMs,
   Value<int> preferencesVersion,
   Value<int> updatedUtcMs,
+  Value<int> auroraEnabled,
 });
 
 final class $AppSettingsReferences
@@ -6212,6 +6265,11 @@ class $AppSettingsFilterComposer extends Composer<_$AppDatabase, AppSettings> {
 
   ColumnFilters<int> get updatedUtcMs => $composableBuilder(
     column: $table.updatedUtcMs,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get auroraEnabled => $composableBuilder(
+    column: $table.auroraEnabled,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6283,6 +6341,11 @@ class $AppSettingsOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get auroraEnabled => $composableBuilder(
+    column: $table.auroraEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $RecitersOrderingComposer get defaultReciterId {
     final $RecitersOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -6347,6 +6410,11 @@ class $AppSettingsAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get auroraEnabled => $composableBuilder(
+    column: $table.auroraEnabled,
+    builder: (column) => column,
+  );
+
   $RecitersAnnotationComposer get defaultReciterId {
     final $RecitersAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -6407,6 +6475,7 @@ class $AppSettingsTableManager
                 Value<int> dailyGoalMs = const Value.absent(),
                 Value<int> preferencesVersion = const Value.absent(),
                 Value<int> updatedUtcMs = const Value.absent(),
+                Value<int> auroraEnabled = const Value.absent(),
               }) => AppSettingsCompanion(
                 id: id,
                 theme: theme,
@@ -6416,6 +6485,7 @@ class $AppSettingsTableManager
                 dailyGoalMs: dailyGoalMs,
                 preferencesVersion: preferencesVersion,
                 updatedUtcMs: updatedUtcMs,
+                auroraEnabled: auroraEnabled,
               ),
           createCompanionCallback:
               ({
@@ -6427,6 +6497,7 @@ class $AppSettingsTableManager
                 Value<int> dailyGoalMs = const Value.absent(),
                 Value<int> preferencesVersion = const Value.absent(),
                 Value<int> updatedUtcMs = const Value.absent(),
+                Value<int> auroraEnabled = const Value.absent(),
               }) => AppSettingsCompanion.insert(
                 id: id,
                 theme: theme,
@@ -6436,6 +6507,7 @@ class $AppSettingsTableManager
                 dailyGoalMs: dailyGoalMs,
                 preferencesVersion: preferencesVersion,
                 updatedUtcMs: updatedUtcMs,
+                auroraEnabled: auroraEnabled,
               ),
           withReferenceMapper: (p0) => p0
               .map(

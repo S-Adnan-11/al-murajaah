@@ -22,6 +22,7 @@ class FoundationRepository {
         'UPDATE app_settings SET theme = ?, updated_utc_ms = ? WHERE id = 1',
         [theme, DateTime.now().toUtc().millisecondsSinceEpoch],
       );
+      db.markTablesUpdated([db.appSettings]);
     });
   }
 
@@ -118,7 +119,7 @@ class FoundationRepository {
         );
     await db.customStatement(
       'UPDATE daily_activity SET played_wall_ms = played_wall_ms + ?, '
-      'qualified = CASE WHEN goal_ms > 0 AND played_wall_ms + ? >= goal_ms THEN 1 ELSE 0 END '
+      'qualified = CASE WHEN qualified = 1 OR (goal_ms > 0 AND played_wall_ms + ? >= goal_ms) THEN 1 ELSE 0 END '
       'WHERE local_date = ?',
       [wallMs, wallMs, localDate],
     );
@@ -126,6 +127,7 @@ class FoundationRepository {
       'UPDATE listening_sessions SET played_wall_ms = played_wall_ms + ? WHERE id = ?',
       [wallMs, sessionId],
     );
+    db.markTablesUpdated([db.dailyActivity, db.listeningSessions]);
     return true;
   });
 

@@ -6,7 +6,8 @@ CREATE TABLE app_settings (
   default_reciter_id TEXT REFERENCES reciters(id),
   daily_goal_ms INTEGER NOT NULL DEFAULT 300000 CHECK (daily_goal_ms >= 0),
   preferences_version INTEGER NOT NULL DEFAULT 1 CHECK (preferences_version > 0),
-  updated_utc_ms INTEGER NOT NULL DEFAULT 0
+  updated_utc_ms INTEGER NOT NULL DEFAULT 0,
+  aurora_enabled INTEGER NOT NULL DEFAULT 0 CHECK (aurora_enabled IN (0,1))
 );
 
 CREATE TABLE surahs (
@@ -51,7 +52,7 @@ CREATE TABLE saved_passages (
   repeat_mode TEXT NOT NULL CHECK (repeat_mode IN ('finite','continuous')),
   play_count INTEGER,
   gap_ms INTEGER NOT NULL DEFAULT 0 CHECK (gap_ms IN (0,2000,5000,10000)),
-  speed REAL NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.0),
+  speed REAL NOT NULL DEFAULT 1.0 CHECK (speed BETWEEN 0.5 AND 2.2),
   note TEXT,
   created_utc_ms INTEGER NOT NULL,
   updated_utc_ms INTEGER NOT NULL CHECK (updated_utc_ms >= created_utc_ms),
@@ -140,7 +141,7 @@ CREATE TABLE listening_sessions (
   started_utc_ms INTEGER NOT NULL,
   ended_utc_ms INTEGER CHECK (ended_utc_ms >= started_utc_ms),
   played_wall_ms INTEGER NOT NULL DEFAULT 0 CHECK (played_wall_ms >= 0),
-  speed REAL NOT NULL CHECK (speed BETWEEN 0.5 AND 2.0),
+  speed REAL NOT NULL CHECK (speed BETWEEN 0.5 AND 2.2),
   completion_reason TEXT
 );
 CREATE TABLE daily_activity (

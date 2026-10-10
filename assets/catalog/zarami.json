@@ -1,0 +1,1960 @@
+﻿{
+    "schemaVersion":  1,
+    "editionId":  "zarami-hafs-v1",
+    "reciter":  "Zarami",
+    "riwayah":  "Hafs",
+    "nameSource":  {
+                       "name":  "Tanzil Quran Metadata v1.0",
+                       "url":  "https://tanzil.net/docs/quran_metadata",
+                       "copyright":  "(C) 2008-2009 Tanzil.info",
+                       "license":  "cc-by (version not specified in source)",
+                       "changes":  "Names/transliterations extracted; common spelling aliases added."
+                   },
+    "recordings":  [
+                       {
+                           "number":  1,
+                           "arabicName":  "الفاتحة",
+                           "name":  "Al-Fatihah",
+                           "searchAliases":  [
+                                                 "The Opening",
+                                                 "Al-Fatiha",
+                                                 "Al-Faatiha"
+                                             ],
+                           "assetId":  "zarami-hafs-001-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/v1790678116/zarami-001.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1368372,
+                           "sha256":  "ccaa00d39b1572d8b88186f7d2a32b26d27688d5c50c3a8fd47cd3eb7c3d4bd2",
+                           "durationMs":  79256,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  2,
+                           "arabicName":  "البقرة",
+                           "name":  "Al-Baqarah",
+                           "searchAliases":  [
+                                                 "The Cow",
+                                                 "Al-Baqara"
+                                             ],
+                           "assetId":  "zarami-hafs-002-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-002.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  91805804,
+                           "sha256":  "5148333a067ea6cc69ef30b1cf5173f05930ae8471f5ca47cea302df60a3e8e2",
+                           "durationMs":  10659344,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  3,
+                           "arabicName":  "آل عمران",
+                           "name":  "Ali Imran",
+                           "searchAliases":  [
+                                                 "The Family of Imraan",
+                                                 "Aal-i-Imraan",
+                                                 "Aal Imran"
+                                             ],
+                           "assetId":  "zarami-hafs-003-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-003.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  100931687,
+                           "sha256":  "0467259c211adbe4493e633b162f835a0f66dac09ded29f449d96c514cfcca37",
+                           "durationMs":  6301962,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  4,
+                           "arabicName":  "النساء",
+                           "name":  "An-Nisaa",
+                           "searchAliases":  [
+                                                 "The Women"
+                                             ],
+                           "assetId":  "zarami-hafs-004-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-004.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  96523052,
+                           "sha256":  "89aea0dc4dbeb8cca2373c45c0063ac1353d7ca4d4b5c01e5d6b25cccd70670c",
+                           "durationMs":  6026423,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  5,
+                           "arabicName":  "المائدة",
+                           "name":  "Al-Maaida",
+                           "searchAliases":  [
+                                                 "The Table"
+                                             ],
+                           "assetId":  "zarami-hafs-005-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-005.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  78611407,
+                           "sha256":  "516adfbbc7e6c9748a97da2d31847942a44e27c4aab4dd513cfaacba3d351b16",
+                           "durationMs":  4906945,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  6,
+                           "arabicName":  "الأنعام",
+                           "name":  "Al-An\u0027aam",
+                           "searchAliases":  [
+                                                 "The Cattle"
+                                             ],
+                           "assetId":  "zarami-hafs-006-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-006.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  85599684,
+                           "sha256":  "b267b419400f838485603169718a4074c278aa3e9b610e366abba6f36c0c1e9d",
+                           "durationMs":  5343713,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  7,
+                           "arabicName":  "الأعراف",
+                           "name":  "Al-A\u0027raaf",
+                           "searchAliases":  [
+                                                 "The Heights"
+                                             ],
+                           "assetId":  "zarami-hafs-007-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-007.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  20732672,
+                           "sha256":  "4d98cf27db759974c4b18f2fa73d6f09d3a3849d3b0949f80c8700faded028d5",
+                           "durationMs":  5156676,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  8,
+                           "arabicName":  "الأنفال",
+                           "name":  "Al-Anfaal",
+                           "searchAliases":  [
+                                                 "The Spoils of War"
+                                             ],
+                           "assetId":  "zarami-hafs-008-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-008.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  36380393,
+                           "sha256":  "5e17c93b217be2acf33eb21289a5e5c78d45f24d5c4d577dda7a8428ddc73fef",
+                           "durationMs":  2267507,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  9,
+                           "arabicName":  "التوبة",
+                           "name":  "At-Tawbah",
+                           "searchAliases":  [
+                                                 "The Repentance",
+                                                 "At-Tawba"
+                                             ],
+                           "assetId":  "zarami-hafs-009-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/v1790678122/zarami-009.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  68895110,
+                           "sha256":  "ab8a6312f18e29332cf311d5412e022c2d2d8baf4dba8f4bdb6193c2a1c4f0fc",
+                           "durationMs":  4299677,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  10,
+                           "arabicName":  "يونس",
+                           "name":  "Yunus",
+                           "searchAliases":  [
+                                                 "Jonas"
+                                             ],
+                           "assetId":  "zarami-hafs-010-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-010.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  49052080,
+                           "sha256":  "b6dee9ab5a506409c265794339c1e103e010831999a75a77f1e879bc5e98276e",
+                           "durationMs":  3059487,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  11,
+                           "arabicName":  "هود",
+                           "name":  "Hud",
+                           "searchAliases":  [
+                                                 "Hud"
+                                             ],
+                           "assetId":  "zarami-hafs-011-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-011.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  51366734,
+                           "sha256":  "9bdc2e910febcedbd3e033bc454037f2bef0464419436f8e5d86d1d73cafce58",
+                           "durationMs":  3204153,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  12,
+                           "arabicName":  "يوسف",
+                           "name":  "Yusuf",
+                           "searchAliases":  [
+                                                 "Joseph"
+                                             ],
+                           "assetId":  "zarami-hafs-012-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-012.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  50855155,
+                           "sha256":  "61464f2858c9accf7c8ac70369969af1da306c9a5b7511d5e42e8dff5846e1dc",
+                           "durationMs":  3172180,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  13,
+                           "arabicName":  "الرعد",
+                           "name":  "Ar-Ra\u0027d",
+                           "searchAliases":  [
+                                                 "The Thunder"
+                                             ],
+                           "assetId":  "zarami-hafs-013-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-013.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  23548182,
+                           "sha256":  "2e2f5283eeccd26742e06c3335886b7f67b4f9fb99d6771d183ff9c11f4c0dee",
+                           "durationMs":  1465496,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  14,
+                           "arabicName":  "ابراهيم",
+                           "name":  "Ibrahim",
+                           "searchAliases":  [
+                                                 "Abraham"
+                                             ],
+                           "assetId":  "zarami-hafs-014-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-014.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  23758866,
+                           "sha256":  "4cff3d384d2a30fe8d80ecf675fe353e1c4b80c1fe1afc6c9aaa7025f7bb4597",
+                           "durationMs":  1478661,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  15,
+                           "arabicName":  "الحجر",
+                           "name":  "Al-Hijr",
+                           "searchAliases":  [
+                                                 "The Rock"
+                                             ],
+                           "assetId":  "zarami-hafs-015-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-015.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  18326648,
+                           "sha256":  "99128ab0cc6dd32609549be6ae5ed2570736e3ba12f9e2bf5c98f49704d41c0f",
+                           "durationMs":  1139148,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  16,
+                           "arabicName":  "النحل",
+                           "name":  "An-Nahl",
+                           "searchAliases":  [
+                                                 "The Bee"
+                                             ],
+                           "assetId":  "zarami-hafs-016-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-016.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  47661111,
+                           "sha256":  "b0b82cc8a79dd9a6e30d22e5e46b276fe77f6a4bfa4f625f9bfd28763a2bd3d4",
+                           "durationMs":  2972552,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  17,
+                           "arabicName":  "الإسراء",
+                           "name":  "Al-Israa",
+                           "searchAliases":  [
+                                                 "The Night Journey"
+                                             ],
+                           "assetId":  "zarami-hafs-017-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-017.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  40172123,
+                           "sha256":  "766190512bcbe096a8875f130601f640347048f35abc8a70d672e39b22786871",
+                           "durationMs":  2504490,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  18,
+                           "arabicName":  "الكهف",
+                           "name":  "Al-Kahf",
+                           "searchAliases":  [
+                                                 "The Cave"
+                                             ],
+                           "assetId":  "zarami-hafs-018-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-018.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  42065892,
+                           "sha256":  "d9a1c7186bf23d4584633f270d1392826b27862af4ae94a3a93203f4d05137c3",
+                           "durationMs":  2622851,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  19,
+                           "arabicName":  "مريم",
+                           "name":  "Maryam",
+                           "searchAliases":  [
+                                                 "Mary"
+                                             ],
+                           "assetId":  "zarami-hafs-019-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-019.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  25532682,
+                           "sha256":  "e9d16b5c6ac4584eb0d27c7af55608688f432c3a418bcbb89f099718205b870c",
+                           "durationMs":  1589525,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  20,
+                           "arabicName":  "طه",
+                           "name":  "Taa-Haa",
+                           "searchAliases":  [
+                                                 "Taa-Haa"
+                                             ],
+                           "assetId":  "zarami-hafs-020-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-020.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  35873826,
+                           "sha256":  "346e998aaeede7164b7f99a735d155de77996095c785cd8e400ce77d8294905e",
+                           "durationMs":  2235847,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  21,
+                           "arabicName":  "الأنبياء",
+                           "name":  "Al-Anbiyaa",
+                           "searchAliases":  [
+                                                 "The Prophets"
+                                             ],
+                           "assetId":  "zarami-hafs-021-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-021.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  34981908,
+                           "sha256":  "921c0fe408c9d85a64ad1ec7e5fc770349206878e6a06f369d0b5dd5b871b5ca",
+                           "durationMs":  2180101,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  22,
+                           "arabicName":  "الحج",
+                           "name":  "Al-Hajj",
+                           "searchAliases":  [
+                                                 "The Pilgrimage"
+                                             ],
+                           "assetId":  "zarami-hafs-022-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-022.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  36321879,
+                           "sha256":  "b15b13a4750ecb87d96f09e5db9745f81eee8b00838a4ff82a2d60981307ddf1",
+                           "durationMs":  2263850,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  23,
+                           "arabicName":  "المؤمنون",
+                           "name":  "Al-Muminoon",
+                           "searchAliases":  [
+                                                 "The Believers"
+                                             ],
+                           "assetId":  "zarami-hafs-023-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-023.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  31537508,
+                           "sha256":  "b856a21209e2d96662d66605788c84744b964e3ebf40fa695c2be077431a926b",
+                           "durationMs":  1964826,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  24,
+                           "arabicName":  "النور",
+                           "name":  "An-Noor",
+                           "searchAliases":  [
+                                                 "The Light"
+                                             ],
+                           "assetId":  "zarami-hafs-024-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-024.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  41664649,
+                           "sha256":  "e4b0d5b17dcb3584a7d520d6582a96680ab9ee9af12c3c4fd454b1f4163c8044",
+                           "durationMs":  2597773,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  25,
+                           "arabicName":  "الفرقان",
+                           "name":  "Al-Furqaan",
+                           "searchAliases":  [
+                                                 "The Criterion"
+                                             ],
+                           "assetId":  "zarami-hafs-025-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-025.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  24304718,
+                           "sha256":  "2036ddce2356f9abd38a40b88d65821aa585fbdf3ade1e9e3f884a9cb280bf4a",
+                           "durationMs":  1512777,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  26,
+                           "arabicName":  "الشعراء",
+                           "name":  "Ash-Shu\u0027araa",
+                           "searchAliases":  [
+                                                 "The Poets"
+                                             ],
+                           "assetId":  "zarami-hafs-026-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-026.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  38868096,
+                           "sha256":  "0210715f565b0ab03050c0b478952b283fb050ef43246854effc23c4aa5e2b07",
+                           "durationMs":  2422988,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  27,
+                           "arabicName":  "النمل",
+                           "name":  "An-Naml",
+                           "searchAliases":  [
+                                                 "The Ant"
+                                             ],
+                           "assetId":  "zarami-hafs-027-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-027.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  36793337,
+                           "sha256":  "6a61521a65c30df742229ec37320b72c5e52555c4ac2e91d44f7c0cd966b447b",
+                           "durationMs":  2293316,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  28,
+                           "arabicName":  "القصص",
+                           "name":  "Al-Qasas",
+                           "searchAliases":  [
+                                                 "The Stories"
+                                             ],
+                           "assetId":  "zarami-hafs-028-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-028.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  42384379,
+                           "sha256":  "447933b907acc1732ceca4562a1bba0ab143472fbd2a9afb0ce71773fcb92355",
+                           "durationMs":  2642756,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  29,
+                           "arabicName":  "العنكبوت",
+                           "name":  "Al-Ankaboot",
+                           "searchAliases":  [
+                                                 "The Spider"
+                                             ],
+                           "assetId":  "zarami-hafs-029-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-029.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  29565157,
+                           "sha256":  "b20233fb59734e8781bf693c2e6541aa0dce10c7bf153a237bc98d83759d4af2",
+                           "durationMs":  1841554,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  30,
+                           "arabicName":  "الروم",
+                           "name":  "Ar-Room",
+                           "searchAliases":  [
+                                                 "The Romans"
+                                             ],
+                           "assetId":  "zarami-hafs-030-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-030.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  23127741,
+                           "sha256":  "48a1824dccbdb6106befb5d5600e4f893ff00854115d61bd0b64a418655f8e0c",
+                           "durationMs":  1439216,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  31,
+                           "arabicName":  "لقمان",
+                           "name":  "Luqman",
+                           "searchAliases":  [
+                                                 "Luqman"
+                                             ],
+                           "assetId":  "zarami-hafs-031-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-031.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  14856333,
+                           "sha256":  "de7a0fb8ee7e738ecb35065c87dbf85d552c2ef7c88cd376026e95eed7033f89",
+                           "durationMs":  922253,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  32,
+                           "arabicName":  "السجدة",
+                           "name":  "As-Sajda",
+                           "searchAliases":  [
+                                                 "The Prostration"
+                                             ],
+                           "assetId":  "zarami-hafs-032-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-032.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  11560725,
+                           "sha256":  "d96a882d88462c5d7ac2964be8c2dd8b5091aba24897d1678f21e889d094433f",
+                           "durationMs":  716278,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  33,
+                           "arabicName":  "الأحزاب",
+                           "name":  "Al-Ahzaab",
+                           "searchAliases":  [
+                                                 "The Clans"
+                                             ],
+                           "assetId":  "zarami-hafs-033-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-033.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  6125955,
+                           "sha256":  "79c5b7aa841a9f69df3b888818c10a4e713bffbf3f66f2522a1e8e5f3da6acf8",
+                           "durationMs":  1465104,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  34,
+                           "arabicName":  "سبإ",
+                           "name":  "Saba",
+                           "searchAliases":  [
+                                                 "Sheba"
+                                             ],
+                           "assetId":  "zarami-hafs-034-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-034.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  22869030,
+                           "sha256":  "edf4781b779cb6653ee011291da2bb118ad7d1eeac5999ec7c10ce02d0522c51",
+                           "durationMs":  1423047,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  35,
+                           "arabicName":  "فاطر",
+                           "name":  "Faatir",
+                           "searchAliases":  [
+                                                 "The Originator"
+                                             ],
+                           "assetId":  "zarami-hafs-035-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-035.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  14508589,
+                           "sha256":  "c2a25f4f1bda5c11685a0be891f04fcce174b88c6936d4032baaccf8a194beda",
+                           "durationMs":  900519,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  36,
+                           "arabicName":  "يس",
+                           "name":  "Yaseen",
+                           "searchAliases":  [
+                                                 "Yaseen"
+                                             ],
+                           "assetId":  "zarami-hafs-036-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-036.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  20624168,
+                           "sha256":  "05e181d8e158d67629a29c3c642d2bce043881f7a3fa11d8cc80fdaf84c88cd1",
+                           "durationMs":  1282743,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  37,
+                           "arabicName":  "الصافات",
+                           "name":  "As-Saaffaat",
+                           "searchAliases":  [
+                                                 "Those drawn up in Ranks"
+                                             ],
+                           "assetId":  "zarami-hafs-037-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-037.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  27115075,
+                           "sha256":  "95dc610a2b7140d05b90910475a8338fae211995db0d6325d6b7f9f75c962920",
+                           "durationMs":  1688424,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  38,
+                           "arabicName":  "ص",
+                           "name":  "Saad",
+                           "searchAliases":  [
+                                                 "The letter Saad"
+                                             ],
+                           "assetId":  "zarami-hafs-038-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-038.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  19978421,
+                           "sha256":  "17704e1753c8eec721b1eb492097292bc27945404c96c48643fb2fe1f5bddf0c",
+                           "durationMs":  1242384,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  39,
+                           "arabicName":  "الزمر",
+                           "name":  "Az-Zumar",
+                           "searchAliases":  [
+                                                 "The Groups"
+                                             ],
+                           "assetId":  "zarami-hafs-039-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-039.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  31984718,
+                           "sha256":  "b27b929f732482ad5dfd0f669f4084ccb21c5a3d3bf43f0dc5e41268829f5e68",
+                           "durationMs":  1992777,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  40,
+                           "arabicName":  "غافر",
+                           "name":  "Al-Ghaafir",
+                           "searchAliases":  [
+                                                 "The Forgiver"
+                                             ],
+                           "assetId":  "zarami-hafs-040-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-040.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  34513791,
+                           "sha256":  "440abc2cd49e93d9234153b56b43f060a0e378eb1ab8b5342494acb8003a5f7f",
+                           "durationMs":  2150844,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  41,
+                           "arabicName":  "فصلت",
+                           "name":  "Fussilat",
+                           "searchAliases":  [
+                                                 "Explained in detail"
+                                             ],
+                           "assetId":  "zarami-hafs-041-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-041.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  25234653,
+                           "sha256":  "d4668a46907e97b2d980a60d3e07435190dcf17f0faac4739ca1ee248ce74fb7",
+                           "durationMs":  1047301,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  42,
+                           "arabicName":  "الشورى",
+                           "name":  "Ash-Shura",
+                           "searchAliases":  [
+                                                 "Consultation"
+                                             ],
+                           "assetId":  "zarami-hafs-042-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-042.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  23181662,
+                           "sha256":  "f8a8959d2d22de8523b1437996755ad3eda66f6416460c15e2639ffb79dd3eab",
+                           "durationMs":  1442586,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  43,
+                           "arabicName":  "الزخرف",
+                           "name":  "Az-Zukhruf",
+                           "searchAliases":  [
+                                                 "Ornaments of gold"
+                                             ],
+                           "assetId":  "zarami-hafs-043-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-043.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  25550237,
+                           "sha256":  "522f8a6bf1abd99edafa00458a0f02e6cc3513d1f39b9d228ee124a0859205e7",
+                           "durationMs":  1590596,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  44,
+                           "arabicName":  "الدخان",
+                           "name":  "Ad-Dukhaan",
+                           "searchAliases":  [
+                                                 "The Smoke"
+                                             ],
+                           "assetId":  "zarami-hafs-044-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-044.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  11045383,
+                           "sha256":  "3384de7d9414697e0c8d43d9259362f7fa8b25454b1a2ef99f6db102c6da5da8",
+                           "durationMs":  684069,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  45,
+                           "arabicName":  "الجاثية",
+                           "name":  "Al-Jaathiya",
+                           "searchAliases":  [
+                                                 "Crouching"
+                                             ],
+                           "assetId":  "zarami-hafs-045-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-045.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  14300447,
+                           "sha256":  "c893b49db668c7fa70099d933271d160e8b8963ad268800772e7f628053cd615",
+                           "durationMs":  887510,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  46,
+                           "arabicName":  "الأحقاف",
+                           "name":  "Al-Ahqaf",
+                           "searchAliases":  [
+                                                 "The Dunes"
+                                             ],
+                           "assetId":  "zarami-hafs-046-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-046.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  18947780,
+                           "sha256":  "a595121b9238e534947010770f8a9d028f208b32f8b034daecc606cfbee507a6",
+                           "durationMs":  1177913,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  47,
+                           "arabicName":  "محمد",
+                           "name":  "Muhammad",
+                           "searchAliases":  [
+                                                 "Muhammad"
+                                             ],
+                           "assetId":  "zarami-hafs-047-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-047.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  16313761,
+                           "sha256":  "4b224e16529c31d2ab290c76a5601614f8c6181892255ff6f08631080a27ff36",
+                           "durationMs":  1013342,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  48,
+                           "arabicName":  "الفتح",
+                           "name":  "Al-Fath",
+                           "searchAliases":  [
+                                                 "The Victory"
+                                             ],
+                           "assetId":  "zarami-hafs-048-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-048.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  15359554,
+                           "sha256":  "4be01e2b94741db3be83ee3c635d1ba6a21f304997cf8a2b735cd6341283360a",
+                           "durationMs":  953704,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  49,
+                           "arabicName":  "الحجرات",
+                           "name":  "Al-Hujuraat",
+                           "searchAliases":  [
+                                                 "The Inner Apartments"
+                                             ],
+                           "assetId":  "zarami-hafs-049-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-049.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  10569748,
+                           "sha256":  "a89161d7eec871a102487b6a0d012d537a1bce7c464d5b245f02f749f088f925",
+                           "durationMs":  654341,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  50,
+                           "arabicName":  "ق",
+                           "name":  "Qaaf",
+                           "searchAliases":  [
+                                                 "The letter Qaaf"
+                                             ],
+                           "assetId":  "zarami-hafs-050-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-050.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  10504538,
+                           "sha256":  "bd99efe18a961165ddf9d9cea4ee673314e0a42626a4a163b27f93a4c0dd8c31",
+                           "durationMs":  650266,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  51,
+                           "arabicName":  "الذاريات",
+                           "name":  "Adh-Dhaariyat",
+                           "searchAliases":  [
+                                                 "The Winnowing Winds"
+                                             ],
+                           "assetId":  "zarami-hafs-051-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-051.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  10946749,
+                           "sha256":  "94163469f91b9a186d7142852c638df6d75e6deb3de888f8a38da28adba7e0a7",
+                           "durationMs":  677904,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  52,
+                           "arabicName":  "الطور",
+                           "name":  "At-Tur",
+                           "searchAliases":  [
+                                                 "The Mount"
+                                             ],
+                           "assetId":  "zarami-hafs-052-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-052.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  9680324,
+                           "sha256":  "5e946342f910e1150c13e332b44ff3e9b10c7c8bfd0834aec8399f439ff35e73",
+                           "durationMs":  598753,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  53,
+                           "arabicName":  "النجم",
+                           "name":  "An-Najm",
+                           "searchAliases":  [
+                                                 "The Star"
+                                             ],
+                           "assetId":  "zarami-hafs-053-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-053.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  10077388,
+                           "sha256":  "a35723a4f92deb74256861803bef80745355d1014d2cae0146012bb7c1dfd12f",
+                           "durationMs":  623543,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  54,
+                           "arabicName":  "القمر",
+                           "name":  "Al-Qamar",
+                           "searchAliases":  [
+                                                 "The Moon"
+                                             ],
+                           "assetId":  "zarami-hafs-054-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-054.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  9441252,
+                           "sha256":  "792b5d128d06fa6c130e199b7b656d77743fe15e7aeadd10f606591a672fa582",
+                           "durationMs":  583811,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  55,
+                           "arabicName":  "الرحمن",
+                           "name":  "Ar-Rahmaan",
+                           "searchAliases":  [
+                                                 "The Beneficent"
+                                             ],
+                           "assetId":  "zarami-hafs-055-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-055.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  13176139,
+                           "sha256":  "543d360984277325413aa7dfd8502b06ba6ad6c4b428a6891bf1f1d61061f78f",
+                           "durationMs":  817241,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  56,
+                           "arabicName":  "الواقعة",
+                           "name":  "Al-Waaqia",
+                           "searchAliases":  [
+                                                 "The Inevitable"
+                                             ],
+                           "assetId":  "zarami-hafs-056-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-056.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  12881476,
+                           "sha256":  "2797a43ae53b7b87846438c40df8d33c0a33ddc13c548f55a67654d1346d51da",
+                           "durationMs":  798824,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  57,
+                           "arabicName":  "الحديد",
+                           "name":  "Al-Hadid",
+                           "searchAliases":  [
+                                                 "The Iron"
+                                             ],
+                           "assetId":  "zarami-hafs-057-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-057.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  16900151,
+                           "sha256":  "e21e92b6475ad0b1f5bf173624ce006ac86f77cb6f9e6fe7bac116408422d13b",
+                           "durationMs":  1049992,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  58,
+                           "arabicName":  "المجادلة",
+                           "name":  "Al-Mujaadila",
+                           "searchAliases":  [
+                                                 "The Pleading Woman"
+                                             ],
+                           "assetId":  "zarami-hafs-058-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-058.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  13582815,
+                           "sha256":  "7c8966a1a38f304c2897fad1485069cd10e49a88f4fe688213349f214ff2a9a5",
+                           "durationMs":  842658,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  59,
+                           "arabicName":  "الحشر",
+                           "name":  "Al-Hashr",
+                           "searchAliases":  [
+                                                 "The Exile"
+                                             ],
+                           "assetId":  "zarami-hafs-059-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-059.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  12733100,
+                           "sha256":  "317a1b2fad51440f5cf09456840595b6c6fb1f80b55d49854d0224db0c2a2ab6",
+                           "durationMs":  789551,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  60,
+                           "arabicName":  "الممتحنة",
+                           "name":  "Al-Mumtahana",
+                           "searchAliases":  [
+                                                 "She that is to be examined"
+                                             ],
+                           "assetId":  "zarami-hafs-060-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-060.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  10929612,
+                           "sha256":  "4529adaeecda27d5c10745045b3bcddcbef1863fe436c0a6b79b8202225fc94c",
+                           "durationMs":  676833,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  61,
+                           "arabicName":  "الصف",
+                           "name":  "As-Saff",
+                           "searchAliases":  [
+                                                 "The Ranks"
+                                             ],
+                           "assetId":  "zarami-hafs-061-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-061.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  6314499,
+                           "sha256":  "0a80d49c16c11a26069e20784256cdab77446052c70ed366c7554576d6df3ac1",
+                           "durationMs":  388389,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  62,
+                           "arabicName":  "الجمعة",
+                           "name":  "Al-Jumu\u0027a",
+                           "searchAliases":  [
+                                                 "Friday"
+                                             ],
+                           "assetId":  "zarami-hafs-062-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-062.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  5440970,
+                           "sha256":  "3db3375c736c152642c0abe9d739f975c27dc081f0d3fb8a7d86bf95053c52e6",
+                           "durationMs":  333793,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  63,
+                           "arabicName":  "المنافقون",
+                           "name":  "Al-Munaafiqoon",
+                           "searchAliases":  [
+                                                 "The Hypocrites"
+                                             ],
+                           "assetId":  "zarami-hafs-063-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-063.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  5340664,
+                           "sha256":  "7e52184c914ac08a3971e90af931ec3e7a699072f982d7dc76d19f238c233858",
+                           "durationMs":  327523,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  64,
+                           "arabicName":  "التغابن",
+                           "name":  "At-Taghaabun",
+                           "searchAliases":  [
+                                                 "Mutual Disillusion"
+                                             ],
+                           "assetId":  "zarami-hafs-064-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-064.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  7469746,
+                           "sha256":  "1f0ea25d90555900378395df2b3dfe326eeb2300b1dc81c3395c483bb6b1e931",
+                           "durationMs":  460591,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  65,
+                           "arabicName":  "الطلاق",
+                           "name":  "At-Talaaq",
+                           "searchAliases":  [
+                                                 "Divorce"
+                                             ],
+                           "assetId":  "zarami-hafs-065-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-065.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  8337424,
+                           "sha256":  "ecc187075a1bf549eb7525e7802d1d98dbb39f5a327f95771e4aa6eac5d3eaa7",
+                           "durationMs":  514821,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  66,
+                           "arabicName":  "التحريم",
+                           "name":  "At-Tahrim",
+                           "searchAliases":  [
+                                                 "The Prohibition"
+                                             ],
+                           "assetId":  "zarami-hafs-066-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-066.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  7867222,
+                           "sha256":  "c9736deaee24a70713c0b26f4c12daf99b2dd23bdab86bf3570cafcbe850e73c",
+                           "durationMs":  485433,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  67,
+                           "arabicName":  "الملك",
+                           "name":  "Al-Mulk",
+                           "searchAliases":  [
+                                                 "The Sovereignty"
+                                             ],
+                           "assetId":  "zarami-hafs-067-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-067.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  9299980,
+                           "sha256":  "a194e39efbd12d9a68d6c063a9d0eecf35dc2d04d026c90c3df5f5569c0fbfcf",
+                           "durationMs":  574981,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  68,
+                           "arabicName":  "القلم",
+                           "name":  "Al-Qalam",
+                           "searchAliases":  [
+                                                 "The Pen"
+                                             ],
+                           "assetId":  "zarami-hafs-068-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-068.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  9624318,
+                           "sha256":  "e9ea6726d5ea9d9b7bec78eebd3f49fa7e491174417103fa6c1a2a84d02c1273",
+                           "durationMs":  595252,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  69,
+                           "arabicName":  "الحاقة",
+                           "name":  "Al-Haaqqa",
+                           "searchAliases":  [
+                                                 "The Reality"
+                                             ],
+                           "assetId":  "zarami-hafs-069-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-069.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  7660332,
+                           "sha256":  "28aacce3bf76378cc4829944d2fe7340b4a0f91d966a14389892a54158e6748a",
+                           "durationMs":  472503,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  70,
+                           "arabicName":  "المعارج",
+                           "name":  "Al-Ma\u0027aarij",
+                           "searchAliases":  [
+                                                 "The Ascending Stairways"
+                                             ],
+                           "assetId":  "zarami-hafs-070-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-070.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  6459955,
+                           "sha256":  "fb6a2dc0299925e4198b0f561138f70e3c3b294e83208a73174a78de501cb306",
+                           "durationMs":  397479,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  71,
+                           "arabicName":  "نوح",
+                           "name":  "Nooh",
+                           "searchAliases":  [
+                                                 "Noah"
+                                             ],
+                           "assetId":  "zarami-hafs-071-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-071.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  6183678,
+                           "sha256":  "c090c9fcad3eea798afa161720743ef8c3a2a1179033533159a97697642df21f",
+                           "durationMs":  380212,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  72,
+                           "arabicName":  "الجن",
+                           "name":  "Al-Jinn",
+                           "searchAliases":  [
+                                                 "The Jinn"
+                                             ],
+                           "assetId":  "zarami-hafs-072-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-072.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  7053869,
+                           "sha256":  "c61929f0c5c1d25145a47d4c3d8828041860c210ea9872d3d65397f2707aabda",
+                           "durationMs":  434599,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  73,
+                           "arabicName":  "المزمل",
+                           "name":  "Al-Muzzammil",
+                           "searchAliases":  [
+                                                 "The Enshrouded One"
+                                             ],
+                           "assetId":  "zarami-hafs-073-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-073.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  5074422,
+                           "sha256":  "5a575cf84df5fcda36830b7b6bbbca1d8e415465e1c70a2c64645b003b148534",
+                           "durationMs":  310883,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  74,
+                           "arabicName":  "المدثر",
+                           "name":  "Al-Muddaththir",
+                           "searchAliases":  [
+                                                 "The Cloaked One"
+                                             ],
+                           "assetId":  "zarami-hafs-074-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-074.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  7037994,
+                           "sha256":  "c596515b34b382fffd79dba270c57255661b4bb8740010f718d763788070a373",
+                           "durationMs":  433607,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  75,
+                           "arabicName":  "القيامة",
+                           "name":  "Al-Qiyaama",
+                           "searchAliases":  [
+                                                 "The Resurrection"
+                                             ],
+                           "assetId":  "zarami-hafs-075-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-075.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  4091376,
+                           "sha256":  "5fb178d82797a3b2388ca189aa7fb582f3d114ce30c92de93f1205cad1fa0800",
+                           "durationMs":  249443,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  76,
+                           "arabicName":  "الانسان",
+                           "name":  "Al-Insaan",
+                           "searchAliases":  [
+                                                 "Man"
+                                             ],
+                           "assetId":  "zarami-hafs-076-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-076.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  6749177,
+                           "sha256":  "2fb24f61e92ec78c86d6f0933712fa1e6990d976d1691e2d10ead4952c37ff8c",
+                           "durationMs":  415556,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  77,
+                           "arabicName":  "المرسلات",
+                           "name":  "Al-Mursalaat",
+                           "searchAliases":  [
+                                                 "The Emissaries"
+                                             ],
+                           "assetId":  "zarami-hafs-077-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-077.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  5980974,
+                           "sha256":  "d73c0026a294fb00e3a2eb7cf9ec5de05bcd0cf4aae663b425e4516a6a9c0ace",
+                           "durationMs":  367543,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  78,
+                           "arabicName":  "النبإ",
+                           "name":  "An-Naba",
+                           "searchAliases":  [
+                                                 "The Announcement"
+                                             ],
+                           "assetId":  "zarami-hafs-078-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-078.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  5707208,
+                           "sha256":  "e702669e490f153b8e993de7956ecf76d78d488518c2b4b9e3b29ca62cf39470",
+                           "durationMs":  350433,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  79,
+                           "arabicName":  "النازعات",
+                           "name":  "An-Naazi\u0027aat",
+                           "searchAliases":  [
+                                                 "Those who drag forth"
+                                             ],
+                           "assetId":  "zarami-hafs-079-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-079.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  5161778,
+                           "sha256":  "dddb79bce2c925f34807d50954b312b4d24fe4787b2d8511e142f212968b7772",
+                           "durationMs":  316343,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  80,
+                           "arabicName":  "عبس",
+                           "name":  "Abasa",
+                           "searchAliases":  [
+                                                 "He frowned"
+                                             ],
+                           "assetId":  "zarami-hafs-080-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-080.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  4541934,
+                           "sha256":  "afb86e857065619c9c9373462f82276e783de68bab3214c6f129c5327566a04b",
+                           "durationMs":  277603,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  81,
+                           "arabicName":  "التكوير",
+                           "name":  "At-Takwir",
+                           "searchAliases":  [
+                                                 "The Overthrowing"
+                                             ],
+                           "assetId":  "zarami-hafs-081-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-081.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  3448975,
+                           "sha256":  "08a74b3db294798c1045eabba898918b483d4dd8b20722f9543ff315103562db",
+                           "durationMs":  209293,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  82,
+                           "arabicName":  "الإنفطار",
+                           "name":  "Al-Infitaar",
+                           "searchAliases":  [
+                                                 "The Cleaving"
+                                             ],
+                           "assetId":  "zarami-hafs-082-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-082.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2649421,
+                           "sha256":  "5da42e459e5d5513318e998a544ea5335510214433c24d54f6f685486cbb09a1",
+                           "durationMs":  159321,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  83,
+                           "arabicName":  "المطففين",
+                           "name":  "Al-Mutaffifin",
+                           "searchAliases":  [
+                                                 "Defrauding"
+                                             ],
+                           "assetId":  "zarami-hafs-083-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-083.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  5746923,
+                           "sha256":  "3ceb1df06d7bc3456a042f624b75d18dd1e6626565cad942ea00e3de67fc03d8",
+                           "durationMs":  352914,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  84,
+                           "arabicName":  "الإنشقاق",
+                           "name":  "Al-Inshiqaaq",
+                           "searchAliases":  [
+                                                 "The Splitting Open"
+                                             ],
+                           "assetId":  "zarami-hafs-084-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-084.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  3418886,
+                           "sha256":  "798cdb383c0e94092915a4a4e4ae51cdd947a0791f0c3e2e62d3316158a56056",
+                           "durationMs":  207412,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  85,
+                           "arabicName":  "البروج",
+                           "name":  "Al-Burooj",
+                           "searchAliases":  [
+                                                 "The Constellations"
+                                             ],
+                           "assetId":  "zarami-hafs-085-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-085.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  3940911,
+                           "sha256":  "492da256dcc4dce7897bbecf4c19d4711366591af46543ae84095a4f7ae2432f",
+                           "durationMs":  240039,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  86,
+                           "arabicName":  "الطارق",
+                           "name":  "At-Taariq",
+                           "searchAliases":  [
+                                                 "The Morning Star"
+                                             ],
+                           "assetId":  "zarami-hafs-086-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-086.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2129474,
+                           "sha256":  "4af06abba22a89595624a721b10ea02605de958ffcba0f7b2c4fbbc703be8975",
+                           "durationMs":  126824,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  87,
+                           "arabicName":  "الأعلى",
+                           "name":  "Al-A\u0027laa",
+                           "searchAliases":  [
+                                                 "The Most High"
+                                             ],
+                           "assetId":  "zarami-hafs-087-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-087.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2363113,
+                           "sha256":  "731f0c87391dbf1ab20025f20af7db98772eedcc84b3f34a4b896078371cb6c4",
+                           "durationMs":  141427,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  88,
+                           "arabicName":  "الغاشية",
+                           "name":  "Al-Ghaashiya",
+                           "searchAliases":  [
+                                                 "The Overwhelming"
+                                             ],
+                           "assetId":  "zarami-hafs-088-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-088.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2801976,
+                           "sha256":  "8d45022b30a3e47ed87716d9cbe19c9f319a7525c0767ad02cd1dc9c809f6c15",
+                           "durationMs":  168856,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  89,
+                           "arabicName":  "الفجر",
+                           "name":  "Al-Fajr",
+                           "searchAliases":  [
+                                                 "The Dawn"
+                                             ],
+                           "assetId":  "zarami-hafs-089-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-089.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  4272769,
+                           "sha256":  "8337b0bce619372e346930b401d012267ac6d9a7e858a8ea202e0de347b9652c",
+                           "durationMs":  260780,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  90,
+                           "arabicName":  "البلد",
+                           "name":  "Al-Balad",
+                           "searchAliases":  [
+                                                 "The City"
+                                             ],
+                           "assetId":  "zarami-hafs-090-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-090.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2398640,
+                           "sha256":  "2c7190dc4d6a299e9d5b4de0e4f4c9236a3863672899d5b8c9ecd10e4cd1081c",
+                           "durationMs":  143647,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  91,
+                           "arabicName":  "الشمس",
+                           "name":  "Ash-Shams",
+                           "searchAliases":  [
+                                                 "The Sun"
+                                             ],
+                           "assetId":  "zarami-hafs-091-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-091.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1834397,
+                           "sha256":  "255e9c1aede77c740afab17adbde0ed84f3246a08e0cf3c1b96ab37df81ebd78",
+                           "durationMs":  108382,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  92,
+                           "arabicName":  "الليل",
+                           "name":  "Al-Lail",
+                           "searchAliases":  [
+                                                 "The Night"
+                                             ],
+                           "assetId":  "zarami-hafs-092-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-092.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2293316,
+                           "sha256":  "8a283811baf282273d7c5577fb8f7bcd440f08664e1cdc48d576346d61e33793",
+                           "durationMs":  137064,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  93,
+                           "arabicName":  "الضحى",
+                           "name":  "Ad-Dhuhaa",
+                           "searchAliases":  [
+                                                 "The Morning Hours"
+                                             ],
+                           "assetId":  "zarami-hafs-093-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-093.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1293973,
+                           "sha256":  "ef023b6982a6b5582df1b8450b1feb6d0a2a61cea22b68963302673293e5e38a",
+                           "durationMs":  74606,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  94,
+                           "arabicName":  "الشرح",
+                           "name":  "Ash-Sharh",
+                           "searchAliases":  [
+                                                 "The Consolation"
+                                             ],
+                           "assetId":  "zarami-hafs-094-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-094.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  908619,
+                           "sha256":  "64a8b40c7ed980121245e17b7a9d0cd40138b70cc924f7af1ca35c28f0ab8439",
+                           "durationMs":  50521,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  95,
+                           "arabicName":  "التين",
+                           "name":  "At-Tin",
+                           "searchAliases":  [
+                                                 "The Fig"
+                                             ],
+                           "assetId":  "zarami-hafs-095-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-095.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1329080,
+                           "sha256":  "f57c1a2b9004f3bf51880febee533e1937d9fbae92ab14095e30aa3e5a27dd8f",
+                           "durationMs":  76800,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  96,
+                           "arabicName":  "العلق",
+                           "name":  "Al-Alaq",
+                           "searchAliases":  [
+                                                 "The Clot"
+                                             ],
+                           "assetId":  "zarami-hafs-096-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-096.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2136577,
+                           "sha256":  "864c53c70a73dd771b4240ae6b85f65cdcb7d05ec0276652639764c108b8cea9",
+                           "durationMs":  127269,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  97,
+                           "arabicName":  "القدر",
+                           "name":  "Al-Qadr",
+                           "searchAliases":  [
+                                                 "The Power, Fate"
+                                             ],
+                           "assetId":  "zarami-hafs-097-v2",
+                           "version":  2,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/v1791101639/zarami-097.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  947065,
+                           "sha256":  "4578f3d4bd8af799ada111bdaa565356e6acff73b3575ee3ae073bbbe2b7b213",
+                           "durationMs":  52924,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  98,
+                           "arabicName":  "البينة",
+                           "name":  "Al-Bayyina",
+                           "searchAliases":  [
+                                                 "The Evidence"
+                                             ],
+                           "assetId":  "zarami-hafs-098-v2",
+                           "version":  2,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/v1791101641/zarami-098.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  2928618,
+                           "sha256":  "92fb161bf66daed373d95103586c6b153c76075839bad8863548bacaaf55171e",
+                           "durationMs":  176771,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  99,
+                           "arabicName":  "الزلزلة",
+                           "name":  "Az-Zalzala",
+                           "searchAliases":  [
+                                                 "The Earthquake"
+                                             ],
+                           "assetId":  "zarami-hafs-099-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-099.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1139333,
+                           "sha256":  "d32b52462f122f0a33d5373d51293a5e0d89482025d44771f00327565bd18f99",
+                           "durationMs":  64940,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  100,
+                           "arabicName":  "العاديات",
+                           "name":  "Al-Aadiyaat",
+                           "searchAliases":  [
+                                                 "The Chargers"
+                                             ],
+                           "assetId":  "zarami-hafs-100-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-100.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1422295,
+                           "sha256":  "61043e660747a7984026d183649b6b8ed09f274b02c3a6e793cbba8ef861cb0f",
+                           "durationMs":  82625,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  101,
+                           "arabicName":  "القارعة",
+                           "name":  "Al-Qaari\u0027a",
+                           "searchAliases":  [
+                                                 "The Calamity"
+                                             ],
+                           "assetId":  "zarami-hafs-101-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-101.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1281857,
+                           "sha256":  "52fe09917e219465ca1735a8b6d8bc66931a9d12473cc1287502895c2ec6c935",
+                           "durationMs":  73848,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  102,
+                           "arabicName":  "التكاثر",
+                           "name":  "At-Takaathur",
+                           "searchAliases":  [
+                                                 "Competition"
+                                             ],
+                           "assetId":  "zarami-hafs-102-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-102.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1231704,
+                           "sha256":  "2889bc66f973552b5e34de6c149fb0ed990c022c70fd9c637f1eeaaebd0e0a3c",
+                           "durationMs":  70713,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  103,
+                           "arabicName":  "العصر",
+                           "name":  "Al-Asr",
+                           "searchAliases":  [
+                                                 "The Declining Day, Epoch"
+                                             ],
+                           "assetId":  "zarami-hafs-103-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-103.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  659927,
+                           "sha256":  "ae21a08ba3a9191623cdaa6a8764c42f5eec5fb365f37f55e2b50fcbb85f604f",
+                           "durationMs":  34978,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  104,
+                           "arabicName":  "الهمزة",
+                           "name":  "Al-Humazah",
+                           "searchAliases":  [
+                                                 "The Traducer",
+                                                 "Al-Humaza"
+                                             ],
+                           "assetId":  "zarami-hafs-104-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/v1790678116/zarami-104.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1191579,
+                           "sha256":  "60bf6de7f5b417e0a4571946be96c1e348ba7ed10062ff9a47202ef928ae7eca",
+                           "durationMs":  68206,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  105,
+                           "arabicName":  "الفيل",
+                           "name":  "Al-Fil",
+                           "searchAliases":  [
+                                                 "The Elephant"
+                                             ],
+                           "assetId":  "zarami-hafs-105-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-105.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  904435,
+                           "sha256":  "9a7c5dedea0913decb214b8c5fd3ebc1afe616e7f8a74d3b6a8a5d1524a91c89",
+                           "durationMs":  50260,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  106,
+                           "arabicName":  "قريش",
+                           "name":  "Quraish",
+                           "searchAliases":  [
+                                                 "Quraysh"
+                                             ],
+                           "assetId":  "zarami-hafs-106-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-106.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  840494,
+                           "sha256":  "cc0f33aef1b7dffda6fd8b9fe6a2dcf054597f92a2a995288bce795c73e35713",
+                           "durationMs":  46263,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  107,
+                           "arabicName":  "الماعون",
+                           "name":  "Al-Maa\u0027un",
+                           "searchAliases":  [
+                                                 "Almsgiving"
+                                             ],
+                           "assetId":  "zarami-hafs-107-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-107.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1129719,
+                           "sha256":  "7f707d04c73403bfa0decec1e0c4807ec1955ffab2ff8abeb7f5523e3731818e",
+                           "durationMs":  64340,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  108,
+                           "arabicName":  "الكوثر",
+                           "name":  "Al-Kawthar",
+                           "searchAliases":  [
+                                                 "Abundance"
+                                             ],
+                           "assetId":  "zarami-hafs-108-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-108.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  587626,
+                           "sha256":  "48920c35fcb44b1d7b9742146b8120c9504845d8395edc23ac25d0ca06507670",
+                           "durationMs":  30459,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  109,
+                           "arabicName":  "الكافرون",
+                           "name":  "Al-Kaafiroon",
+                           "searchAliases":  [
+                                                 "The Disbelievers"
+                                             ],
+                           "assetId":  "zarami-hafs-109-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-109.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1090435,
+                           "sha256":  "28a15f7307eb9a9b0494f971a1b9299afded313d811afa20f8d2d8cdaa19ce21",
+                           "durationMs":  61884,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  110,
+                           "arabicName":  "النصر",
+                           "name":  "An-Nasr",
+                           "searchAliases":  [
+                                                 "Divine Support"
+                                             ],
+                           "assetId":  "zarami-hafs-110-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-110.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  717608,
+                           "sha256":  "fd87d473f16da4bd1145777eba8461b37f174970dfd65e2a4dcea864caea6658",
+                           "durationMs":  38583,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  111,
+                           "arabicName":  "المسد",
+                           "name":  "Al-Masad",
+                           "searchAliases":  [
+                                                 "The Palm Fibre"
+                                             ],
+                           "assetId":  "zarami-hafs-111-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-111.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  894824,
+                           "sha256":  "2b696396b8f81f590fa285edf8b0a10bd006953d31525d49e0308e56a914dd38",
+                           "durationMs":  49659,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  112,
+                           "arabicName":  "الإخلاص",
+                           "name":  "Al-Ikhlaas",
+                           "searchAliases":  [
+                                                 "Sincerity"
+                                             ],
+                           "assetId":  "zarami-hafs-112-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-112.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  504872,
+                           "sha256":  "f1669988de9ffa56a5d526a5c1c25c33cffc797d717e734e0b23587931483351",
+                           "durationMs":  25287,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  113,
+                           "arabicName":  "الفلق",
+                           "name":  "Al-Falaq",
+                           "searchAliases":  [
+                                                 "The Dawn"
+                                             ],
+                           "assetId":  "zarami-hafs-113-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-113.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  761913,
+                           "sha256":  "1b73b2831e72d9bc14686e20d9f8f219d5341d8fc07de519e7a17d26b2718ac1",
+                           "durationMs":  41352,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       },
+                       {
+                           "number":  114,
+                           "arabicName":  "الناس",
+                           "name":  "An-Naas",
+                           "searchAliases":  [
+                                                 "Mankind"
+                                             ],
+                           "assetId":  "zarami-hafs-114-v1",
+                           "version":  1,
+                           "url":  "https://res.cloudinary.com/yw5eprsc/video/upload/zarami-114.mp3",
+                           "mimeType":  "audio/mpeg",
+                           "byteSize":  1000150,
+                           "sha256":  "41a0747eeb4679dd42f42b58edfdc93db1ecb527746500f45b2254a041e9d984",
+                           "durationMs":  56242,
+                           "availability":  "published",
+                           "unavailableReason":  null
+                       }
+                   ]
+}

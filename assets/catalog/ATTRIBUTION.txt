@@ -1,0 +1,9 @@
+Chapter names and transliterations: Tanzil Quran Metadata v1.0.
+(C) 2008-2009 Tanzil.info.
+Source: https://tanzil.net/res/text/metadata/quran-data.xml
+Documentation: https://tanzil.net/docs/quran_metadata
+The source XML declares "cc-by"; it does not specify a license version.
+Changes: extracted chapter names/transliterations, added common spelling aliases.
+
+Recording collection: Zarami, Hafs. Public delivery supplied by the owner.
+Delivery metadata describes the distributed MP3 bytes; no audio is bundled.
