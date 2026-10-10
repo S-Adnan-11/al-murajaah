@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- audio_service resolves these Dart control icons by name at runtime. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/audio_service_play_arrow,@drawable/audio_service_pause,@drawable/audio_service_stop,@drawable/audio_service_fast_rewind,@drawable/audio_service_fast_forward,@drawable/ic_replay_10,@drawable/ic_forward_10" />

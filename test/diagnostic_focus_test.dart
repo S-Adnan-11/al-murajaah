@@ -12,6 +12,12 @@ import 'package:flutter_test/flutter_test.dart';
 // Exercise real diagnostic widgets with commands held pending. Native playback
 // is deliberately outside this keyboard/focus regression's scope.
 class FocusTestHandler implements PrototypeHandler {
+  @override
+  bool get loading => false;
+  @override
+  bool get progressing => playing;
+  @override
+  bool get playRequested => playing;
   FocusTestHandler(this.store);
   @override
   final PrototypeStore store;
@@ -23,6 +29,8 @@ class FocusTestHandler implements PrototypeHandler {
   final durations = {samples.first.id: 79263};
   @override
   SessionSpec? spec;
+  @override
+  SessionSpec? get displaySession => spec;
   @override
   String? lastError;
   @override
