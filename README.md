@@ -1,18 +1,34 @@
-# Al-Murāja’ah
+<p align="center">
+  <img src="assets/brand/4.0x/main-blue.png" width="144" alt="Al-Murāja’ah Arabic calligraphy logo">
+</p>
 
-[![Android foundation checks](https://github.com/S-Adnan-11/al-murajaah/actions/workflows/android.yml/badge.svg?branch=main)](https://github.com/S-Adnan-11/al-murajaah/actions/workflows/android.yml)
+<h1 align="center">Al-Murāja’ah</h1>
 
-Al-Murāja’ah helps you memorise and revise the Qur’an through listening. Choose a passage, repeat it, save it and return to it whenever you need. Stream recordings from the complete 114-surah Zarami/Hafs catalogue or download them for offline listening.
+<p align="center"><strong>Listen. Repeat. Return.</strong></p>
 
-The current Android release is **1.0.1+36**.
+<p align="center">
+  Al-Murāja’ah helps you memorise and revise the Qur’an through listening. Choose a passage, repeat it, save it and return to it whenever you need. Stream recordings from the complete 114-surah Zarami/Hafs catalogue or download them for offline listening.
+</p>
 
-[Download for Android](https://github.com/S-Adnan-11/al-murajaah/releases/tag/v1.0.1) · [Report a problem or suggest an idea](https://github.com/S-Adnan-11/al-murajaah-feedback/issues) · [Contribute](CONTRIBUTING.md)
+<p align="center">
+  <a href="https://github.com/S-Adnan-11/al-murajaah/actions/workflows/android.yml"><img src="https://github.com/S-Adnan-11/al-murajaah/actions/workflows/android.yml/badge.svg?branch=main" alt="Android CI status"></a>
+  <a href="https://github.com/S-Adnan-11/al-murajaah/releases/latest"><img src="https://img.shields.io/github/v/release/S-Adnan-11/al-murajaah?style=flat-square&amp;label=Android%20release&amp;color=0e7490" alt="Latest Android release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/S-Adnan-11/al-murajaah?style=flat-square&amp;label=Code%20licence&amp;color=0e7490" alt="Source code licence"></a>
+</p>
 
-<p>
-  <img src="screenshots/home-light.png" width="220" alt="Light Home with English revision reminder and listening shortcuts">
-  <img src="screenshots/home-dark.png" width="220" alt="Dark Home with Arabic revision reminder">
-  <img src="screenshots/player-light.png" width="220" alt="Full-surah player with seeking, passage selection and repeat controls">
-  <img src="screenshots/library-light.png" width="220" alt="Library before any passages have been saved">
+<p align="center">
+  <a href="https://github.com/S-Adnan-11/al-murajaah/releases/tag/v1.0.1"><strong>Download</strong></a> ·
+  <a href="https://github.com/S-Adnan-11/al-murajaah-feedback/issues"><strong>Feedback</strong></a> ·
+  <a href="CONTRIBUTING.md"><strong>Contribute</strong></a>
+</p>
+
+<p align="center">Current Android release: <strong>1.0.1+36</strong>.</p>
+
+<p align="center">
+  <img src="screenshots/home-light.png" width="200" alt="Light Home with English revision reminder and listening shortcuts">
+  <img src="screenshots/home-dark.png" width="200" alt="Dark Home with Arabic revision reminder">
+  <img src="screenshots/player-light.png" width="200" alt="Full-surah player with seeking, passage selection and repeat controls">
+  <img src="screenshots/library-light.png" width="200" alt="Library before any passages have been saved">
 </p>
 
 App screenshots captured from build 1.0.1+35 with a disposable profile and no personal saves. The current 1.0.1+36 release has the same interface.
@@ -53,6 +69,67 @@ Contributor debug builds use their own local development key and generally canno
 1. Open **Surahs**, choose a recording and press **Play**. Browsing another recording leaves the active session alone until you explicitly play it.
 2. In the player, choose **Set passage**, set the A and B times, name the passage and choose repeat options. **Save** keeps current playback; **Save & play** starts the new passage at A.
 3. Return to the passage from **Library**. For offline listening, download its recording and wait for verification to complete before disconnecting.
+
+## Technology stack
+
+<p>
+  <a href="https://flutter.dev/"><img src="https://img.shields.io/badge/Flutter-0e7490?style=flat-square&amp;logo=flutter&amp;logoColor=white" alt="Flutter"></a>
+  <a href="https://dart.dev/"><img src="https://img.shields.io/badge/Dart-0e7490?style=flat-square&amp;logo=dart&amp;logoColor=white" alt="Dart"></a>
+  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-0e7490?style=flat-square&amp;logo=kotlin&amp;logoColor=white" alt="Kotlin"></a>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-0e7490?style=flat-square&amp;logo=javascript&amp;logoColor=white" alt="JavaScript"></a>
+  <a href="https://developer.android.com/"><img src="https://img.shields.io/badge/Android-0e7490?style=flat-square&amp;logo=android&amp;logoColor=white" alt="Android"></a>
+  <a href="https://sqlite.org/"><img src="https://img.shields.io/badge/SQLite-0e7490?style=flat-square&amp;logo=sqlite&amp;logoColor=white" alt="SQLite"></a>
+  <a href="https://cloudinary.com/documentation"><img src="https://img.shields.io/badge/Cloudinary-0e7490?style=flat-square&amp;logo=cloudinary&amp;logoColor=white" alt="Cloudinary"></a>
+  <a href="https://developers.cloudflare.com/workers/"><img src="https://img.shields.io/badge/Cloudflare-0e7490?style=flat-square&amp;logo=cloudflare&amp;logoColor=white" alt="Cloudflare"></a>
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-0e7490?style=flat-square&amp;logo=nodedotjs&amp;logoColor=white" alt="Node.js"></a>
+  <a href="https://gradle.org/"><img src="https://img.shields.io/badge/Gradle-0e7490?style=flat-square&amp;logo=gradle&amp;logoColor=white" alt="Gradle"></a>
+  <a href="https://docs.github.com/en/actions"><img src="https://img.shields.io/badge/GitHub_Actions-0e7490?style=flat-square&amp;logo=githubactions&amp;logoColor=white" alt="GitHub Actions"></a>
+</p>
+
+### Mobile app and audio
+
+| Technology | Actual role |
+| --- | --- |
+| Flutter / Dart | Material UI, app logic, asynchronous work and shared application source |
+| Kotlin / Android APIs | Native MethodChannel adapters for DownloadManager transfers, document export/import, device details and diagnostics |
+| audio_service | Background playback service, media notifications and system media controls |
+| just_audio | Streaming/local playback, clipping, seeking and playback speed under one playback handler |
+| audio_session | Audio-focus and interruption handling for the playback session |
+| Riverpod | Shared dependencies and reactive provider composition |
+| go_router | Application routes and navigation |
+| SQL / Drift / sqlite3 / SQLite | Generated database access, local preferences, passages and listening activity, with versioned migrations |
+| Swift / UIKit — prepared | iOS runner and limited support-channel source. iOS builds, native adapters and device behavior remain unverified; Xcode/macOS validation is pending |
+
+### Media hosting and feedback
+
+| Technology | Actual role |
+| --- | --- |
+| Cloudinary | HTTPS delivery of configured recitations for streaming and verified downloads |
+| JavaScript / Cloudflare Workers | ES-module feedback endpoint, payload validation and public-issue relay |
+| Cloudflare Durable Objects | Serialized quotas, deduplication and retry references in SQLite-backed storage; edge rate limiting supplements the relay |
+| GitHub Issues REST API | Public feedback destination; the scoped token stays in Cloudflare Secrets |
+
+### Build, testing and automation
+
+| Technology | Actual role |
+| --- | --- |
+| Flutter SDK / Dart SDK / Pub | App commands, package resolution and the committed pubspec.lock |
+| Gradle / Android Gradle Plugin / R8 | Kotlin DSL build configuration, Android packaging, R8 code shrinking and resource shrinking for releases |
+| JDK / Android SDK / NDK / CMake | Android and native-dependency toolchain; JDK 21 runs builds, while Java/Kotlin bytecode targets JVM 17 |
+| build_runner / drift_dev | Database access code, versioned schema sources and migration-test generation |
+| Dart analyzer / formatter / flutter_lints | Static analysis, Dart formatting and configured lint rules |
+| flutter_test / integration_test | Unit, widget and migration tests, plus bounded Android runtime checks with required fixtures |
+| Node.js / node:test / node:assert/strict | Worker preparation scripts and mocked protocol/concurrency assertions |
+| npm / Wrangler / Miniflare / workerd | Separate Worker tools, deliberate deployment and local runtime/SQLite Durable Object tests; installed under ignored artifacts |
+| Git / GitHub Actions / Bash / Windows batch | SDK commit pinning, Android CI, mocked Worker tests and cross-platform Gradle launch scripts |
+
+Pinned versions and copyable commands are in [Build and run](#build-and-run); Worker administration and runtime checks are in the [relay README](services/feedback-worker/README.md). The CI artifact is a debug APK; production signing and service deployment remain separate maintainer operations.
+
+### Supporting packages and assets
+
+- **Files and paths:** path_provider locates app storage; path joins and normalizes local paths.
+- **Integrity:** crypto supplies SHA-256 verification for audio files and hashes for diagnostic exports.
+- **Icons and typography:** Flutter Material Icons and the bundled Cairo / Noto Sans Arabic fonts supply UI icons and Arabic text. Their notices and the other asset permissions remain in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Build and run
 
@@ -110,20 +187,6 @@ node --test services/feedback-worker/test/relay.test.mjs
 ```
 
 Native playback checks live in `integration_test/` and `test_driver/`. Read each check’s fixtures and bounds before running; some need private audio fixtures and are not a blanket fresh-checkout test suite. Keep existing installations and data intact. Use `--keep-app-running` when driving integration checks. Playback-state assertions do not establish audible quality.
-
-## Technology stack
-
-| Technology | Use in this project |
-| --- | --- |
-| Flutter / Dart | Application UI, playback/session logic and cross-platform source |
-| Riverpod | Shared dependency composition and reactive application state |
-| go_router | Application routes and navigation |
-| audio_service / just_audio / audio_session | Background media controls, audio playback and audio-focus/session handling |
-| Drift / SQLite | Local database, generated queries and versioned migrations for settings, passages and listening activity |
-| Android native integrations (Kotlin) | MethodChannel adapters, DownloadManager transfers, document export/import and platform diagnostics |
-| Cloudinary | HTTPS delivery of configured recording files for streaming and downloads |
-| Cloudflare Workers / Durable Objects | Feedback relay, SQLite-backed deduplication and rate limits; credentials remain server-side |
-| GitHub Actions | Pinned Android dependency, generation, analysis, test and debug-build checks, plus mocked feedback tests |
 
 ## Architecture
 
