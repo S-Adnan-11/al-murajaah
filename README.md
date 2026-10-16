@@ -24,35 +24,30 @@
 
 <p align="center">Current Android release: <strong>1.0.1+36</strong>.</p>
 
-<p align="center">
-  <img src="screenshots/home-light.png" width="200" alt="Light Home with English revision reminder and listening shortcuts">
-  <img src="screenshots/home-dark.png" width="200" alt="Dark Home with Arabic revision reminder">
-  <img src="screenshots/player-light.png" width="200" alt="Full-surah player with seeking, passage selection and repeat controls">
-  <img src="screenshots/library-light.png" width="200" alt="Library before any passages have been saved">
+## See it in action
+
+<p>
+  <strong>1. Choose a surah</strong> — Browse the catalogue and download a recording for offline revision.<br>
+  <strong>2. Mark your passage</strong> — Seek and set A/B boundaries on the full-surah timeline.
 </p>
 
-App screenshots captured from build 1.0.1+35 with a disposable profile and no personal saves. The current 1.0.1+36 release has the same interface.
+<p align="center">
+  <a href="screenshots/catalogue-light.png"><img src="screenshots/catalogue-light.png" width="210" alt="1. Light Surahs catalogue with Al-Fatihah downloaded and download controls for other recordings"></a>
+  <a href="screenshots/passage-light.png"><img src="screenshots/passage-light.png" width="210" alt="2. Light passage editor with start A and end B marked on the Al-Fatihah timeline"></a>
+</p>
 
-## Install on Android
+<p>
+  <strong>3. Repeat and return</strong> — Play a named passage, then revisit your saved passages in Library.<br>
+  <strong>4. Follow your progress</strong> — Review credited listening, your daily goal and listening streak.
+</p>
 
-1. Open the [v1.0.1 release](https://github.com/S-Adnan-11/al-murajaah/releases/tag/v1.0.1) and download **Al-Murāja’ah.apk**. The adjacent **Al-Murāja’ah.apk.sha256** verifies that file’s bytes.
-2. Allow your browser or file manager to install this APK when Android prompts you. No split installer is needed.
-3. Open the downloaded APK and follow Android’s installation prompts. If you already have an earlier private test build, read the migration section below first.
+<p align="center">
+  <a href="screenshots/repeat-dark.png"><img src="screenshots/repeat-dark.png" width="210" alt="3. Dark player repeating the saved Al-Fatihah opening passage"></a>
+  <a href="screenshots/library-dark.png"><img src="screenshots/library-dark.png" width="210" alt="3. Dark Library populated with named demonstration passages and a starred favourite"></a>
+  <a href="screenshots/activity-dark.png"><img src="screenshots/activity-dark.png" width="210" alt="4. Dark Activity showing demonstration listening time, a daily goal and listening streak"></a>
+</p>
 
-The APK declares **Android 7.0 / API 24** as its minimum and includes ARM32, ARM64 and x86_64 libraries. This minimum is a build setting, not a claim of device coverage. Recordings download separately; they are not bundled with the installer.
-
-The release APK is non-debuggable and uses a dedicated production signing certificate. Certificate SHA-256: `acac6c5bc482ea7c9246fd233fc59efe707b65779c40b17f9d663b3937f0737d`. Future production updates must retain the package and signer and increase the build number. This release is distributed directly through GitHub.
-
-<details>
-<summary>One-time migration from an earlier private test build</summary>
-
-Android rejects an ordinary update from the previous debug-origin signer to the new production signer. Keep the old app until you have paused playback, exported through **Settings → Backup & restore → Export metadata backup**, received the saved-and-verified confirmation, and copied the JSON off the device to private storage. Verify the backup and keep a second copy before deciding to remove the old installation.
-
-To migrate the same package, the owner must then manually remove the old test installation, install the production APK, select **Choose backup to import**, review its contents, enable **Apply settings from backup** if wanted, and import. Removing the old app erases its private data and downloads. Metadata restores passages, stars, listening records/best streak and supported preferences; recordings must be downloaded again. Playback checkpoints, transfer state, feedback drafts and discovery state do not transfer. Stop if backup verification fails; there is no automatic signer-migration path in this release.
-
-</details>
-
-Contributor debug builds use their own local development key and generally cannot update the distributed installation.
+Captured from the released **1.0.1+36** APK on a disposable emulator. Passage names and listening history are demonstration data. Select any screenshot to view it at full size.
 
 ## What V1 does
 
@@ -73,17 +68,26 @@ Contributor debug builds use their own local development key and generally canno
 ## Technology stack
 
 <p>
-  <a href="https://flutter.dev/"><img src="https://img.shields.io/badge/Flutter-0e7490?style=flat-square&amp;logo=flutter&amp;logoColor=white" alt="Flutter"></a>
-  <a href="https://dart.dev/"><img src="https://img.shields.io/badge/Dart-0e7490?style=flat-square&amp;logo=dart&amp;logoColor=white" alt="Dart"></a>
-  <a href="https://kotlinlang.org/"><img src="https://img.shields.io/badge/Kotlin-0e7490?style=flat-square&amp;logo=kotlin&amp;logoColor=white" alt="Kotlin"></a>
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-0e7490?style=flat-square&amp;logo=javascript&amp;logoColor=white" alt="JavaScript"></a>
-  <a href="https://developer.android.com/"><img src="https://img.shields.io/badge/Android-0e7490?style=flat-square&amp;logo=android&amp;logoColor=white" alt="Android"></a>
-  <a href="https://sqlite.org/"><img src="https://img.shields.io/badge/SQLite-0e7490?style=flat-square&amp;logo=sqlite&amp;logoColor=white" alt="SQLite"></a>
-  <a href="https://cloudinary.com/documentation"><img src="https://img.shields.io/badge/Cloudinary-0e7490?style=flat-square&amp;logo=cloudinary&amp;logoColor=white" alt="Cloudinary"></a>
-  <a href="https://developers.cloudflare.com/workers/"><img src="https://img.shields.io/badge/Cloudflare-0e7490?style=flat-square&amp;logo=cloudflare&amp;logoColor=white" alt="Cloudflare"></a>
-  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-0e7490?style=flat-square&amp;logo=nodedotjs&amp;logoColor=white" alt="Node.js"></a>
-  <a href="https://gradle.org/"><img src="https://img.shields.io/badge/Gradle-0e7490?style=flat-square&amp;logo=gradle&amp;logoColor=white" alt="Gradle"></a>
-  <a href="https://docs.github.com/en/actions"><img src="https://img.shields.io/badge/GitHub_Actions-0e7490?style=flat-square&amp;logo=githubactions&amp;logoColor=white" alt="GitHub Actions"></a>
+  <strong>App</strong><br>
+  <a href="https://flutter.dev/"><img src="screenshots/stack/flutter.svg" alt="Flutter"></a>
+  <a href="https://dart.dev/"><img src="screenshots/stack/dart.svg" alt="Dart"></a>
+  <a href="https://kotlinlang.org/"><img src="screenshots/stack/kotlin.svg" alt="Kotlin"></a>
+  <a href="https://developer.android.com/"><img src="screenshots/stack/android.svg" alt="Android"></a>
+  <a href="https://sqlite.org/"><img src="screenshots/stack/sqlite.svg" alt="SQLite"></a>
+</p>
+
+<p>
+  <strong>Services</strong><br>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="screenshots/stack/javascript.svg" alt="JavaScript"></a>
+  <a href="https://cloudinary.com/documentation"><img src="screenshots/stack/cloudinary.svg" alt="Cloudinary"></a>
+  <a href="https://developers.cloudflare.com/workers/"><img src="screenshots/stack/cloudflare.svg" alt="Cloudflare"></a>
+</p>
+
+<p>
+  <strong>Tooling</strong><br>
+  <a href="https://nodejs.org/"><img src="screenshots/stack/nodejs.svg" alt="Node.js"></a>
+  <a href="https://gradle.org/"><img src="screenshots/stack/gradle.svg" alt="Gradle"></a>
+  <a href="https://docs.github.com/en/actions"><img src="screenshots/stack/github-actions.svg" alt="GitHub Actions"></a>
 </p>
 
 ### Mobile app and audio
@@ -130,6 +134,27 @@ Pinned versions and copyable commands are in [Build and run](#build-and-run); Wo
 - **Files and paths:** path_provider locates app storage; path joins and normalizes local paths.
 - **Integrity:** crypto supplies SHA-256 verification for audio files and hashes for diagnostic exports.
 - **Icons and typography:** Flutter Material Icons and the bundled Cairo / Noto Sans Arabic fonts supply UI icons and Arabic text. Their notices and the other asset permissions remain in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+## Install on Android
+
+1. Open the [v1.0.1 release](https://github.com/S-Adnan-11/al-murajaah/releases/tag/v1.0.1) and download **Al-Murāja’ah.apk**. The adjacent **Al-Murāja’ah.apk.sha256** verifies that file’s bytes.
+2. Allow your browser or file manager to install this APK when Android prompts you. No split installer is needed.
+3. Open the downloaded APK and follow Android’s installation prompts. If you already have an earlier private test build, read the migration section below first.
+
+The APK declares **Android 7.0 / API 24** as its minimum and includes ARM32, ARM64 and x86_64 libraries. This minimum is a build setting, not a claim of device coverage. Recordings download separately; they are not bundled with the installer.
+
+The release APK is non-debuggable and uses a dedicated production signing certificate. Certificate SHA-256: `acac6c5bc482ea7c9246fd233fc59efe707b65779c40b17f9d663b3937f0737d`. Future production updates must retain the package and signer and increase the build number. This release is distributed directly through GitHub.
+
+<details>
+<summary>One-time migration from an earlier private test build</summary>
+
+Android rejects an ordinary update from the previous debug-origin signer to the new production signer. Keep the old app until you have paused playback, exported through **Settings → Backup & restore → Export metadata backup**, received the saved-and-verified confirmation, and copied the JSON off the device to private storage. Verify the backup and keep a second copy before deciding to remove the old installation.
+
+To migrate the same package, the owner must then manually remove the old test installation, install the production APK, select **Choose backup to import**, review its contents, enable **Apply settings from backup** if wanted, and import. Removing the old app erases its private data and downloads. Metadata restores passages, stars, listening records/best streak and supported preferences; recordings must be downloaded again. Playback checkpoints, transfer state, feedback drafts and discovery state do not transfer. Stop if backup verification fails; there is no automatic signer-migration path in this release.
+
+</details>
+
+Contributor debug builds use their own local development key and generally cannot update the distributed installation.
 
 ## Build and run
 
