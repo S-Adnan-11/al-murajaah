@@ -4,7 +4,6 @@ import 'package:al_murajaah/core/audio/session_spec.dart';
 import 'package:al_murajaah/core/database/app_database.dart';
 import 'package:al_murajaah/core/theme/app_theme.dart';
 import 'package:al_murajaah/core/theme/product_components.dart';
-import 'package:al_murajaah/features/activity/activity_screen.dart';
 import 'package:al_murajaah/features/catalog/catalog.dart';
 import 'package:al_murajaah/features/product/duration_display.dart';
 import 'package:al_murajaah/features/product/main_tab_pager.dart';
@@ -22,7 +21,7 @@ void main() {
       60000: '1 min',
       119999: '1 min',
       503000: '8 min',
-      3600000: '60 min',
+      3600000: '1 hr',
     }.entries) {
       expect(listeningDuration(entry.key), entry.value);
     }
@@ -190,7 +189,7 @@ void main() {
     },
   );
 
-  test('absent Wi-Fi preference defaults off; stored/imported choices survive reopen', () async {
+  test('V30 absent Wi-Fi preference defaults off; stored/imported choices survive reopen', () async {
     final root = await Directory.systemTemp.createTemp('v20-default');
     final file = File('${root.path}/db.sqlite');
     var db = AppDatabase(NativeDatabase(file));
@@ -227,7 +226,7 @@ void main() {
         (await db.customSelect('pragma user_version').getSingle()).read<int>(
           'user_version',
         ),
-        4,
+        7,
       );
     } finally {
       await db.close();

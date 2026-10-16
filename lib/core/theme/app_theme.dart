@@ -55,6 +55,12 @@ abstract final class AppTheme {
           onPrimary: palette.onAction,
           secondary: palette.accent,
           onSecondary: palette.onAccent,
+          secondaryContainer: brightness == Brightness.dark
+              ? const Color(0xff943103)
+              : const Color(0xffffe5d8),
+          onSecondaryContainer: brightness == Brightness.dark
+              ? const Color(0xfffff5ef)
+              : const Color(0xff6b2607),
           surface: palette.surface,
           onSurface: palette.text,
           onSurfaceVariant: palette.secondaryText,
@@ -152,9 +158,16 @@ abstract final class AppTheme {
         backgroundColor: palette.surface,
         selectedColor: Color.lerp(palette.surface, palette.action, .20),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        labelStyle: TextStyle(color: palette.text),
+        labelStyle: base.textTheme.labelLarge?.copyWith(color: palette.text),
       ),
       navigationBarTheme: NavigationBarThemeData(
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? palette.action
+                : palette.secondaryText,
+          ),
+        ),
         backgroundColor: palette.surface,
         indicatorColor: Color.lerp(palette.surface, palette.action, .20),
         elevation: 0,
@@ -162,6 +175,40 @@ abstract final class AppTheme {
       dividerTheme: DividerThemeData(
         color: scheme.outlineVariant,
         thickness: .5,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: palette.surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: palette.surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: palette.surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: brightness == Brightness.dark
+            ? const Color(0xff203249)
+            : const Color(0xffe4edf2),
+        contentTextStyle: base.textTheme.bodyMedium?.copyWith(
+          color: palette.text,
+        ),
+        actionTextColor: brightness == Brightness.dark
+            ? palette.accent
+            : const Color(0xffad3b0b),
+        closeIconColor: palette.accent,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      bannerTheme: MaterialBannerThemeData(
+        backgroundColor: brightness == Brightness.dark
+            ? const Color(0xff203249)
+            : const Color(0xffe4edf2),
+        contentTextStyle: base.textTheme.bodyMedium?.copyWith(
+          color: palette.text,
+        ),
       ),
       expansionTileTheme: const ExpansionTileThemeData(
         shape: Border(),

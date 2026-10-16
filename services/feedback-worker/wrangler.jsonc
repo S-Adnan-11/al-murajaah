@@ -1,0 +1,24 @@
+{
+  "$schema": "../../artifacts/feedback-worker-tools/node_modules/wrangler/config-schema.json",
+  "name": "al-murajaah-feedback",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-10-10",
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": false },
+  "vars": {
+    "GITHUB_OWNER": "S-Adnan-11",
+    "GITHUB_REPO": "al-murajaah-feedback",
+    "FEEDBACK_VISIBILITY": "public",
+    "FEEDBACK_ENABLED": "true"
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "FEEDBACK", "class_name": "FeedbackGate" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["FeedbackGate"] }],
+  "ratelimits": [{
+    "name": "EDGE_LIMIT",
+    "namespace_id": "1001",
+    "simple": { "limit": 30, "period": 60 }
+  }]
+}

@@ -3,9 +3,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/database/app_database.dart';
 import '../../core/theme/product_components.dart';
+import '../../core/theme/home_text_controller.dart';
 import '../activity/listening_recorder.dart';
 import '../backup/backup_screen.dart';
 import '../backup/metadata_backup.dart';
+import '../../core/audio/prototype_handler.dart';
+import '../support/developer_screen.dart';
+import '../support/feedback_screen.dart';
+import '../support/support_store.dart';
+import '../support/credits_screen.dart';
+import '../support/about_screen.dart';
+import '../../core/audio/recording_source.dart';
 
 class ProductSettings extends StatefulWidget {
   const ProductSettings({
@@ -15,12 +23,20 @@ class ProductSettings extends StatefulWidget {
     this.listening,
     this.onImported,
     this.catalogWarning,
+    this.handler,
+    this.supportStore,
+    this.openRecording,
+    this.homeText,
   });
   final AppDatabase db;
   final VoidCallback downloaded;
   final ListeningRecorder? listening;
   final Future<void> Function()? onImported;
   final String? catalogWarning;
+  final PrototypeHandler? handler;
+  final SupportStore? supportStore;
+  final void Function(RecordingSource, bool playNow)? openRecording;
+  final HomeTextController? homeText;
   @override
   State<ProductSettings> createState() => _ProductSettingsState();
 }
@@ -127,6 +143,37 @@ class _ProductSettingsState extends State<ProductSettings> {
                   ),
                   SwitchListTile(
                     secondary: showSwitchIcons
+                        ? const Icon(Icons.translate_rounded)
+                        : null,
+                    title: const Text('Alternate Home text'),
+                    value: settings.alternateHomeText == 1,
+                    onChanged: _saving
+                        ? null
+                        : (value) async {
+                            final homeText = widget.homeText;
+                            if (homeText == null) {
+                              await _save('alternate_home_text', value ? 1 : 0);
+                              return;
+                            }
+                            setState(() {
+                              _saving = true;
+                              _error = null;
+                            });
+                            try {
+                              await homeText.setAlternating(value);
+                            } catch (_) {
+                              if (mounted) {
+                                setState(
+                                  () => _error = 'Setting could not be saved. Your previous choice is retained.',
+                                );
+                              }
+                            } finally {
+                              if (mounted) setState(() => _saving = false);
+                            }
+                          },
+                  ),
+                  SwitchListTile(
+                    secondary: showSwitchIcons
                         ? const Icon(Icons.motion_photos_paused_outlined)
                         : null,
                     title: const Text('Reduce motion'),
@@ -154,7 +201,7 @@ class _ProductSettingsState extends State<ProductSettings> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.timelapse_rounded),
-                    title: const Text('Daily goal'),
+                    title: const Text('Min. fulfillment'),
                     subtitle: Text(minutes == 0 ? 'Off' : '$minutes min'),
                     trailing: const Icon(Icons.expand_more_rounded),
                     onTap: _saving
@@ -162,7 +209,7 @@ class _ProductSettingsState extends State<ProductSettings> {
                         : () async {
                             final value = await showAppChoices<int>(
                               context: context,
-                              title: 'Daily goal',
+                              title: 'Min. fulfillment',
                               value: minutes,
                               options: {
                                 for (final option in {
@@ -236,15 +283,39 @@ class _ProductSettingsState extends State<ProductSettings> {
                 'About & support',
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.record_voice_over_outlined),
-                    title: const Text('Muhammad Bukar Zarami'),
-                    subtitle: const Text(
-                      'Hafs · Recordings used with permission',
-                    ),
+                    leading: const Icon(Icons.send_outlined),
+                    title: const Text('Send feedback'),
                     trailing: const Icon(Icons.chevron_right_rounded),
-                    onTap: () => _information(
-                      'Credits',
-                      'Recitation by Muhammad Bukar Zarami, Hafs riwayah. Recordings are distributed with permission.\n\nSurah names and transliterations: Tanzil Quran Metadata v1.0, © 2008–2009 Tanzil.info, declared CC-BY (version unspecified). Names and aliases adapted for this app.\n\nArabic typography: Noto Sans Arabic, licensed under the SIL Open Font License. Full font and software licenses are available below.',
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) =>
+                            FeedbackScreen(store: widget.supportStore),
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.code_rounded),
+                    title: const Text('Developer'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => DeveloperScreen(
+                          handler: widget.handler,
+                          store: widget.supportStore,
+                          openRecording: widget.openRecording,
+                        ),
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.record_voice_over_outlined),
+                    title: const Text('Credits'),
+                    subtitle: const Text('Muhammad Bukar Zarami · Hafs'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const CreditsScreen(),
+                      ),
                     ),
                   ),
                   ListTile(
@@ -253,7 +324,7 @@ class _ProductSettingsState extends State<ProductSettings> {
                     trailing: const Icon(Icons.chevron_right_rounded),
                     onTap: () => _information(
                       'Privacy & help',
-                      'No account, microphone, contacts or location access is needed. Saves, settings, activity and diagnostics stay on your device until you choose to export them.\n\nStreaming and downloads contact the audio host, which may retain request logs. There is no external analytics or crash reporting.\n\nAurora is optional and off by default. It becomes still when playback pauses, the player is hidden, the app is backgrounded or battery saver applies. Your phone’s reduced motion setting always takes priority.\n\nFor a recording or playback problem, use Audio diagnostics below. Include the surah and what happened when reporting an issue; export diagnostics only if you intend to share them.',
+                      'No account, microphone, contacts or location access is needed. Saves, settings, activity and diagnostics stay on your device until you choose to export them.\n\nFeedback sends only your message, category and any app/device details you review and choose to include. It goes through Cloudflare to public GitHub issues. Please do not include personal information. Providers may process request metadata.\n\nStreaming and downloads contact the audio host, which may retain request logs. There is no external analytics or crash reporting.\n\nAurora is optional and off by default. It becomes still when playback pauses, the player is hidden, the app is backgrounded or battery saver applies. Your phone’s reduced motion setting always takes priority.\n\nFor a recording or playback problem, use Audio diagnostics below. Include the surah and what happened when reporting an issue; export diagnostics only if you intend to share them.',
                     ),
                   ),
                   ListTile(
@@ -262,7 +333,46 @@ class _ProductSettingsState extends State<ProductSettings> {
                     trailing: const Icon(Icons.chevron_right_rounded),
                     onTap: () => showLicensePage(
                       context: context,
-                      applicationName: 'Al-Muraja’ah',
+                      applicationName: 'Al-Murāja\'ah',
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.info_outline_rounded),
+                    title: const Text('About App'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => AboutScreen(
+                          developer: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => DeveloperScreen(
+                                handler: widget.handler,
+                                store: widget.supportStore,
+                                openRecording: widget.openRecording,
+                              ),
+                            ),
+                          ),
+                          credits: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => const CreditsScreen(),
+                            ),
+                          ),
+                          feedback: () => Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) =>
+                                  FeedbackScreen(store: widget.supportStore),
+                            ),
+                          ),
+                          licenses: () => showLicensePage(
+                            context: context,
+                            applicationName: "Al-Murāja'ah",
+                          ),
+                          privacy: () => _information(
+                            'Privacy & help',
+                            'Your saves, settings, listening activity and downloads are stored on this device. Audio streams and downloads come from Cloudinary, which may process request metadata.\n\nFeedback is optional and goes through Cloudflare to public GitHub issues. Your message and the app/device details you choose to include are public. Providers may process request metadata. Do not include personal information.\n\nThere are no accounts, advertising, external analytics or crash reporting. Diagnostics stay on the device until you choose to export and share them.',
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   ListTile(

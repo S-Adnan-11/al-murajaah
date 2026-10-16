@@ -26,10 +26,8 @@ class AudioDownloads(private val context: Context, private val reply: (Runnable)
                     }
                     "enqueue" -> {
                         val id = requireNotNull(call.argument<String>("assetId"))
-                        require(Regex("^zarami-hafs-\\d{3}-v[1-9]\\d*$").matches(id))
                         val url = requireNotNull(call.argument<String>("url"))
-                        val number = id.substring(12, 15)
-                        require(Regex("^https://res\\.cloudinary\\.com/yw5eprsc/video/upload/(v[0-9]+/)?zarami-$number\\.mp3$").matches(url))
+                        require(ApprovedAudioDownloads.allows(id, url))
                         staging.mkdirs()
                         val target = File(staging, "$id-${System.nanoTime()}.part")
                         val request = DownloadManager.Request(Uri.parse(url))

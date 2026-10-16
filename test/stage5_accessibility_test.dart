@@ -64,23 +64,23 @@ void main() {
       );
       await ready(tester);
       await tester.pumpAndSettle();
-      expect(find.text('Today’s listening'), findsOneWidget);
+      expect(find.text('Today'), findsOneWidget);
       await tester.scrollUntilVisible(
-        find.text('Daily details'),
+        find.text('Details'),
         160,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.ensureVisible(find.text('Daily details'));
+      await tester.ensureVisible(find.text('Details'));
       await tester.pumpAndSettle();
-      expect(find.text('Daily details').hitTestable(), findsOneWidget);
-      await tester.tap(find.text('Daily details'));
+      expect(find.text('Details').hitTestable(), findsOneWidget);
+      await tester.tap(find.text('Details'));
       await tester.pumpAndSettle();
       final yesterday = DateTime.now().subtract(const Duration(days: 1));
       final label = MaterialLocalizations.of(
         tester.element(find.byType(ActivityScreen)),
       ).formatMediumDate(yesterday);
       await tester.scrollUntilVisible(
-        find.text('$label · No recorded time'),
+        find.text('$label · 0 min'),
         160,
         scrollable: find.byType(Scrollable).first,
       );
@@ -91,7 +91,7 @@ void main() {
         scrollable: find.byType(Scrollable).first,
       );
       await tester.pumpAndSettle();
-      expect(find.text('Daily goal'), findsOneWidget);
+      expect(find.text('Min. fulfillment'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
     } finally {

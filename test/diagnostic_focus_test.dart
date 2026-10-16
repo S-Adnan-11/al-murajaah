@@ -13,6 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 // is deliberately outside this keyboard/focus regression's scope.
 class FocusTestHandler implements PrototypeHandler {
   @override
+  bool get restoredMetadata => false;
+  @override
   bool get loading => false;
   @override
   bool get progressing => playing;

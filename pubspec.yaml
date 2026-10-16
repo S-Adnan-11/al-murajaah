@@ -1,5 +1,5 @@
 name: al_murajaah
-description: "A new Flutter project."
+description: "Listen, repeat and return to saved Qur’an revision passages."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+20
+version: 1.0.1+36
 
 environment:
   sdk: ^3.13.4
@@ -71,10 +71,21 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - assets/credits/zarami.png
+    - assets/brand/main-blue.png
+    - assets/brand/wordmark-ink.png
+    - assets/brand/wordmark-white.png
     - assets/fonts/noto-sans-arabic/OFL.txt
+    - assets/fonts/cairo/OFL.txt
     - assets/catalog/zarami.json
     - assets/catalog/ATTRIBUTION.txt
   fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/cairo/Cairo-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/cairo/Cairo-Variable.ttf
+          weight: 700
     - family: NotoSansArabic
       fonts:
         - asset: assets/fonts/noto-sans-arabic/NotoSansArabic-Variable.ttf

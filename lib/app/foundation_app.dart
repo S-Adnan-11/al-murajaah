@@ -12,11 +12,13 @@ import '../core/database/foundation_repository.dart';
 import '../core/theme/appearance_controller.dart';
 import '../core/theme/appearance_screen.dart';
 import '../core/theme/themed_app.dart';
+import '../core/theme/home_reading.dart';
 import '../main.dart' show DiagnosticScreen;
 import 'product_dependencies.dart';
 import '../features/product/product_shell.dart';
 import '../features/product/product_appearance.dart';
 import '../features/settings/app_motion.dart';
+import '../features/support/diagnostics_gate.dart';
 
 /// One player and one logical database worker. Diagnostic JSON/audio stay in
 /// their existing directory; there is no implicit migration of user audio data.
@@ -60,6 +62,7 @@ class FoundationDependencies {
   }
 
   Future<void> close() async {
+    product?.homeText.dispose();
     product?.downloads.dispose();
     await product?.listening?.close();
     appearance.dispose();
@@ -80,6 +83,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final handler = ref.watch(audioHandlerProvider);
   final product = ref.watch(productDependenciesProvider);
   final router = GoRouter(
+    observers: [diagnosticsRouteObserver, appRouteObserver],
     routes: [
       GoRoute(
         path: '/',
@@ -98,9 +102,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: 'diagnostics',
-            builder: (context, state) => DiagnosticScreen(
-              handler: handler,
-              onAppearance: () => context.push('/appearance'),
+            builder: (context, state) => DiagnosticsGate(
+              builder: (context) => DiagnosticScreen(
+                handler: handler,
+                onAppearance: () => context.push('/appearance'),
+              ),
             ),
           ),
         ],

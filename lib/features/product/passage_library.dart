@@ -7,6 +7,7 @@ import 'package:crypto/crypto.dart';
 import '../../core/audio/prototype_store.dart' as legacy;
 import '../../core/audio/session_spec.dart';
 import '../../core/database/app_database.dart';
+import '../support/support_content.dart';
 
 class LibraryPassage {
   LibraryPassage(this.row, this.durationMs, this.recordingName, this.review);
@@ -100,7 +101,11 @@ class PassageLibrary {
         LibraryPassage(
           row,
           assets[row.assetId]!.durationMs!,
-          surahs[assets[row.assetId]!.surahNumber]!.transliteration,
+          storyRecordings
+                  .where((r) => r.assetId == row.assetId)
+                  .firstOrNull
+                  ?.creditName ??
+              surahs[assets[row.assetId]!.surahNumber]!.transliteration,
           assets[row.assetId]!.availability != 'published',
         ),
     ];

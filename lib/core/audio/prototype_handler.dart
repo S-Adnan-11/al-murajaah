@@ -25,6 +25,7 @@ class PrototypeHandler extends BaseAudioHandler {
     Stream<String>? verifiedDownloads,
     this.nextSession,
     this.listeningRecorder,
+    this.knownDuration,
   }) : _player = player ?? AudioPlayer(handleInterruptions: false),
        _assetResolver = assetResolver ?? assetById,
        _localResolver = localResolver ?? store.verifiedFile {
@@ -85,6 +86,9 @@ class PrototypeHandler extends BaseAudioHandler {
   }
   final PrototypeStore store;
   final ListeningRecorder? listeningRecorder;
+  final int? Function(String)? knownDuration;
+  bool _restoredMetadata = false;
+  bool get restoredMetadata => _restoredMetadata;
   final FutureOr<SessionSpec?> Function(SessionSpec)? nextSession;
   bool _transitioning = false;
   Object? _transitionOwner;
@@ -540,6 +544,7 @@ class PrototypeHandler extends BaseAudioHandler {
   }
 
   void _event(String message) {
+    _syncDiagnosticSampling();
     final line = '${DateTime.now().toUtc().toIso8601String()} $message';
     events.value = [
       ...events.value,
@@ -572,10 +577,6 @@ class PrototypeHandler extends BaseAudioHandler {
       '${logs.path}/audio-${DateTime.now().toUtc().microsecondsSinceEpoch}.jsonl',
     );
     recordDiagnostic('initialized');
-    _diagnosticTimer = Timer.periodic(
-      const Duration(seconds: 5),
-      (_) => recordDiagnostic('sample'),
-    );
     final session = await AudioSession.instance;
     await session.configure(const AudioSessionConfiguration.speech());
     _subscriptions.add(
@@ -610,21 +611,25 @@ class PrototypeHandler extends BaseAudioHandler {
         final restored = SessionSpec.fromJson(
           Map<String, dynamic>.from(checkpoint['spec']),
         );
-        final asset = _assetResolver(restored.assetId);
-        recordDiagnostic('startup-checkpoint-verification');
-        final duration = await inspect(asset);
-        if (duration != restored.durationMs) {
+        _assetResolver(restored.assetId); // Must still be a retained identity.
+        final duration = knownDuration?.call(restored.assetId);
+        // Decoder duration may include MP3 encoder padding. Exact retained
+        // bytes/identity stay authoritative; Play verifies native duration.
+        if (duration != null && (duration - restored.durationMs).abs() > 250) {
           throw StateError('Recording duration changed.');
         }
-        await start(
-          restored,
-          autoPlay: false,
-          initialIndex: checkpoint['index'] as int,
-          initialPosition: Duration(
-            milliseconds: checkpoint['positionMs'] as int,
-          ),
-        );
-        _event('restored paused checkpoint');
+        final index = checkpoint['index'] as int;
+        final positionMs = checkpoint['positionMs'] as int;
+        if (index < 0 || positionMs < 0 || positionMs > restored.lengthMs) {
+          throw const FormatException('Invalid retained playback position.');
+        }
+        spec = restored;
+        _failedPosition = Duration(milliseconds: positionMs);
+        _failedPass = index + 1;
+        _restoredMetadata = true;
+        _wantedPlaying = false;
+        _event('restored paused metadata; source deferred until Play');
+        _publish();
       }
     } catch (error) {
       lastError = 'Checkpoint could not be restored: $error';
@@ -676,6 +681,7 @@ class PrototypeHandler extends BaseAudioHandler {
         durations[asset.id] = durationMs;
         _startupStage('duration-prepared');
         spec = SessionSpec(assetId: asset.id, durationMs: durationMs);
+        _restoredMetadata = false;
         _event('loaded ${asset.id} durationMs=$durationMs local=$usingLocal');
       } finally {
         _loading = false;
@@ -789,6 +795,7 @@ class PrototypeHandler extends BaseAudioHandler {
         // descriptor together before yielding; a queued Pause/Stop still wins
         // autoplay, but a later Resume must describe the source actually loaded.
         spec = request;
+        _restoredMetadata = false;
         _sourceUri = preparedSource;
         usingLocal = preparedLocal;
         await _player.setSpeed(request.speed);
@@ -981,6 +988,8 @@ class PrototypeHandler extends BaseAudioHandler {
     void Function(int)? owned,
     bool autoPlay = true,
     bool preserveSleep = false,
+    int initialIndex = 0,
+    Duration initialPosition = Duration.zero,
   }) async {
     final preparingOwner = _preparingOwner = Object();
     _preparingSpec = request;
@@ -1019,6 +1028,8 @@ class PrototypeHandler extends BaseAudioHandler {
         autoPlay: autoPlay,
         preserveSleep: preserveSleep,
         reuseSource: cachedDuration == null,
+        initialIndex: initialIndex,
+        initialPosition: initialPosition,
       );
       if (_generation == token + 1) owned?.call(_generation);
       await starting;
@@ -1174,7 +1185,29 @@ class PrototypeHandler extends BaseAudioHandler {
     }
   }
 
+  // Event diagnostics remain available while idle. Periodic snapshots serve
+  // active transport/loading only and stop entirely at the existing row cap.
+  // This timer has no authority over audio or listening/timing callbacks.
+  void _syncDiagnosticSampling() {
+    if (_disposed ||
+        _diagnosticFile == null ||
+        _diagnosticRows >= 4000 ||
+        (!_wantedPlaying && !_loading) ||
+        _completed ||
+        _stopped ||
+        lastError != null) {
+      _diagnosticTimer?.cancel();
+      _diagnosticTimer = null;
+      return;
+    }
+    _diagnosticTimer ??= Timer.periodic(const Duration(seconds: 5), (_) {
+      recordDiagnostic('sample');
+      _syncDiagnosticSampling();
+    });
+  }
+
   void _publish() {
+    _syncDiagnosticSampling();
     _observeListening();
     if (_loading) return;
     if (_player.processingState == ProcessingState.completed &&
@@ -1274,8 +1307,11 @@ class PrototypeHandler extends BaseAudioHandler {
                   : 'Passage')
             : _assetResolver(current.assetId).name,
         artist: current.isPassage
-            ? '${_assetResolver(current.assetId).name} · Muhammad Bukar Zarami'
-            : 'Muhammad Bukar Zarami · Hafs',
+            ? '${_assetResolver(current.assetId).name} · ${_assetResolver(current.assetId).reciter}'
+            : [
+                _assetResolver(current.assetId).reciter,
+                ?_assetResolver(current.assetId).riwayah,
+              ].join(' · '),
         album: _assetResolver(current.assetId).name,
         duration: Duration(milliseconds: current.lengthMs),
       );
@@ -1343,6 +1379,17 @@ class PrototypeHandler extends BaseAudioHandler {
   Future<void> play() async {
     _listeningDiscontinuity();
     if (spec == null) return;
+    if (_restoredMetadata) {
+      final restored = spec!;
+      final restoredPass = pass;
+      final restoredPosition = position;
+      await _loadAndStart(
+        restored,
+        initialIndex: restoredPass - 1,
+        initialPosition: restoredPosition,
+      );
+      return;
+    }
     if (lastError != null) {
       throw StateError(
         'Load the recording again before resuming after an error.',
@@ -1414,6 +1461,13 @@ class PrototypeHandler extends BaseAudioHandler {
     _listeningDiscontinuity();
     final request = spec;
     if (request == null) return Future.value();
+    if (_restoredMetadata) {
+      _failedPosition = Duration(
+        milliseconds: position.inMilliseconds.clamp(0, request.lengthMs),
+      );
+      _publish();
+      return _persist();
+    }
     final token = ++_generation;
     _recovering = false;
     _localBufferTimer?.cancel();
@@ -1486,6 +1540,12 @@ class PrototypeHandler extends BaseAudioHandler {
     final current = spec;
     if (current == null) return;
     final request = current.withOptions(speed: speed);
+    if (_restoredMetadata) {
+      spec = request;
+      await _persist();
+      _publish();
+      return;
+    }
     if (speed == current.speed) return;
     final token = _generation;
     await _queue(() async {
@@ -1539,6 +1599,12 @@ class PrototypeHandler extends BaseAudioHandler {
     final current = spec;
     if (current == null) return;
     if (gapMs == current.gapMs) return setSpeed(speed);
+    if (_restoredMetadata) {
+      spec = current.withOptions(speed: speed, gapMs: gapMs);
+      await _persist();
+      _publish();
+      return;
+    }
     await _start(
       current.withOptions(speed: speed, gapMs: gapMs),
       autoPlay: playing,

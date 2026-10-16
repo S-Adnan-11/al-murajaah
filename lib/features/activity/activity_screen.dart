@@ -4,18 +4,14 @@ import 'package:flutter/material.dart';
 
 import '../../core/database/app_database.dart';
 import 'activity_overview.dart';
+import '../product/duration_display.dart';
+export '../product/duration_display.dart' show listeningDuration;
 
 String localDate(DateTime time) =>
     '${time.year.toString().padLeft(4, '0')}-${time.month.toString().padLeft(2, '0')}-${time.day.toString().padLeft(2, '0')}';
 
-String listeningDuration(int ms) {
-  if (ms <= 0) return '0 min';
-  if (ms < 60000) return '<1 min';
-  return '${ms ~/ 60000} min';
-}
-
 String recordedListening(DailyActivityData? day) =>
-    day == null ? 'No recorded time' : listeningDuration(day.playedWallMs);
+    day == null ? '0 min' : listeningDuration(day.playedWallMs);
 
 int listeningStreak(List<DailyActivityData> days, DateTime today) {
   final qualified = days
@@ -38,7 +34,7 @@ int listeningStreak(List<DailyActivityData> days, DateTime today) {
 /// UTC arithmetic here steps calendar dates without DST-length assumptions.
 int currentListeningStreak(List<DailyActivityData> days, DateTime today) {
   final qualified = days
-      .where((d) => d.playedWallMs >= 60000)
+      .where((d) => d.playedWallMs > 0)
       .map((d) => d.localDate)
       .toSet();
   var date = DateTime.utc(today.year, today.month, today.day);
@@ -58,7 +54,7 @@ void showListeningStreakDetails(BuildContext context) => showDialog<void>(
   builder: (ctx) => AlertDialog(
     title: const Text('Listening streak'),
     content: const Text(
-      'One minute of credited listening on a local calendar date qualifies that day. If today is still in progress, your streak through yesterday stays available to continue. A missed day breaks the streak. Only recorded activity counts; daily goals are separate.',
+      'Credited listening on a local calendar date qualifies that day. If today is still in progress, your streak through yesterday stays available to continue. A missed day breaks the current streak; your best is retained.',
     ),
     actions: [
       TextButton(
@@ -135,7 +131,11 @@ class _ListeningStreakBadgeState extends State<ListeningStreakBadge>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.local_fire_department_outlined, size: 20),
+                Icon(
+                  Icons.local_fire_department_outlined,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
                 const SizedBox(width: 3),
                 Text('${count ?? '–'}'),
               ],
@@ -168,6 +168,9 @@ class _ActivityScreenState extends State<ActivityScreen>
     with WidgetsBindingObserver {
   late final _days = widget.db.select(widget.db.dailyActivity).watch();
   late final _settings = widget.db.select(widget.db.appSettings).watchSingle();
+  late final _best = widget.db
+      .select(widget.db.listeningStreakRecords)
+      .watchSingle();
   Timer? _dateTimer;
   String? _error;
   @override
@@ -214,21 +217,27 @@ class _ActivityScreenState extends State<ActivityScreen>
         if (!snapshot.hasData || !settings.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
-        return ActivityOverview(
-          days: snapshot.data!,
-          configuredGoalMs: settings.data!.dailyGoalMs,
-          error: _error,
-          saveError: widget.saveError,
-          onGoalChanged: (value) async {
-            try {
-              await saveDailyGoal(widget.db, value);
-              if (mounted) setState(() => _error = null);
-            } catch (_) {
-              if (mounted) {
-                setState(() => _error = 'Goal could not be saved. Try again.');
+        return StreamBuilder(
+          stream: _best,
+          builder: (context, best) => ActivityOverview(
+            bestStreak: best.data?.bestDays ?? 0,
+            days: snapshot.data!,
+            configuredGoalMs: settings.data!.dailyGoalMs,
+            error: _error,
+            saveError: widget.saveError,
+            onGoalChanged: (value) async {
+              try {
+                await saveDailyGoal(widget.db, value);
+                if (mounted) setState(() => _error = null);
+              } catch (_) {
+                if (mounted) {
+                  setState(
+                    () => _error = 'Target could not be saved. Try again.',
+                  );
+                }
               }
-            }
-          },
+            },
+          ),
         );
       },
     ),
@@ -290,15 +299,47 @@ class _TodayActivityState extends State<TodayActivity>
         child: ListTile(
           leading: const Icon(Icons.bar_chart_rounded),
           title: const Text('Today’s listening'),
-          subtitle: Text(
-            snapshot.hasError
-                ? 'Activity unavailable'
-                : listeningDuration(played),
-          ),
+          subtitle: snapshot.hasError
+              ? const Text('Activity unavailable')
+              : ListeningTotal(played),
           trailing: const Icon(Icons.arrow_forward_rounded),
           onTap: widget.open,
         ),
       );
     },
+  );
+}
+
+class ListeningTotal extends StatefulWidget {
+  const ListeningTotal(this.ms, {super.key, this.style});
+  final int ms;
+  final TextStyle? style;
+  @override
+  State<ListeningTotal> createState() => _ListeningTotalState();
+}
+
+class _ListeningTotalState extends State<ListeningTotal> {
+  final _tooltip = GlobalKey<TooltipState>();
+  void _show() => _tooltip.currentState?.ensureTooltipVisible();
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    key: _tooltip,
+    message: listeningEquivalence(widget.ms),
+    excludeFromSemantics: true,
+    child: Semantics(
+      button: true,
+      label:
+          '${listeningDuration(widget.ms)}, ${listeningMinutes(widget.ms)} total minutes. Show time details',
+      excludeSemantics: true,
+      onTap: _show,
+      child: InkWell(
+        onTap: _show,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Text(listeningDuration(widget.ms), style: widget.style),
+        ),
+      ),
+    ),
   );
 }

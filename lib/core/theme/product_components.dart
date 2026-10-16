@@ -181,30 +181,30 @@ class RepeatCountIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scale = MediaQuery.textScalerOf(context).scale(12) / 12;
-    final inside = count != null && count! <= 99 && scale <= 1.3;
-    final colors = Theme.of(context).colorScheme;
+    final inside = count != null && count! <= 99;
+    final theme = Theme.of(context);
+    // Small count text needs the deeper rust on tinted light surfaces.
+    final foreground = theme.brightness == Brightness.light
+        ? const Color(0xffad3b0b)
+        : theme.colorScheme.secondary;
     return ExcludeSemantics(
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            width: 34,
-            height: 34,
+            width: 34 * scale,
+            height: 34 * scale,
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Icon(Icons.loop_rounded, size: 34, color: colors.primary),
+                Icon(Icons.loop_rounded, size: 34 * scale, color: foreground),
                 if (inside)
-                  Container(
-                    color: colors.primaryContainer,
-                    padding: const EdgeInsets.symmetric(horizontal: 1),
-                    child: Text(
-                      '$count',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        color: colors.onPrimaryContainer,
-                      ),
+                  Text(
+                    '$count',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: foreground,
                     ),
                   ),
               ],
@@ -212,12 +212,80 @@ class RepeatCountIcon extends StatelessWidget {
           ),
           if (count != null && !inside) ...[
             const SizedBox(width: 8),
-            Text('$count'),
+            Text('$count', style: TextStyle(color: foreground)),
           ],
         ],
       ),
     );
   }
+}
+
+class AppSearchField extends StatefulWidget {
+  const AppSearchField({
+    super.key,
+    required this.label,
+    required this.onChanged,
+    this.controller,
+  });
+  final String label;
+  final ValueChanged<String> onChanged;
+  final TextEditingController? controller;
+  @override
+  State<AppSearchField> createState() => _AppSearchFieldState();
+}
+
+class _AppSearchFieldState extends State<AppSearchField> {
+  late final _owned = TextEditingController();
+  TextEditingController get _text => widget.controller ?? _owned;
+  @override
+  void dispose() {
+    _owned.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => TextField(
+    controller: _text,
+    textInputAction: TextInputAction.search,
+    decoration: InputDecoration(
+      labelText: widget.label,
+      floatingLabelBehavior: FloatingLabelBehavior.never,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      isDense: true,
+      fillColor: Theme.of(context).colorScheme.primaryContainer,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.outlineVariant,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.primary,
+          width: 2,
+        ),
+      ),
+      prefixIconConstraints: const BoxConstraints(minWidth: 48, minHeight: 50),
+      suffixIconConstraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+      prefixIcon: const Icon(Icons.search_rounded),
+      suffixIcon: ValueListenableBuilder(
+        valueListenable: _text,
+        builder: (_, value, _) => value.text.isEmpty
+            ? const SizedBox.shrink()
+            : IconButton(
+                tooltip: 'Clear search',
+                icon: const Icon(Icons.close_rounded),
+                onPressed: () {
+                  _text.clear();
+                  widget.onChanged('');
+                },
+              ),
+      ),
+    ),
+    onChanged: widget.onChanged,
+  );
 }
 
 abstract final class AppSpace {
@@ -260,6 +328,7 @@ class CollectionTile extends StatelessWidget {
     this.heading,
     this.warning,
     this.starred = false,
+    this.active = false,
   });
   final String title, details;
   final VoidCallback? onOpen;
@@ -267,6 +336,7 @@ class CollectionTile extends StatelessWidget {
   final Widget? leading, heading;
   final String? warning;
   final bool starred;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +349,14 @@ class CollectionTile extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: Text(title, style: theme.textTheme.titleMedium)),
+            Expanded(
+              child: Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
             if (starred)
               Padding(
                 padding: const EdgeInsets.only(left: 6, top: 3),
@@ -308,11 +385,22 @@ class CollectionTile extends StatelessWidget {
       ],
     );
     return Card(
+      color: active
+          ? theme.colorScheme.primaryContainer
+          : theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: active
+              ? theme.colorScheme.primary
+              : theme.colorScheme.outlineVariant,
+        ),
+      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: onOpen,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+          padding: const EdgeInsets.fromLTRB(16, 16, 8, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -353,7 +441,18 @@ class EmptyCollection extends StatelessWidget {
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 32, color: Theme.of(context).colorScheme.primary),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
+          child: Icon(
+            icon,
+            size: 32,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
         const SizedBox(height: 16),
         Text(
           title,
@@ -361,7 +460,12 @@ class EmptyCollection extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 8),
-        Text(message, textAlign: TextAlign.center),
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        ),
         if (action != null) ...[const SizedBox(height: 16), action!],
       ],
     ),

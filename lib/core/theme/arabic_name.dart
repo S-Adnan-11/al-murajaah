@@ -19,6 +19,11 @@ abstract final class ArabicTypography {
         'Noto Sans Arabic',
       ], await rootBundle.loadString(licenseAsset));
     });
+    LicenseRegistry.addLicense(() async* {
+      yield LicenseEntryWithLineBreaks([
+        'Cairo',
+      ], await rootBundle.loadString('assets/fonts/cairo/OFL.txt'));
+    });
   }
 }
 

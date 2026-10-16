@@ -125,14 +125,14 @@ void main() {
               findsOneWidget,
             );
             if (populated) {
-              expect(find.text('5 min daily goal'), findsOneWidget);
+              expect(find.text('5 min fulfillment'), findsOneWidget);
             } else {
-              expect(find.text('15 min daily goal'), findsOneWidget);
+              expect(find.text('15 min fulfillment'), findsOneWidget);
             }
             expect(
               find.bySemanticsLabel(
                 RegExp(
-                  'Friday.*October.*9.*today: ${populated ? '1 min' : 'No recorded time'}',
+                  'Friday.*October.*9.*today: ${populated ? '1 min' : '0 min'}',
                 ),
               ),
               findsOneWidget,
@@ -142,17 +142,17 @@ void main() {
               'activity-${populated ? 'populated' : 'empty'}-${brightness.name}-fixture',
             );
             await tester.scrollUntilVisible(
-              find.text('Daily details'),
+              find.text('Details'),
               180,
               scrollable: find.byType(Scrollable).first,
             );
-            await tester.ensureVisible(find.text('Daily details'));
+            await tester.ensureVisible(find.text('Details'));
             await tester.pumpAndSettle();
-            await tester.tap(find.text('Daily details'));
+            await tester.tap(find.text('Details'));
             await tester.pumpAndSettle();
             final context = tester.element(find.byType(ActivityOverview));
             final missing =
-                '${MaterialLocalizations.of(context).formatMediumDate(DateTime(2026, 10, 4))} · No recorded time';
+                '${MaterialLocalizations.of(context).formatMediumDate(DateTime(2026, 10, 4))} · 0 min';
             await tester.scrollUntilVisible(
               find.text(missing),
               160,
@@ -174,7 +174,7 @@ void main() {
             await tester.tap(find.text('How listening time works'));
             await tester.pumpAndSettle();
             expect(
-              find.textContaining('Speed changes do not multiply minutes.'),
+              find.textContaining('speed changes and seek jumps are excluded.'),
               findsOneWidget,
             );
             expect(tester.takeException(), isNull);

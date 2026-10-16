@@ -19,6 +19,7 @@ import 'package:al_murajaah/features/product/product_shell.dart';
 import 'package:al_murajaah/features/product/passage_library.dart';
 import 'package:al_murajaah/features/product/product_controller.dart';
 import 'package:al_murajaah/features/product/saved_sheet.dart';
+import 'package:al_murajaah/features/support/support_store.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,6 +32,15 @@ class MemoryPassages extends PrototypeStore {
   MemoryPassages(super.root);
   @override
   Future<List<SavedPassage>> passages() async => [];
+}
+
+class ProductSupportStore extends SupportStore {
+  ProductSupportStore() : super(File('unused'));
+  final data = <String, dynamic>{};
+  @override
+  Future<Map<String, dynamic>> read() async => Map.of(data);
+  @override
+  Future<void> update(String key, Object? value) async => data[key] = value;
 }
 
 class ProductTestHandler extends FocusTestHandler {
@@ -267,7 +277,12 @@ void main() {
       pollInterval: const Duration(days: 1),
     );
     final handler = ProductTestHandler(MemoryPassages(root), catalog);
-    final product = ProductDependencies(catalog, assets, queue);
+    final product = ProductDependencies(
+      catalog,
+      assets,
+      queue,
+      supportStore: ProductSupportStore(),
+    );
     return (
       FoundationDependencies(
         db,
@@ -301,6 +316,106 @@ void main() {
     await tester.runAsync(deps.close);
     await tester.runAsync(() => root.delete(recursive: true));
   }
+
+  testWidgets(
+    'focused search opens active player without keyboard; repeats show one status',
+    (tester) async {
+      final (deps, h, root) = (await tester.runAsync(fixture))!;
+      h.spec = SessionSpec(
+        assetId: catalog.chapter(1).assetId,
+        durationMs: catalog.chapter(1).durationMs!,
+        playCount: null,
+      );
+      h.intent = true;
+      h.index = 8;
+      try {
+        await tester.pumpWidget(FoundationApp(handler: h, dependencies: deps));
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.descendant(
+            of: find.byType(NavigationBar),
+            matching: find.text('Surahs'),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'Imran');
+        final input = tester.widget<EditableText>(find.byType(EditableText));
+        expect(input.focusNode.hasFocus, true);
+        await tester.tap(find.byKey(const ValueKey('mini-player-open')));
+        await tester.pumpAndSettle();
+        expect(input.focusNode.hasFocus, false);
+        expect(tester.testTextInput.isVisible, false);
+        await reveal(tester, find.byType(RepeatCountIcon));
+        expect(find.text('∞'), findsOneWidget);
+        expect(find.textContaining('of infinity'), findsNothing);
+        expect(h.index, 8);
+        expect(h.playing, true);
+        expect(h.starts, 0);
+        h.spec = h.spec!.withCount(33);
+        h.revision.value++;
+        await tester.pumpAndSettle();
+        expect(find.text('9 of 33'), findsOneWidget);
+        expect(
+          find.text('33'),
+          findsOneWidget,
+        ); // Only the icon's configured count.
+        expect(find.text('∞'), findsNothing);
+      } finally {
+        await clean(tester, deps, h, root);
+      }
+    },
+  );
+
+  testWidgets(
+    'Developer and native feedback navigation preserve the active playback session',
+    (tester) async {
+      final (deps, h, root) = (await tester.runAsync(fixture))!;
+      final recording = deps.product!.catalog.recordings.first;
+      final active = SessionSpec(
+        assetId: recording.assetId,
+        durationMs: recording.durationMs!,
+      );
+      h.spec = active;
+      h.intent = true;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        const MethodChannel('dev.almurajaah/support'),
+        (_) async => <String, String>{},
+      );
+      try {
+        await tester.pumpWidget(FoundationApp(handler: h, dependencies: deps));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip('Settings'));
+        await tester.pumpAndSettle();
+        await reveal(tester, find.text('Developer'));
+        await tester.tap(find.text('Developer'));
+        await tester.pumpAndSettle();
+        expect(find.text('Developed by S. Adnan'), findsOneWidget);
+        expect(h.spec, same(active));
+        expect(h.playing, true);
+        await tester.pageBack();
+        await tester.pumpAndSettle();
+        await reveal(tester, find.text('Send feedback'));
+        await tester.tap(find.text('Send feedback'));
+        await tester.pumpAndSettle();
+        await tester.enterText(
+          find.byType(TextField),
+          'Native draft while listening',
+        );
+        expect(h.spec, same(active));
+        expect(h.playing, true);
+        await tester.pageBack();
+        await tester.pumpAndSettle();
+        expect(h.spec, same(active));
+        expect(h.playing, true);
+      } finally {
+        tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          const MethodChannel('dev.almurajaah/support'),
+          null,
+        );
+        await clean(tester, deps, h, root);
+      }
+    },
+  );
 
   testWidgets(
     'automatic preparation keeps the next identity and a cancellable Pause control',
@@ -357,7 +472,7 @@ void main() {
       try {
         await tester.pumpWidget(FoundationApp(handler: h, dependencies: deps));
         await tester.pumpAndSettle();
-        for (final label in ['Surahs', 'Saved', 'Activity']) {
+        for (final label in ['Surahs', 'Library', 'Activity']) {
           await tester.tap(
             find.descendant(
               of: find.byType(NavigationBar),
@@ -373,7 +488,7 @@ void main() {
             tester
                 .widget<NavigationBar>(find.byType(NavigationBar))
                 .selectedIndex,
-            ['Home', 'Surahs', 'Saved', 'Activity'].indexOf(label),
+            ['Home', 'Surahs', 'Library', 'Activity'].indexOf(label),
           );
           await tester.binding.handlePopRoute();
           await tester.pumpAndSettle();
@@ -495,7 +610,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Activity'));
         await tester.pumpAndSettle();
-        expect(find.text('Today’s listening'), findsOneWidget);
+        expect(find.text('Today'), findsOneWidget);
         await tester.runAsync(() async {
           await deps.database.customStatement(
             'INSERT INTO listening_sessions (id,asset_id,started_utc_ms,speed) VALUES (?,?,?,1)',
@@ -593,7 +708,7 @@ void main() {
         final first = tester.getRect(cards.at(0)),
             second = tester.getRect(cards.at(1));
         expect(second.top - first.bottom, 12);
-        for (final tabName in ['Home', 'Saved']) {
+        for (final tabName in ['Home', 'Library']) {
           await tester.tap(
             find.descendant(
               of: find.byType(NavigationBar),
@@ -683,11 +798,11 @@ void main() {
           await tester.tap(
             find.descendant(
               of: find.byType(NavigationBar),
-              matching: find.text('Saved'),
+              matching: find.text('Library'),
             ),
           );
           await tester.pumpAndSettle();
-          expect(find.text('Saved passages'), findsOneWidget);
+          expect(find.widgetWithText(AppBar, 'Library'), findsOneWidget);
           await reveal(tester, find.text(longName));
           final card = find.ancestor(
             of: find.text(longName),
@@ -1152,7 +1267,7 @@ void main() {
         await tester.tap(
           find.descendant(
             of: find.byType(NavigationBar),
-            matching: find.text('Saved'),
+            matching: find.text('Library'),
           ),
         );
         await tester.pumpAndSettle();
@@ -1379,8 +1494,8 @@ void main() {
         expect(h.starts, 0);
         expect(h.pass, 3);
         expect(h.position.inMilliseconds, 8500);
-        await reveal(tester, find.text('Pass 3 of 33'));
-        expect(find.text('Pass 3 of 33'), findsOneWidget);
+        await reveal(tester, find.text('3 of 33'));
+        expect(find.text('3 of 33'), findsOneWidget);
       } finally {
         await clean(tester, deps, h, root);
       }
@@ -1547,7 +1662,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.byType(ProductShell), findsOneWidget);
         expect(find.textContaining('DESIGN PREVIEW'), findsNothing);
-        await tester.tap(find.text('Browse all surahs'));
+        await tester.tap(find.text('All surahs'));
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextField), '41');
         await tester.pumpAndSettle();
@@ -1567,7 +1682,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('Theme'));
         await tester.pumpAndSettle();
-        await tester.tap(find.widgetWithText(ChoiceChip, 'Dark'));
+        await tester.tap(find.text('Dark'));
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 30)),
         );
@@ -1634,7 +1749,7 @@ void main() {
         h.elapsed = const Duration(milliseconds: 1000);
         h.revision.value++;
         await tester.pump();
-        expect(find.text('Pass 2 of 3'), findsOneWidget);
+        expect(find.text('2 of 3'), findsOneWidget);
         await tester.scrollUntilVisible(
           find.textContaining('In full surah 0:03'),
           -200,
@@ -1709,7 +1824,10 @@ void main() {
       );
       await tester.tap(find.byTooltip('Close player'));
       await tester.pumpAndSettle();
-      expect(find.text('At your own pace').hitTestable(), findsOneWidget);
+      expect(
+        find.text('Let not! A day fades away...').hitTestable(),
+        findsOneWidget,
+      );
       expect(h.spec!.assetId, catalog.chapter(108).assetId);
       expect(tester.takeException(), isNull);
     } finally {
@@ -2004,7 +2122,7 @@ void main() {
         await tester.tap(
           find.descendant(
             of: find.byType(NavigationBar),
-            matching: find.text('Saved'),
+            matching: find.text('Library'),
           ),
         );
         await tester.pumpAndSettle();

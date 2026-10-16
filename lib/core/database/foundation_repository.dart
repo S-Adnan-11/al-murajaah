@@ -11,7 +11,11 @@ class FoundationRepository {
   final AppDatabase db;
 
   Future<String> readTheme() async =>
-      (await db.select(db.appSettings).getSingle()).theme;
+      (await (db.selectOnly(
+        db.appSettings,
+      )..addColumns([db.appSettings.theme])).getSingle()).read(
+        db.appSettings.theme,
+      )!;
 
   Future<void> saveTheme(String theme) async {
     if (!{'system', 'light', 'dark'}.contains(theme)) {
@@ -101,6 +105,9 @@ class FoundationRepository {
       }
       return false;
     }
+    final previousDay = await (db.select(
+      db.dailyActivity,
+    )..where((d) => d.localDate.equals(localDate))).getSingleOrNull();
     await db.customStatement(
       'INSERT OR IGNORE INTO daily_activity '
       '(local_date,timezone_policy,played_wall_ms,goal_ms,qualified) VALUES (?,?,0,?,0)',
@@ -128,6 +135,9 @@ class FoundationRepository {
       [wallMs, sessionId],
     );
     db.markTablesUpdated([db.dailyActivity, db.listeningSessions]);
+    if ((previousDay?.playedWallMs ?? 0) == 0) {
+      await db.reconcileBestListeningStreak();
+    }
     return true;
   });
 

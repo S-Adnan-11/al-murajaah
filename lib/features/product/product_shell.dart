@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import '../../app/product_dependencies.dart';
 import '../../core/audio/prototype_handler.dart';
 import '../../core/audio/session_spec.dart';
+import '../../core/audio/recording_source.dart';
 import '../../core/audio/transport_seek_bar.dart';
 import '../../core/theme/arabic_name.dart';
 import '../../core/theme/product_components.dart';
+import '../../core/theme/brand.dart';
+import '../../core/theme/home_reading.dart';
 import '../catalog/catalog.dart';
-import '../catalog/catalog_repository.dart';
 import '../activity/activity_screen.dart';
 import '../settings/product_settings.dart';
 import 'aurora_backdrop.dart';
@@ -45,6 +47,7 @@ class _ProductShellState extends State<ProductShell> {
   StreamSubscription<bool>? notificationClicks;
   String query = '';
   final search = TextEditingController();
+  final homeScroll = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -52,7 +55,7 @@ class _ProductShellState extends State<ProductShell> {
     unawaited(controller.initialize());
     notificationClicks = AudioService.notificationClicked.listen((clicked) {
       if (clicked && mounted && !editing) {
-        Navigator.of(context).popUntil((route) => route is PageRoute);
+        Navigator.of(context).popUntil((route) => route.isFirst);
         starredScreen = false;
         _openCurrent();
       }
@@ -65,6 +68,7 @@ class _ProductShellState extends State<ProductShell> {
 
   @override
   void dispose() {
+    homeScroll.dispose();
     controller.removeListener(_refresh);
     notificationClicks?.cancel();
     controller.dispose();
@@ -72,22 +76,28 @@ class _ProductShellState extends State<ProductShell> {
     super.dispose();
   }
 
-  void _open(CatalogRecording recording) {
+  void _open(RecordingSource recording) {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() => player = true);
     unawaited(controller.select(recording));
   }
 
   void _openCurrent() {
+    FocusManager.instance.primaryFocus?.unfocus();
     controller.showActive();
     setState(() => player = true);
   }
+
+  bool get _originActive =>
+      widget.handler.displaySession?.assetId.startsWith('brother-') == true ||
+      widget.handler.displaySession?.assetId.startsWith('origin-') == true;
 
   void _openSaved(
     LibraryPassage passage, {
     bool playNow = false,
     bool edit = false,
   }) {
+    FocusManager.instance.primaryFocus?.unfocus();
     controller.viewSaved(passage);
     setState(() => player = true);
     if (playNow) unawaited(controller.playViewed(restart: true));
@@ -120,12 +130,12 @@ class _ProductShellState extends State<ProductShell> {
     });
   }
 
-  void _playRow(CatalogRecording recording) {
+  void _playRow(RecordingSource recording) {
     _open(recording);
     unawaited(controller.playViewed(restart: true));
   }
 
-  Future<void> _download(CatalogRecording recording) async {
+  Future<void> _download(RecordingSource recording) async {
     try {
       await widget.dependencies.downloads.enqueue(recording.audioAsset);
     } catch (error) {
@@ -136,7 +146,7 @@ class _ProductShellState extends State<ProductShell> {
   void _notice(String value) =>
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(value)));
-  Future<void> _delete(CatalogRecording recording) async {
+  Future<void> _delete(RecordingSource recording) async {
     final local = controller.localSourceInUse(recording);
     final confirm = await showDialog<bool>(
       context: context,
@@ -399,9 +409,23 @@ class _ProductShellState extends State<ProductShell> {
       MaterialPageRoute<void>(
         builder: (settingsContext) => ProductSettings(
           db: widget.dependencies.downloads.db,
+          homeText: widget.dependencies.homeText,
           listening: widget.dependencies.listening,
           catalogWarning: widget.dependencies.catalogWarning,
-          onImported: controller.refreshSaved,
+          handler: widget.handler,
+          supportStore: widget.dependencies.supportStore,
+          openRecording: (recording, playNow) {
+            Navigator.of(settingsContext).popUntil((route) => route.isFirst);
+            if (playNow) {
+              _playRow(recording);
+            } else {
+              _open(recording);
+            }
+          },
+          onImported: () async {
+            await widget.dependencies.homeText.restore();
+            await controller.refreshSaved();
+          },
           downloaded: () {
             Navigator.of(settingsContext).pop();
             _filteredSurahs(downloaded: true);
@@ -458,23 +482,29 @@ class _ProductShellState extends State<ProductShell> {
                   }),
                 )
               : null,
-          title: Text(
-            player
-                ? 'Player'
-                : starredScreen
-                ? 'Starred'
-                : tab == 2
-                ? 'Saved passages'
-                : tab == 0
-                ? (MediaQuery.textScalerOf(context).scale(16) > 22
-                      ? 'Home'
-                      : 'Al-Muraja’ah')
-                : tab == 3
-                ? 'Activity'
-                : 'Surahs',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          title:
+              !player &&
+                  !starredScreen &&
+                  tab == 0 &&
+                  MediaQuery.textScalerOf(context).scale(16) <= 22
+              ? const BrandWordmark()
+              : Text(
+                  player
+                      ? 'Player'
+                      : starredScreen
+                      ? 'Starred'
+                      : tab == 2
+                      ? 'Library'
+                      : tab == 0
+                      ? (MediaQuery.textScalerOf(context).scale(16) > 22
+                            ? 'Home'
+                            : 'Al-Murāja\'ah')
+                      : tab == 3
+                      ? 'Activity'
+                      : 'Surahs',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
           actions: [
             if (!player && !starredScreen && tab == 0)
               ListeningStreakBadge(
@@ -492,9 +522,18 @@ class _ProductShellState extends State<ProductShell> {
           children: [
             if (controller.message != null)
               MaterialBanner(
+                leading: Icon(
+                  Icons.error_outline_rounded,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
                 content: Text(controller.message!),
                 actions: [
                   TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context)
+                          .snackBarTheme
+                          .actionTextColor,
+                    ),
                     onPressed: () {
                       controller.message = null;
                       _refresh();
@@ -513,7 +552,10 @@ class _ProductShellState extends State<ProductShell> {
                       enabled: !player && !starredScreen,
                       child: MainTabPager(
                         index: tab,
-                        onChanged: (value) => setState(() => tab = value),
+                        onChanged: (value) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          setState(() => tab = value);
+                        },
                         pages: [
                           _home(context),
                           _surahs(context),
@@ -577,6 +619,7 @@ class _ProductShellState extends State<ProductShell> {
                     NavigationBar(
                       selectedIndex: tab,
                       onDestinationSelected: (value) {
+                        FocusManager.instance.primaryFocus?.unfocus();
                         if (value == 2) {
                           _saved();
                           return;
@@ -600,7 +643,7 @@ class _ProductShellState extends State<ProductShell> {
                         ),
                         NavigationDestination(
                           icon: Icon(Icons.bookmark_border_rounded),
-                          label: 'Saved',
+                          label: 'Library',
                         ),
                         NavigationDestination(
                           icon: Icon(Icons.bar_chart_rounded),
@@ -616,22 +659,18 @@ class _ProductShellState extends State<ProductShell> {
   }
 
   Widget _home(BuildContext context) {
-    final text = Theme.of(context).textTheme;
     final recent = List<LibraryPassage>.of(controller.saved)
       ..sort((a, b) => b.row.updatedUtcMs.compareTo(a.row.updatedUtcMs));
     return ListView(
       key: const PageStorageKey('product-home'),
+      controller: homeScroll,
       padding: AppSpace.page,
       children: [
-        Text(
-          'At your own pace',
-          style: text.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            height: 1.15,
-          ),
+        HomeReading(
+          active: tab == 0 && !player && !starredScreen,
+          scroll: homeScroll,
+          preferences: widget.dependencies.homeText,
         ),
-        const SizedBox(height: 8),
-        Text('A little revision, every day.', style: text.bodyMedium),
         const SizedBox(height: 24),
         ListenableBuilder(
           listenable: widget.handler.revision,
@@ -654,7 +693,7 @@ class _ProductShellState extends State<ProductShell> {
             TextButton.icon(
               onPressed: _allSurahs,
               icon: const Icon(Icons.menu_book_outlined),
-              label: const Text('Browse all surahs'),
+              label: const Text('All surahs'),
             ),
             TextButton.icon(
               onPressed: () => _saved(starred: true),
@@ -704,11 +743,22 @@ class _ProductShellState extends State<ProductShell> {
   }
 
   Widget _continueListening(BuildContext context) {
-    final text = Theme.of(context).textTheme;
+    final theme = Theme.of(context), text = theme.textTheme;
+    final light = theme.brightness == Brightness.light;
+    final surface = light
+        ? const Color(0xffeaf8f6)
+        : theme.colorScheme.primaryContainer;
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: light
+          ? BorderSide(color: theme.colorScheme.primary.withValues(alpha: .18))
+          : BorderSide.none,
+    );
     final current = controller.activeRecording;
     if (widget.handler.displaySession == null) {
       return Card(
-        color: Theme.of(context).colorScheme.primaryContainer,
+        color: surface,
+        shape: shape,
         child: ListTile(
           leading: const Icon(Icons.headphones_rounded),
           title: const Text('Begin listening'),
@@ -719,7 +769,8 @@ class _ProductShellState extends State<ProductShell> {
       );
     }
     return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
+      color: surface,
+      shape: shape,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -735,7 +786,7 @@ class _ProductShellState extends State<ProductShell> {
                     ),
                   ),
                 ),
-                if (current != null)
+                if (current != null && current.arabicName.isNotEmpty)
                   Flexible(
                     child: Align(
                       alignment: Alignment.centerRight,
@@ -758,7 +809,9 @@ class _ProductShellState extends State<ProductShell> {
             ),
             const SizedBox(height: 4),
             Text(
-              widget.handler.displaySession!.isPassage
+              _originActive
+                  ? '${widget.handler.displaySession!.isPassage ? '${controller.activeName} · ' : ''}${widget.dependencies.assets[widget.handler.displaySession?.assetId]?.reciter ?? ''}'
+                  : widget.handler.displaySession!.isPassage
                   ? '${controller.activeName} · Zarami'
                   : 'Zarami · Hafs',
               style: text.bodySmall,
@@ -804,14 +857,10 @@ class _ProductShellState extends State<ProductShell> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextField(
+                AppSearchField(
                   controller: search,
+                  label: 'Search surahs',
                   onChanged: (value) => setState(() => query = value),
-                  decoration: const InputDecoration(
-                    labelText: 'Search surahs',
-                    hintText: 'Name or number',
-                    prefixIcon: Icon(Icons.search_rounded),
-                  ),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -932,7 +981,7 @@ class _ProductShellState extends State<ProductShell> {
 
   Widget _player(
     BuildContext context,
-    CatalogRecording? recording,
+    RecordingSource? recording,
     SessionSpec? spec,
   ) {
     final text = Theme.of(context).textTheme,
@@ -998,7 +1047,8 @@ class _ProductShellState extends State<ProductShell> {
                         color: colors.primary,
                       ),
                       const SizedBox(height: 10),
-                      if (recording != null) ArabicName(recording.arabicName),
+                      if (recording != null && recording.arabicName.isNotEmpty)
+                        ArabicName(recording.arabicName),
                       const SizedBox(height: 8),
                       Row(
                         children: [
@@ -1034,7 +1084,10 @@ class _ProductShellState extends State<ProductShell> {
                           textAlign: TextAlign.center,
                           style: text.bodyMedium,
                         ),
-                      Text('Zarami · Hafs', style: text.bodySmall),
+                      Text(
+                        recording?.credit ?? 'Zarami · Hafs',
+                        style: text.bodySmall,
+                      ),
                     ],
                   ),
                 ),
@@ -1047,6 +1100,8 @@ class _ProductShellState extends State<ProductShell> {
               label: Text(
                 spec?.isPassage == true
                     ? 'Passage · ${playbackTime(spec!.startMs)}–${playbackTime(spec.endMs)}'
+                    : spec?.isOrigin == true
+                    ? 'Recitation'
                     : 'Full surah',
               ),
             ),
@@ -1072,7 +1127,11 @@ class _ProductShellState extends State<ProductShell> {
                 !widget.handler.loading,
             onSeek: controller.seek,
             semanticFormatter: (value) =>
-                '${playbackTime(value.round())} into ${spec?.isPassage == true ? 'passage' : 'surah'}',
+                '${playbackTime(value.round())} into ${spec?.isPassage == true
+                    ? 'passage'
+                    : spec?.isOrigin == true
+                    ? 'recording'
+                    : 'surah'}',
             positionLabels: (preview) => Column(
               children: [
                 Row(
@@ -1092,7 +1151,7 @@ class _ProductShellState extends State<ProductShell> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
-                      'In full surah ${playbackTime(spec!.relativeToSource(preview))} · Passage length ${passageLengthLabel(spec.lengthMs)}',
+                      'In ${spec!.sourceLabel} ${playbackTime(spec.relativeToSource(preview))} · Passage length: ${passageLengthLabel(spec.lengthMs)}',
                       textAlign: TextAlign.center,
                       style: text.bodySmall,
                     ),
@@ -1154,12 +1213,12 @@ class _ProductShellState extends State<ProductShell> {
                       ),
                       if (controller.viewedBusy ||
                           (isActive && widget.handler.loading))
-                        const SizedBox(
+                        SizedBox(
                           width: 62,
                           height: 62,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: colors.onPrimary,
                           ),
                         ),
                     ],
@@ -1183,6 +1242,10 @@ class _ProductShellState extends State<ProductShell> {
             runSpacing: 8,
             children: [
               FilledButton.tonalIcon(
+                style: FilledButton.styleFrom(
+                  backgroundColor: colors.primaryContainer,
+                  foregroundColor: colors.onPrimaryContainer,
+                ),
                 onPressed: ready ? _passage : null,
                 icon: const Icon(Icons.content_cut_rounded),
                 label: const Text('Set passage'),
@@ -1208,7 +1271,7 @@ class _ProductShellState extends State<ProductShell> {
                     selectedText: spec?.playCount == null ? 'Continuous' : '',
                     semanticLabel: spec?.playCount == null
                         ? 'Continuous total plays'
-                        : '${spec!.playCount} total plays. ${spec.repeatOutcome}',
+                        : '${spec!.playCount} total plays${spec.continuesToNext ? '. Next surah follows.' : ''}',
                     value: spec?.playCount ?? 0,
                     options: {
                       for (final count in {
@@ -1233,12 +1296,12 @@ class _ProductShellState extends State<ProductShell> {
                         : null,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    spec?.repeatOutcome ?? 'Play once, then next surah',
-                    style: text.bodySmall,
-                  ),
+                  if (spec == null || spec.continuesToNext)
+                    Text('➜', style: text.bodySmall),
                   if (isActive)
-                    Text(controller.countLabel, style: text.labelLarge),
+                    Text(controller.countLabel, style: text.labelLarge)
+                  else if (spec?.playCount == null && spec != null)
+                    Text('∞', style: text.labelLarge),
                 ],
               ),
             ),
@@ -1271,18 +1334,34 @@ class _ProductShellState extends State<ProductShell> {
               if (spec?.isPassage == true)
                 TextButton(
                   onPressed: () => unawaited(controller.playFullViewed()),
-                  child: const Text('Play full surah'),
+                  child: Text(
+                    spec?.isOrigin == true
+                        ? 'Play full recording'
+                        : 'Play full surah',
+                  ),
                 ),
               if (recording != null && spec?.isPassage != true)
                 TextButton.icon(
                   onPressed: () => unawaited(controller.favorite(recording)),
                   icon: Icon(
-                    controller.favorites.contains('${recording.number}')
+                    (recording.isOrigin
+                            ? controller.recordingFavorites.contains(
+                                recording.assetId,
+                              )
+                            : controller.favorites.contains(
+                                '${recording.number}',
+                              ))
                         ? Icons.star_rounded
                         : Icons.star_border_rounded,
                   ),
                   label: Text(
-                    controller.favorites.contains('${recording.number}')
+                    recording.isOrigin
+                        ? controller.recordingFavorites.contains(
+                                recording.assetId,
+                              )
+                              ? 'Unstar recitation'
+                              : 'Star recitation'
+                        : controller.favorites.contains('${recording.number}')
                         ? 'Unstar surah'
                         : 'Star surah',
                   ),
@@ -1314,7 +1393,7 @@ class _ProductShellState extends State<ProductShell> {
                     Text(download.label, style: text.titleMedium),
                     const SizedBox(height: 6),
                     Text(
-                      '${(recording.byteSize / 1000000).toStringAsFixed(1)} MB · Offline playback after download',
+                      '${(recording.byteSize / 1000000).toStringAsFixed(1)} MB · Offline playback.',
                     ),
                     if (download.active)
                       Padding(
@@ -1394,7 +1473,9 @@ class _ProductShellState extends State<ProductShell> {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${widget.handler.displaySession?.isPassage == true ? '${controller.activeName} · ' : ''}Zarami · ${controller.status}',
+                    _originActive
+                        ? '${widget.handler.displaySession?.isPassage == true ? '${controller.activeName} · ' : ''}${widget.dependencies.assets[widget.handler.displaySession?.assetId]?.reciter ?? ''} · ${controller.status}'
+                        : '${widget.handler.displaySession?.isPassage == true ? '${controller.activeName} · ' : ''}Zarami · ${controller.status}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

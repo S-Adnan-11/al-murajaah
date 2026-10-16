@@ -1,7 +1,32 @@
+import java.util.Properties
+import java.security.KeyStore
+import java.security.MessageDigest
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Dedicated production signer approved before the first public release.
+// The legacy debug-origin key remains private for existing test installations.
+val productionSigningFile = rootProject.file("production/key.properties")
+val productionSigning = Properties()
+if (productionSigningFile.isFile) {
+    productionSigningFile.inputStream().use { productionSigning.load(it) }
+    val store = KeyStore.getInstance("JKS")
+    val password = productionSigning.getProperty("storePassword").toCharArray()
+    file(productionSigning.getProperty("storeFile")).inputStream().use { store.load(it, password) }
+    val certificate = store.getCertificate(productionSigning.getProperty("keyAlias"))
+    val fingerprint = MessageDigest.getInstance("SHA-256").digest(certificate.encoded)
+        .joinToString("") { "%02x".format(it) }
+    check(fingerprint == "acac6c5bc482ea7c9246fd233fc59efe707b65779c40b17f9d663b3937f0737d") {
+        "Production signer differs from the approved certificate. Do not substitute another key."
+    }
+} else {
+    check(gradle.startParameter.taskNames.none { it.contains("release", ignoreCase = true) }) {
+        "Release signing requires private android/production/key.properties and the preserved production key."
+    }
 }
 
 android {
@@ -15,7 +40,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // Established installed identity; retain for data-preserving updates.
         applicationId = "dev.almurajaah.al_murajaah.diagnostic"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
@@ -29,11 +54,22 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (productionSigningFile.isFile) {
+            create("productionRelease") {
+                storeFile = file(productionSigning.getProperty("storeFile"))
+                storePassword = productionSigning.getProperty("storePassword")
+                keyAlias = productionSigning.getProperty("keyAlias")
+                keyPassword = productionSigning.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("productionRelease")
+            isMinifyEnabled = true
+            isShrinkResources = true
         }
     }
 }

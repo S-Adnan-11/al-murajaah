@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:audio_service/audio_service.dart';
@@ -13,8 +14,10 @@ import 'core/audio/session_spec.dart';
 import 'core/audio/transport_seek_bar.dart';
 import 'core/theme/appearance_screen.dart';
 import 'core/theme/themed_app.dart';
+import 'core/theme/brand.dart';
 import 'app/foundation_app.dart';
 import 'app/product_dependencies.dart';
+import 'features/support/support_content.dart';
 
 Future<PrototypeHandler> createHandler(
   PrototypeStore store, {
@@ -24,6 +27,17 @@ Future<PrototypeHandler> createHandler(
     builder: () => PrototypeHandler(
       store,
       listeningRecorder: product?.listening,
+      knownDuration: product == null
+          ? null
+          : (id) =>
+                product.catalog.recordings
+                    .where((r) => r.assetId == id)
+                    .firstOrNull
+                    ?.durationMs ??
+                storyRecordings
+                    .where((r) => r.assetId == id)
+                    .firstOrNull
+                    ?.durationMs,
       assetResolver: product == null
           ? null
           : (id) =>
@@ -81,8 +95,9 @@ Future<void> main() async {
 /// Draw a focusable Flutter window before storage, native media initialization
 /// or retained-file verification. A pending/failed restore stays visible.
 class DiagnosticBootstrap extends StatefulWidget {
-  const DiagnosticBootstrap({super.key, this.loader});
+  const DiagnosticBootstrap({super.key, this.loader, this.firstFrameReady});
   final Future<PrototypeHandler> Function(void Function(String))? loader;
+  final Future<void> Function()? firstFrameReady;
   @override
   State<DiagnosticBootstrap> createState() => _DiagnosticBootstrapState();
 }
@@ -91,13 +106,87 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
   PrototypeHandler? handler;
   FoundationDependencies? foundation;
   Object? error;
+  bool nativeStarted = false;
   String status = 'Opening your listening library…';
   final clock = Stopwatch()..start();
+  Timer? _entranceTimer;
+  bool _entranceFinished = false;
+  static const entranceDuration = Duration(milliseconds: 2500);
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _initialize());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(_begin());
+    });
+  }
+
+  Future<void> _begin() async {
+    final firstFrameReady = widget.firstFrameReady;
+    if (firstFrameReady != null) {
+      await firstFrameReady();
+    } else if (widget.loader == null) {
+      // Paint the entrance and name before local preparation competes for the
+      // platform and SQLite startup threads. Preparation and dwell then overlap.
+      await WidgetsBinding.instance.waitUntilFirstFrameRasterized;
+    }
+    if (!mounted) return;
+    unawaited(_present());
+    unawaited(_initialize());
+  }
+
+  Future<void> _present() async {
+    void finish() {
+      if (!mounted || _entranceFinished) return;
+      debugPrint(
+        'ENTRANCE_END elapsedMs=${clock.elapsedMilliseconds} localReady=${handler != null}',
+      );
+      setState(() => _entranceFinished = true);
+    }
+
+    // The optional native timestamp must never gate the presentation timer.
+    _entranceTimer = Timer(entranceDuration, finish);
+    var nativeElapsed = 0;
+    try {
+      nativeElapsed =
+          await const MethodChannel('dev.almurajaah/support')
+              .invokeMethod<int>('entranceElapsedMs')
+              .timeout(const Duration(milliseconds: 250)) ??
+          0;
+    } on MissingPluginException {
+      // Other platforms count from the first rendered Flutter entrance.
+    } on PlatformException {
+      // Local presentation remains bounded if the optional timestamp fails.
+    } on TimeoutException {
+      // Keep the first-frame deadline if Android's platform thread is delayed.
+    }
+    if (!mounted || _entranceFinished) return;
+    if (nativeElapsed <= 0) {
+      debugPrint(
+        'ENTRANCE firstFlutterMs=${clock.elapsedMilliseconds} nativeElapsedMs=unavailable fallbackMs=2500',
+      );
+      return;
+    }
+    final elapsed = nativeElapsed;
+    final remaining = (entranceDuration.inMilliseconds - elapsed).clamp(
+      0,
+      entranceDuration.inMilliseconds,
+    );
+    debugPrint(
+      'ENTRANCE firstFlutterMs=${clock.elapsedMilliseconds} nativeElapsedMs=$nativeElapsed remainingMs=$remaining',
+    );
+    _entranceTimer?.cancel();
+    if (remaining == 0) {
+      finish();
+    } else {
+      _entranceTimer = Timer(Duration(milliseconds: remaining), finish);
+    }
+  }
+
+  @override
+  void dispose() {
+    _entranceTimer?.cancel();
+    super.dispose();
   }
 
   void _status(String value) {
@@ -122,7 +211,7 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
           foundation!.database,
           store,
         );
-        _status('Starting the native player and restoring a paused session…');
+        nativeStarted = true;
         result = await createHandler(store, product: foundation!.product);
       }
       result.recordDiagnostic(
@@ -139,7 +228,7 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
 
   @override
   Widget build(BuildContext context) {
-    if (handler != null) {
+    if (handler != null && _entranceFinished) {
       if (foundation != null) {
         return FoundationApp(handler: handler!, dependencies: foundation!);
       }
@@ -147,20 +236,18 @@ class _DiagnosticBootstrapState extends State<DiagnosticBootstrap> {
     }
     return ThemedApp(
       appearance: foundation?.appearance,
-      home: Scaffold(
-        appBar: AppBar(title: const Text("Al-Muraja'ah")),
-        body: Padding(
-          padding: const EdgeInsets.all(24),
-          child: ListView(
-            children: [
-              if (error == null) const LinearProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(error == null ? status : 'Audio setup failed: $error'),
-              if (error != null)
-                const Text('Close and reopen to retry audio setup.'),
-            ],
-          ),
-        ),
+      home: BrandedStartup(
+        loading: _entranceFinished && error == null,
+        failed: error != null,
+        retry: nativeStarted
+            ? null
+            : () async {
+                await foundation?.close();
+                foundation = null;
+                if (!mounted) return;
+                setState(() => error = null);
+                await _initialize();
+              },
       ),
     );
   }
@@ -309,7 +396,7 @@ class _DiagnosticScreenState extends State<DiagnosticScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text("Al-Muraja'ah"),
+      title: const Text("Al-Murāja'ah"),
       actions: [
         IconButton(
           tooltip: 'Appearance',

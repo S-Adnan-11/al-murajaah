@@ -60,7 +60,7 @@ class _ThemedAppState extends State<ThemedApp> {
       valueListenable: mode,
       builder: (context, value, _) => widget.router != null
           ? MaterialApp.router(
-              title: "Al-Muraja'ah",
+              title: "Al-Murāja'ah",
               debugShowCheckedModeBanner: false,
               theme: AppTheme.forBrightness(Brightness.light),
               darkTheme: AppTheme.forBrightness(Brightness.dark),
@@ -69,7 +69,7 @@ class _ThemedAppState extends State<ThemedApp> {
               builder: widget.builder,
             )
           : MaterialApp(
-              title: "Al-Muraja'ah",
+              title: "Al-Murāja'ah",
               debugShowCheckedModeBanner: false,
               theme: AppTheme.forBrightness(Brightness.light),
               darkTheme: AppTheme.forBrightness(Brightness.dark),

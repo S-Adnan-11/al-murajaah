@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@color/al_murajaah_splash_background</item>
+        <item name="android:windowSplashScreenBackground">@color/al_murajaah_splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/al_murajaah_splash_icon</item>
+    </style>
+</resources>

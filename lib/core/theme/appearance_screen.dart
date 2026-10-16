@@ -34,7 +34,7 @@ class AppearanceScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Turquoise, deep navy and a little warmth. Choose how Al-Muraja’ah looks on your phone.',
+                      'Turquoise, deep navy and a little warmth. Choose how Al-Murāja\'ah looks on your phone.',
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: colors.onSurfaceVariant,
                       ),
@@ -95,7 +95,7 @@ class AppearanceScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              "Al-Muraja'ah",
+                              "Al-Murāja'ah",
                               style: theme.textTheme.headlineSmall,
                             ),
                             const SizedBox(height: 8),
@@ -180,7 +180,7 @@ class AppearanceScreen extends StatelessWidget {
                             TextButton(
                               onPressed: () => showLicensePage(
                                 context: context,
-                                applicationName: "Al-Muraja'ah",
+                                applicationName: "Al-Murāja'ah",
                               ),
                               child: const Text('Font and software licenses'),
                             ),

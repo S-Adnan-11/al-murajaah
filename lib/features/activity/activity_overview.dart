@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../core/database/app_database.dart';
 import '../../core/theme/product_components.dart';
 import 'activity_screen.dart';
+import '../product/duration_display.dart';
 
 /// Presentation only: previews can supply isolated data without recording time.
 class ActivityOverview extends StatelessWidget {
@@ -16,6 +17,7 @@ class ActivityOverview extends StatelessWidget {
     this.now,
     this.error,
     this.saveError,
+    this.bestStreak = 0,
   });
   final List<DailyActivityData> days;
   final int configuredGoalMs;
@@ -23,6 +25,7 @@ class ActivityOverview extends StatelessWidget {
   final DateTime? now;
   final String? error;
   final ValueNotifier<String?>? saveError;
+  final int bestStreak;
 
   @override
   Widget build(BuildContext context) {
@@ -54,16 +57,17 @@ class ActivityOverview extends StatelessWidget {
       children: [
         Card(
           key: const ValueKey('today-listening-summary'),
+          semanticContainer: false,
           color: theme.colorScheme.primaryContainer,
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Today’s listening', style: theme.textTheme.titleMedium),
+                Text('Today', style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
-                Text(
-                  listeningDuration(played),
+                ListeningTotal(
+                  played,
                   style: theme.textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -72,7 +76,7 @@ class ActivityOverview extends StatelessWidget {
                 if (goal > 0) ...[
                   Semantics(
                     label:
-                        'Daily goal ${(played / goal * 100).clamp(0, 100).round()} percent',
+                        'Fulfillment ${(played / goal * 100).clamp(0, 100).round()} percent',
                     child: LinearProgressIndicator(
                       value: (played / goal).clamp(0, 1),
                       minHeight: 6,
@@ -80,13 +84,39 @@ class ActivityOverview extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Text(
-                    today?.qualified == 1
-                        ? 'Today’s goal reached'
-                        : '${listeningDuration(goal)} daily goal',
+                ],
+                Semantics(
+                  label: goal == 0
+                      ? 'Target off'
+                      : played >= goal
+                      ? 'Fulfilled'
+                      : 'Fulfilling',
+                  excludeSemantics: true,
+                  child: Row(
+                    children: [
+                      Icon(
+                        goal > 0 && played >= goal
+                            ? Icons.check_circle_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        color: goal > 0 && played >= goal
+                            ? theme.brightness == Brightness.dark
+                                  ? const Color(0xff7bdc9a)
+                                  : const Color(0xff166534)
+                            : theme.colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          goal == 0
+                              ? 'Target off'
+                              : played >= goal
+                              ? 'Fulfilled'
+                              : '${listeningDuration(goal)} fulfillment',
+                        ),
+                      ),
+                    ],
                   ),
-                ] else
-                  const Text('Daily goal is off'),
+                ),
                 const SizedBox(height: 20),
                 InkWell(
                   onTap: () => showListeningStreakDetails(context),
@@ -97,20 +127,33 @@ class ActivityOverview extends StatelessWidget {
                       children: [
                         Icon(
                           Icons.local_fire_department_outlined,
-                          color: theme.colorScheme.primary,
+                          color: theme.colorScheme.secondary,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Current listening streak',
-                                style: theme.textTheme.bodyMedium,
-                              ),
+                              Text('Streak', style: theme.textTheme.bodyMedium),
                               Text(
                                 '${currentListeningStreak(days, date)} ${currentListeningStreak(days, date) == 1 ? 'day' : 'days'}',
                                 style: theme.textTheme.titleLarge,
+                              ),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 6,
+                                children: [
+                                  Icon(
+                                    Icons.emoji_events_outlined,
+                                    size: 18,
+                                    color: theme.colorScheme.secondary,
+                                  ),
+                                  Text(
+                                    'Best Streak · $bestStreak ${bestStreak == 1 ? 'day' : 'days'}',
+                                    style: theme.textTheme.labelLarge,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -140,10 +183,7 @@ class ActivityOverview extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  listeningDuration(weeklyMs),
-                  style: theme.textTheme.headlineSmall,
-                ),
+                ListeningTotal(weeklyMs, style: theme.textTheme.headlineSmall),
                 Text('Total listening time', style: theme.textTheme.bodySmall),
                 const SizedBox(height: 24),
                 LayoutBuilder(
@@ -174,22 +214,24 @@ class ActivityOverview extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  'Tap a day for its listening time.',
-                  style: theme.textTheme.bodySmall,
-                ),
                 ExpansionTile(
                   key: const PageStorageKey('daily-listening-details'),
                   tilePadding: EdgeInsets.zero,
-                  title: const Text('Daily details'),
+                  title: const Text('Details'),
                   children: [
                     for (final day in week)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            '${localizations.formatMediumDate(day)} · ${recordedListening(byDate[localDate(day)])}',
+                          child: Tooltip(
+                            message: listeningEquivalence(
+                              byDate[localDate(day)]?.playedWallMs ?? 0,
+                            ),
+                            triggerMode: TooltipTriggerMode.tap,
+                            child: Text(
+                              '${localizations.formatMediumDate(day)} · ${recordedListening(byDate[localDate(day)])}',
+                            ),
                           ),
                         ),
                       ),
@@ -208,12 +250,12 @@ class ActivityOverview extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
               title: Text(
-                '$streak consecutive goal ${streak == 1 ? 'day' : 'days'}',
+                '$streak consecutive target ${streak == 1 ? 'fulfillment' : 'fulfillment'}',
               ),
               subtitle: Text(
                 streak > 0 && today?.qualified != 1
-                    ? 'Continue today. Each day qualifies by reaching its saved goal.'
-                    : 'Each day qualifies by reaching its saved listening goal.',
+                    ? 'Keep the consistency, every day counts.'
+                    : 'Start now, every day counts.',
               ),
             ),
           ),
@@ -221,7 +263,7 @@ class ActivityOverview extends StatelessWidget {
         const SizedBox(height: 24),
         AppChoiceField<int>(
           value: minutes,
-          label: 'Daily goal',
+          label: 'Min. fulfillment',
           options: {
             for (final value in {
               ...[0, 1, 5, 10, 15, 30, 60],
@@ -234,10 +276,6 @@ class ActivityOverview extends StatelessWidget {
           },
         ),
         const SizedBox(height: 8),
-        Text(
-          'A day saves its goal with its first listening credit. Changes leave saved daily goals unchanged.',
-          style: theme.textTheme.bodySmall,
-        ),
         if (error != null)
           Semantics(
             liveRegion: true,
@@ -268,24 +306,14 @@ class ActivityOverview extends StatelessWidget {
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
           children: const [
             Text(
-              'Only time spent playing recitation counts. Pauses, buffering, repeat gaps and seek jumps are excluded. Speed changes do not multiply minutes.',
+              'Only time spent playing recitation counts. Pauses, buffering, repeat gaps, speed changes and seek jumps are excluded.',
             ),
             SizedBox(height: 12),
             Text(
-              'Days use your device’s local date when measured. Credited dates stay fixed when you travel. Each day saves its goal on its first listening credit; later goal changes do not rewrite it.',
+              'Days use your device’s local date when measured. Credited dates stay fixed when you travel. Each day saves its target on its first listening credit.',
             ),
             SizedBox(height: 12),
-            Text(
-              'Tracking began with the Activity update. Earlier listening is not reconstructed. A missing day says “No recorded time”; it cannot establish whether you listened before tracking began.',
-            ),
-            SizedBox(height: 12),
-            Text(
-              'Totals update about every 15 seconds and when playback stops. A sudden shutdown can lose the last unsaved interval.',
-            ),
-            SizedBox(height: 12),
-            Text(
-              'Listening time measures playback, not attention or memorization. Activity stays on this device unless you export a backup.',
-            ),
+            Text('A missed day is  “0 min”.'),
           ],
         ),
       ],
@@ -312,7 +340,7 @@ class _DayBar extends StatelessWidget {
     final label =
         '${MaterialLocalizations.of(context).formatFullDate(date)}${today ? ', today' : ''}: ${recordedListening(record)}';
     return Tooltip(
-      message: label,
+      message: '$label\n${listeningEquivalence(record?.playedWallMs ?? 0)}',
       triggerMode: TooltipTriggerMode.tap,
       excludeFromSemantics: true,
       child: Semantics(

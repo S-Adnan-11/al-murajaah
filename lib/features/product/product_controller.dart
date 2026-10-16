@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import '../../app/product_dependencies.dart';
 import '../../core/audio/prototype_handler.dart';
 import '../../core/audio/session_spec.dart';
+import '../../core/audio/recording_source.dart';
+import '../support/support_content.dart';
 import '../../core/database/foundation_repository.dart';
-import '../catalog/catalog.dart';
-import '../catalog/catalog_repository.dart';
 import 'passage_library.dart';
 
 class SavedPlaybackUpdateException implements Exception {}
@@ -20,12 +20,13 @@ class ProductController extends ChangeNotifier {
   final PrototypeHandler handler;
   final ProductDependencies dependencies;
   late final library = PassageLibrary(dependencies.downloads.db);
-  CatalogRecording? selected;
+  RecordingSource? selected;
   SessionSpec? viewedSpec;
   String? savedId;
   String draftTitle = '', draftNote = '';
   List<LibraryPassage> saved = [];
   final favorites = <String>{}, passageFavorites = <String>{};
+  final recordingFavorites = <String>{};
   String? message;
   bool busy = false, _closed = false;
   int _intent = 0;
@@ -49,14 +50,16 @@ class ProductController extends ChangeNotifier {
 
   bool get viewedBusy =>
       busy && viewedSpec != null && _pendingSpec?.sameItem(viewedSpec!) == true;
-  CatalogRecording? _recording(String? id) {
+  RecordingSource? _recording(String? id) {
     for (final r in dependencies.catalog.recordings) {
       if (r.assetId == id) return r;
     }
-    return null;
+    return storyRecordings
+        .where((r) => r.assetId == id && dependencies.assets.containsKey(id))
+        .firstOrNull;
   }
 
-  CatalogRecording? get activeRecording =>
+  RecordingSource? get activeRecording =>
       _recording(handler.displaySession?.assetId);
   String get activeName =>
       activeRecording?.name ??
@@ -70,6 +73,9 @@ class ProductController extends ChangeNotifier {
       viewedIsActive ? handler.displaySession : viewedSpec;
   String get activeLabel => handler.displaySession?.isPassage == true
       ? '${handler.displaySession?.passageTitle ?? 'Passage'} · $activeName'
+      : handler.displaySession?.assetId.startsWith('brother-') == true ||
+            handler.displaySession?.assetId.startsWith('origin-') == true
+      ? 'Recitation · $activeName'
       : 'Full surah · $activeName';
   void _changed() {
     if (!_closed) notifyListeners();
@@ -93,16 +99,21 @@ class ProductController extends ChangeNotifier {
     saved = await library.read();
     favorites.clear();
     passageFavorites.clear();
+    recordingFavorites.clear();
     for (final row
         in await dependencies.downloads.db
             .select(dependencies.downloads.db.favorites)
             .get()) {
-      (row.type == 'surah' ? favorites : passageFavorites).add(row.targetId);
+      (switch (row.type) {
+        'surah' => favorites,
+        'recording' => recordingFavorites,
+        _ => passageFavorites,
+      }).add(row.targetId);
     }
     _changed();
   }
 
-  Future<void> select(CatalogRecording recording) async {
+  Future<void> select(RecordingSource recording) async {
     selected = recording;
     viewedSpec = recording.durationMs == null
         ? null
@@ -151,7 +162,8 @@ class ProductController extends ChangeNotifier {
           viewedIsActive &&
           !handler.completed &&
           handler.lastError == null &&
-          handler.diagnostics['processingState'] != 'idle') {
+          (handler.restoredMetadata ||
+              handler.diagnostics['processingState'] != 'idle')) {
         await handler.play();
       } else {
         await handler.loadAndStart(request);
@@ -231,7 +243,7 @@ class ProductController extends ChangeNotifier {
     if (active) {
       await handler.updateCount(count);
       if (count != null && count <= handler.pass && !handler.completed) {
-        message = view.isPassage || count != 1
+        message = !view.withCount(count).continuesToNext
             ? 'The new total is already reached. This play will finish, then stop.'
             : 'This play will finish, then continue to the next surah.';
       }
@@ -345,7 +357,16 @@ class ProductController extends ChangeNotifier {
     await playViewed();
   }
 
-  Future<void> favorite(CatalogRecording recording) async {
+  Future<void> favorite(RecordingSource recording) async {
+    if (recording.isOrigin) {
+      await FoundationRepository(dependencies.downloads.db).setFavorite(
+        'recording',
+        recording.assetId,
+        !recordingFavorites.contains(recording.assetId),
+      );
+      await refreshSaved();
+      return;
+    }
     final id = '${recording.number}',
         value = !favorites.contains('${recording.number}');
     await FoundationRepository(dependencies.downloads.db)
@@ -359,12 +380,12 @@ class ProductController extends ChangeNotifier {
     await refreshSaved();
   }
 
-  bool localSourceInUse(CatalogRecording recording) =>
+  bool localSourceInUse(RecordingSource recording) =>
       (handler.spec?.assetId == recording.assetId && handler.usingLocal) ||
       (handler.loading && handler.displaySession?.assetId == recording.assetId);
 
   Future<int> deleteAudio(
-    CatalogRecording recording, {
+    RecordingSource recording, {
     bool stopLocal = false,
   }) async {
     if (localSourceInUse(recording)) {
@@ -390,9 +411,7 @@ class ProductController extends ChangeNotifier {
     final spec = handler.displaySession;
     if (spec == null) return 'Play once';
     final pass = handler.displaySession == handler.spec ? handler.pass : 1;
-    return spec.playCount == null
-        ? 'Pass $pass · Continuous'
-        : 'Pass $pass of ${spec.playCount}';
+    return spec.playCount == null ? '∞' : '$pass of ${spec.playCount}';
   }
 
   @override

@@ -1,6 +1,16 @@
 /// Diagnostic samples only. The other 111 recordings are not fabricated.
 class SampleAsset {
-  const SampleAsset(this.id, this.name, this.url, this.bytes, this.sha256);
+  const SampleAsset(
+    this.id,
+    this.name,
+    this.url,
+    this.bytes,
+    this.sha256, {
+    this.reciter = 'Muhammad Bukar Zarami',
+    this.riwayah = 'Hafs',
+  });
+  final String reciter;
+  final String? riwayah;
   final String id, name, url, sha256;
   final int bytes;
 }

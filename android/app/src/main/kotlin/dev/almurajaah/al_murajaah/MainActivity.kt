@@ -35,6 +35,44 @@ class MainActivity : AudioServiceActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "dev.almurajaah/support")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    // Include the native splash/engine interval in the single
+                    // entrance budget. This is not replayed on activity resume.
+                    "entranceElapsedMs" -> result.success(SystemClock.uptimeMillis() - activityCreatedUptimeMs)
+                    "publicVersion" -> {
+                        @Suppress("DEPRECATION")
+                        val info = packageManager.getPackageInfo(packageName, 0)
+                        result.success(info.versionName)
+                    }
+                    "openWebsite" -> {
+                        val url = call.arguments as? String
+                        if (url == "https://s-adnan.dev" ||
+                            url?.matches(Regex("https://github\\.com/[A-Za-z0-9-]+/?")) == true) {
+                            try {
+                                startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse(url)))
+                                result.success(null)
+                            } catch (error: Exception) {
+                                result.error("website_unavailable", "Website could not be opened.", null)
+                            }
+                        } else result.error("invalid_website", "Website unavailable.", null)
+                    }
+                    "feedbackDetails" -> {
+                        @Suppress("DEPRECATION")
+                        val info = packageManager.getPackageInfo(packageName, 0)
+                        @Suppress("DEPRECATION")
+                        val version = if (Build.VERSION.SDK_INT >= 28) info.longVersionCode else info.versionCode.toLong()
+                        result.success(mapOf(
+                            "appVersion" to "${info.versionName}+$version",
+                            "androidVersion" to Build.VERSION.RELEASE,
+                            "manufacturer" to Build.MANUFACTURER,
+                            "model" to Build.MODEL,
+                        ))
+                    }
+                    else -> result.notImplemented()
+                }
+            }
         val documents = MetadataDocuments(this)
         metadataDocuments = documents
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "dev.almurajaah/metadata")

@@ -5,6 +5,8 @@ import '../../core/theme/product_components.dart';
 import 'product_controller.dart';
 import 'passage_library.dart';
 import '../catalog/catalog.dart';
+import '../support/support_content.dart';
+import '../../core/audio/recording_source.dart';
 
 class SavedSheet extends StatefulWidget {
   const SavedSheet({
@@ -16,7 +18,7 @@ class SavedSheet extends StatefulWidget {
   });
   final ProductController controller;
   final void Function(LibraryPassage, bool play, bool edit) open;
-  final void Function(CatalogRecording, bool play)? openSurah;
+  final void Function(RecordingSource, bool play)? openSurah;
   final bool combinedStarred;
   @override
   State<SavedSheet> createState() => _SavedSheetState();
@@ -151,6 +153,15 @@ class _SavedSheetState extends State<SavedSheet> {
                   c.passageFavorites.contains(p.id)),
         )
         .toList();
+    final recitations = widget.combinedStarred
+        ? storyRecordings
+              .where(
+                (r) =>
+                    c.recordingFavorites.contains(r.assetId) &&
+                    r.creditName.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList()
+        : <StoryRecording>[];
     rows.sort(
       (a, b) => sort == 'Name'
           ? a.title.toLowerCase().compareTo(b.title.toLowerCase())
@@ -166,13 +177,10 @@ class _SavedSheetState extends State<SavedSheet> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextField(
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search_rounded),
-                    labelText: widget.combinedStarred
-                        ? 'Search starred items'
-                        : 'Search saved passages',
-                  ),
+                AppSearchField(
+                  label: widget.combinedStarred
+                      ? 'Search starred items'
+                      : 'Search saved passages',
                   onChanged: (v) => setState(() => query = v),
                 ),
                 const SizedBox(height: 12),
@@ -183,12 +191,28 @@ class _SavedSheetState extends State<SavedSheet> {
                   children: [
                     if (!widget.combinedStarred)
                       FilterChip(
+                        selectedColor: Theme.of(context)
+                            .colorScheme
+                            .primaryContainer,
+                        labelStyle: TextStyle(
+                          color: !starred
+                              ? Theme.of(context).colorScheme.onPrimaryContainer
+                              : null,
+                        ),
                         label: const Text('All passages'),
                         selected: !starred,
                         onSelected: (_) => setState(() => starred = false),
                       ),
                     if (!widget.combinedStarred)
                       FilterChip(
+                        selectedColor: Theme.of(context)
+                            .colorScheme
+                            .primaryContainer,
+                        labelStyle: TextStyle(
+                          color: starred
+                              ? Theme.of(context).colorScheme.onPrimaryContainer
+                              : null,
+                        ),
                         label: const Text('Starred'),
                         selected: starred,
                         onSelected: (_) => setState(() => starred = true),
@@ -226,7 +250,7 @@ class _SavedSheetState extends State<SavedSheet> {
                 const SizedBox(height: 8),
                 Text(
                   widget.combinedStarred
-                      ? '${surahs.length} surahs · ${rows.length} passages'
+                      ? '${surahs.length} surahs · ${rows.length} passages${recitations.isEmpty ? '' : ' · ${recitations.length} recitations'}'
                       : '${rows.length} saved ${rows.length == 1 ? 'passage' : 'passages'}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
@@ -234,7 +258,7 @@ class _SavedSheetState extends State<SavedSheet> {
             ),
           ),
         ),
-        if (rows.isEmpty && surahs.isEmpty)
+        if (rows.isEmpty && surahs.isEmpty && recitations.isEmpty)
           SliverToBoxAdapter(
             child: EmptyCollection(
               icon: widget.combinedStarred || starred
@@ -248,7 +272,7 @@ class _SavedSheetState extends State<SavedSheet> {
               message: query.isNotEmpty
                   ? 'Try another name or change the filter.'
                   : widget.combinedStarred
-                  ? 'Star a surah or a saved passage to find it here.'
+                  ? 'Star a surah, recitation or saved passage to find it here.'
                   : starred
                   ? 'Star a saved passage to find it here.'
                   : 'Open a surah and choose Set passage to save an A–B range.',
@@ -258,7 +282,7 @@ class _SavedSheetState extends State<SavedSheet> {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             sliver: SliverList.separated(
-              itemCount: surahs.length + rows.length,
+              itemCount: surahs.length + recitations.length + rows.length,
               separatorBuilder: (_, _) => const SizedBox(height: AppSpace.gap),
               itemBuilder: (context, index) {
                 if (index < surahs.length) {
@@ -282,9 +306,30 @@ class _SavedSheetState extends State<SavedSheet> {
                     ],
                   );
                 }
-                final p = rows[index - surahs.length];
+                if (index < surahs.length + recitations.length) {
+                  final r = recitations[index - surahs.length];
+                  return CollectionTile(
+                    title: r.name,
+                    details: 'Recitation · ${r.asset.reciter}',
+                    onOpen: () => widget.openSurah!(r, false),
+                    actions: [
+                      IconButton(
+                        tooltip: 'Play ${r.name}',
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        onPressed: () => widget.openSurah!(r, true),
+                      ),
+                      IconButton(
+                        tooltip: 'Unstar ${r.name}',
+                        icon: const Icon(Icons.star_rounded),
+                        onPressed: () => c.favorite(r),
+                      ),
+                    ],
+                  );
+                }
+                final p = rows[index - surahs.length - recitations.length];
                 return CollectionTile(
                   title: p.title,
+                  active: c.handler.displaySession?.passageId == p.id,
                   starred: c.passageFavorites.contains(p.id),
                   details:
                       '${widget.combinedStarred ? 'Passage · ' : ''}${p.recordingName}\n${playbackTime(p.row.startMs)} – ${playbackTime(p.row.endMs)}',

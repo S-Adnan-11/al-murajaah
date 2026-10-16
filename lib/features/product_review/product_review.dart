@@ -55,7 +55,7 @@ class _ProductReviewState extends State<ProductReview> {
           isPlayer
               ? 'Now listening'
               : page == ReviewPage.home
-              ? "Al-Muraja’ah"
+              ? "Al-Murāja'ah"
               : 'Surahs',
         ),
         actions: [

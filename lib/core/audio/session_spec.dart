@@ -41,15 +41,21 @@ class SessionSpec {
   final double speed;
   final String? passageId, passageTitle;
 
+  bool get isOrigin =>
+      assetId.startsWith('brother-') || assetId.startsWith('origin-');
+  String get sourceLabel => isOrigin ? 'recording' : 'full surah';
+
   bool get continuesToNext =>
       !isPassage &&
       playCount == 1 &&
+      !isOrigin &&
       !RegExp(r'^zarami-hafs-114-v[1-9]\d*$').hasMatch(assetId);
+  // I commented this out, intentionally
   String get repeatOutcome => playCount == null
-      ? 'Repeat continuously'
+      ? '∞'
       : continuesToNext
-      ? 'Play once, then next surah'
-      : 'Play $playCount ${playCount == 1 ? 'time' : 'times'}, then stop';
+      ? '➜'
+      : '$playCount';
 
   /// Settings and native codec padding are not an item's identity.
   bool sameItem(SessionSpec other) =>

@@ -27,7 +27,9 @@ class AudioFiles {
       a.changed == b.changed &&
       a.mode == b.mode;
   void _validate(SampleAsset asset) {
-    if (!RegExp(r'^zarami-hafs-\d{3}-v[1-9]\d*$').hasMatch(asset.id)) {
+    if (RegExp(r'^(?:zarami-hafs-\d{3}-v[1-9]\d*|(?:brother|origin)-\d{3})$')
+            .stringMatch(asset.id) !=
+        asset.id) {
       throw ArgumentError('Unsafe recording identity');
     }
   }

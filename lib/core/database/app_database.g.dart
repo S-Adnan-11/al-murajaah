@@ -428,8 +428,8 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
-    $customConstraints: 'NOT NULL DEFAULT \'wifi\' CHECK (network_policy IN (\'wifi\', \'any\'))',
-    defaultValue: const CustomExpression('\'wifi\''),
+    $customConstraints: 'NOT NULL DEFAULT \'any\' CHECK (network_policy IN (\'wifi\', \'any\'))',
+    defaultValue: const CustomExpression('\'any\''),
   );
   static const VerificationMeta _defaultReciterIdMeta = const VerificationMeta(
     'defaultReciterId',
@@ -489,6 +489,31 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
     $customConstraints: 'NOT NULL DEFAULT 0 CHECK (aurora_enabled IN (0, 1))',
     defaultValue: const CustomExpression('0'),
   );
+  static const VerificationMeta _alternateHomeTextMeta = const VerificationMeta(
+    'alternateHomeText',
+  );
+  late final GeneratedColumn<int> alternateHomeText = GeneratedColumn<int>(
+    'alternate_home_text',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints:
+        'NOT NULL DEFAULT 1 CHECK (alternate_home_text IN (0, 1))',
+    defaultValue: const CustomExpression('1'),
+  );
+  static const VerificationMeta _homeTextLanguageMeta = const VerificationMeta(
+    'homeTextLanguage',
+  );
+  late final GeneratedColumn<String> homeTextLanguage = GeneratedColumn<String>(
+    'home_text_language',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT \'english\' CHECK (home_text_language IN (\'english\', \'arabic\'))',
+    defaultValue: const CustomExpression('\'english\''),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -500,6 +525,8 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
     preferencesVersion,
     updatedUtcMs,
     auroraEnabled,
+    alternateHomeText,
+    homeTextLanguage,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -585,6 +612,24 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
         ),
       );
     }
+    if (data.containsKey('alternate_home_text')) {
+      context.handle(
+        _alternateHomeTextMeta,
+        alternateHomeText.isAcceptableOrUnknown(
+          data['alternate_home_text']!,
+          _alternateHomeTextMeta,
+        ),
+      );
+    }
+    if (data.containsKey('home_text_language')) {
+      context.handle(
+        _homeTextLanguageMeta,
+        homeTextLanguage.isAcceptableOrUnknown(
+          data['home_text_language']!,
+          _homeTextLanguageMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -630,6 +675,14 @@ class AppSettings extends Table with TableInfo<AppSettings, AppSetting> {
         DriftSqlType.int,
         data['${effectivePrefix}aurora_enabled'],
       )!,
+      alternateHomeText: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}alternate_home_text'],
+      )!,
+      homeTextLanguage: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}home_text_language'],
+      )!,
     );
   }
 
@@ -652,6 +705,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
   final int preferencesVersion;
   final int updatedUtcMs;
   final int auroraEnabled;
+  final int alternateHomeText;
+  final String homeTextLanguage;
   const AppSetting({
     required this.id,
     required this.theme,
@@ -662,6 +717,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     required this.preferencesVersion,
     required this.updatedUtcMs,
     required this.auroraEnabled,
+    required this.alternateHomeText,
+    required this.homeTextLanguage,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -677,6 +734,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     map['preferences_version'] = Variable<int>(preferencesVersion);
     map['updated_utc_ms'] = Variable<int>(updatedUtcMs);
     map['aurora_enabled'] = Variable<int>(auroraEnabled);
+    map['alternate_home_text'] = Variable<int>(alternateHomeText);
+    map['home_text_language'] = Variable<String>(homeTextLanguage);
     return map;
   }
 
@@ -693,6 +752,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       preferencesVersion: Value(preferencesVersion),
       updatedUtcMs: Value(updatedUtcMs),
       auroraEnabled: Value(auroraEnabled),
+      alternateHomeText: Value(alternateHomeText),
+      homeTextLanguage: Value(homeTextLanguage),
     );
   }
 
@@ -713,6 +774,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       preferencesVersion: serializer.fromJson<int>(json['preferences_version']),
       updatedUtcMs: serializer.fromJson<int>(json['updated_utc_ms']),
       auroraEnabled: serializer.fromJson<int>(json['aurora_enabled']),
+      alternateHomeText: serializer.fromJson<int>(json['alternate_home_text']),
+      homeTextLanguage: serializer.fromJson<String>(json['home_text_language']),
     );
   }
   @override
@@ -728,6 +791,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       'preferences_version': serializer.toJson<int>(preferencesVersion),
       'updated_utc_ms': serializer.toJson<int>(updatedUtcMs),
       'aurora_enabled': serializer.toJson<int>(auroraEnabled),
+      'alternate_home_text': serializer.toJson<int>(alternateHomeText),
+      'home_text_language': serializer.toJson<String>(homeTextLanguage),
     };
   }
 
@@ -741,6 +806,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     int? preferencesVersion,
     int? updatedUtcMs,
     int? auroraEnabled,
+    int? alternateHomeText,
+    String? homeTextLanguage,
   }) => AppSetting(
     id: id ?? this.id,
     theme: theme ?? this.theme,
@@ -753,6 +820,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     preferencesVersion: preferencesVersion ?? this.preferencesVersion,
     updatedUtcMs: updatedUtcMs ?? this.updatedUtcMs,
     auroraEnabled: auroraEnabled ?? this.auroraEnabled,
+    alternateHomeText: alternateHomeText ?? this.alternateHomeText,
+    homeTextLanguage: homeTextLanguage ?? this.homeTextLanguage,
   );
   AppSetting copyWithCompanion(AppSettingsCompanion data) {
     return AppSetting(
@@ -779,6 +848,12 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
       auroraEnabled: data.auroraEnabled.present
           ? data.auroraEnabled.value
           : this.auroraEnabled,
+      alternateHomeText: data.alternateHomeText.present
+          ? data.alternateHomeText.value
+          : this.alternateHomeText,
+      homeTextLanguage: data.homeTextLanguage.present
+          ? data.homeTextLanguage.value
+          : this.homeTextLanguage,
     );
   }
 
@@ -793,7 +868,9 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
           ..write('dailyGoalMs: $dailyGoalMs, ')
           ..write('preferencesVersion: $preferencesVersion, ')
           ..write('updatedUtcMs: $updatedUtcMs, ')
-          ..write('auroraEnabled: $auroraEnabled')
+          ..write('auroraEnabled: $auroraEnabled, ')
+          ..write('alternateHomeText: $alternateHomeText, ')
+          ..write('homeTextLanguage: $homeTextLanguage')
           ..write(')'))
         .toString();
   }
@@ -809,6 +886,8 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
     preferencesVersion,
     updatedUtcMs,
     auroraEnabled,
+    alternateHomeText,
+    homeTextLanguage,
   );
   @override
   bool operator ==(Object other) =>
@@ -822,7 +901,9 @@ class AppSetting extends DataClass implements Insertable<AppSetting> {
           other.dailyGoalMs == this.dailyGoalMs &&
           other.preferencesVersion == this.preferencesVersion &&
           other.updatedUtcMs == this.updatedUtcMs &&
-          other.auroraEnabled == this.auroraEnabled);
+          other.auroraEnabled == this.auroraEnabled &&
+          other.alternateHomeText == this.alternateHomeText &&
+          other.homeTextLanguage == this.homeTextLanguage);
 }
 
 class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
@@ -835,6 +916,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
   final Value<int> preferencesVersion;
   final Value<int> updatedUtcMs;
   final Value<int> auroraEnabled;
+  final Value<int> alternateHomeText;
+  final Value<String> homeTextLanguage;
   const AppSettingsCompanion({
     this.id = const Value.absent(),
     this.theme = const Value.absent(),
@@ -845,6 +928,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     this.preferencesVersion = const Value.absent(),
     this.updatedUtcMs = const Value.absent(),
     this.auroraEnabled = const Value.absent(),
+    this.alternateHomeText = const Value.absent(),
+    this.homeTextLanguage = const Value.absent(),
   });
   AppSettingsCompanion.insert({
     this.id = const Value.absent(),
@@ -856,6 +941,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     this.preferencesVersion = const Value.absent(),
     this.updatedUtcMs = const Value.absent(),
     this.auroraEnabled = const Value.absent(),
+    this.alternateHomeText = const Value.absent(),
+    this.homeTextLanguage = const Value.absent(),
   });
   static Insertable<AppSetting> custom({
     Expression<int>? id,
@@ -867,6 +954,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     Expression<int>? preferencesVersion,
     Expression<int>? updatedUtcMs,
     Expression<int>? auroraEnabled,
+    Expression<int>? alternateHomeText,
+    Expression<String>? homeTextLanguage,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -878,6 +967,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
       if (preferencesVersion != null) 'preferences_version': preferencesVersion,
       if (updatedUtcMs != null) 'updated_utc_ms': updatedUtcMs,
       if (auroraEnabled != null) 'aurora_enabled': auroraEnabled,
+      if (alternateHomeText != null) 'alternate_home_text': alternateHomeText,
+      if (homeTextLanguage != null) 'home_text_language': homeTextLanguage,
     });
   }
 
@@ -891,6 +982,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     Value<int>? preferencesVersion,
     Value<int>? updatedUtcMs,
     Value<int>? auroraEnabled,
+    Value<int>? alternateHomeText,
+    Value<String>? homeTextLanguage,
   }) {
     return AppSettingsCompanion(
       id: id ?? this.id,
@@ -902,6 +995,8 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
       preferencesVersion: preferencesVersion ?? this.preferencesVersion,
       updatedUtcMs: updatedUtcMs ?? this.updatedUtcMs,
       auroraEnabled: auroraEnabled ?? this.auroraEnabled,
+      alternateHomeText: alternateHomeText ?? this.alternateHomeText,
+      homeTextLanguage: homeTextLanguage ?? this.homeTextLanguage,
     );
   }
 
@@ -935,6 +1030,12 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
     if (auroraEnabled.present) {
       map['aurora_enabled'] = Variable<int>(auroraEnabled.value);
     }
+    if (alternateHomeText.present) {
+      map['alternate_home_text'] = Variable<int>(alternateHomeText.value);
+    }
+    if (homeTextLanguage.present) {
+      map['home_text_language'] = Variable<String>(homeTextLanguage.value);
+    }
     return map;
   }
 
@@ -949,7 +1050,9 @@ class AppSettingsCompanion extends UpdateCompanion<AppSetting> {
           ..write('dailyGoalMs: $dailyGoalMs, ')
           ..write('preferencesVersion: $preferencesVersion, ')
           ..write('updatedUtcMs: $updatedUtcMs, ')
-          ..write('auroraEnabled: $auroraEnabled')
+          ..write('auroraEnabled: $auroraEnabled, ')
+          ..write('alternateHomeText: $alternateHomeText, ')
+          ..write('homeTextLanguage: $homeTextLanguage')
           ..write(')'))
         .toString();
   }
@@ -2948,7 +3051,8 @@ class Favorites extends Table with TableInfo<Favorites, Favorite> {
     false,
     type: DriftSqlType.string,
     requiredDuringInsert: true,
-    $customConstraints: 'NOT NULL CHECK (type IN (\'surah\', \'passage\'))',
+    $customConstraints:
+        'NOT NULL CHECK (type IN (\'surah\', \'passage\', \'recording\'))',
   );
   static const VerificationMeta _targetIdMeta = const VerificationMeta(
     'targetId',
@@ -5592,6 +5696,211 @@ class ActivityEventsCompanion extends UpdateCompanion<ActivityEvent> {
   }
 }
 
+class ListeningStreakRecords extends Table
+    with TableInfo<ListeningStreakRecords, ListeningStreakRecord> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  ListeningStreakRecords(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL PRIMARY KEY CHECK (id = 1)',
+  );
+  static const VerificationMeta _bestDaysMeta = const VerificationMeta(
+    'bestDays',
+  );
+  late final GeneratedColumn<int> bestDays = GeneratedColumn<int>(
+    'best_days',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    $customConstraints: 'NOT NULL DEFAULT 0 CHECK (best_days >= 0)',
+    defaultValue: const CustomExpression('0'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, bestDays];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'listening_streak_records';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ListeningStreakRecord> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('best_days')) {
+      context.handle(
+        _bestDaysMeta,
+        bestDays.isAcceptableOrUnknown(data['best_days']!, _bestDaysMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ListeningStreakRecord map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ListeningStreakRecord(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      bestDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}best_days'],
+      )!,
+    );
+  }
+
+  @override
+  ListeningStreakRecords createAlias(String alias) {
+    return ListeningStreakRecords(attachedDatabase, alias);
+  }
+
+  @override
+  bool get dontWriteConstraints => true;
+}
+
+class ListeningStreakRecord extends DataClass
+    implements Insertable<ListeningStreakRecord> {
+  final int id;
+  final int bestDays;
+  const ListeningStreakRecord({required this.id, required this.bestDays});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['best_days'] = Variable<int>(bestDays);
+    return map;
+  }
+
+  ListeningStreakRecordsCompanion toCompanion(bool nullToAbsent) {
+    return ListeningStreakRecordsCompanion(
+      id: Value(id),
+      bestDays: Value(bestDays),
+    );
+  }
+
+  factory ListeningStreakRecord.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ListeningStreakRecord(
+      id: serializer.fromJson<int>(json['id']),
+      bestDays: serializer.fromJson<int>(json['best_days']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'best_days': serializer.toJson<int>(bestDays),
+    };
+  }
+
+  ListeningStreakRecord copyWith({int? id, int? bestDays}) =>
+      ListeningStreakRecord(
+        id: id ?? this.id,
+        bestDays: bestDays ?? this.bestDays,
+      );
+  ListeningStreakRecord copyWithCompanion(
+    ListeningStreakRecordsCompanion data,
+  ) {
+    return ListeningStreakRecord(
+      id: data.id.present ? data.id.value : this.id,
+      bestDays: data.bestDays.present ? data.bestDays.value : this.bestDays,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ListeningStreakRecord(')
+          ..write('id: $id, ')
+          ..write('bestDays: $bestDays')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, bestDays);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ListeningStreakRecord &&
+          other.id == this.id &&
+          other.bestDays == this.bestDays);
+}
+
+class ListeningStreakRecordsCompanion
+    extends UpdateCompanion<ListeningStreakRecord> {
+  final Value<int> id;
+  final Value<int> bestDays;
+  const ListeningStreakRecordsCompanion({
+    this.id = const Value.absent(),
+    this.bestDays = const Value.absent(),
+  });
+  ListeningStreakRecordsCompanion.insert({
+    this.id = const Value.absent(),
+    this.bestDays = const Value.absent(),
+  });
+  static Insertable<ListeningStreakRecord> custom({
+    Expression<int>? id,
+    Expression<int>? bestDays,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (bestDays != null) 'best_days': bestDays,
+    });
+  }
+
+  ListeningStreakRecordsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? bestDays,
+  }) {
+    return ListeningStreakRecordsCompanion(
+      id: id ?? this.id,
+      bestDays: bestDays ?? this.bestDays,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (bestDays.present) {
+      map['best_days'] = Variable<int>(bestDays.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ListeningStreakRecordsCompanion(')
+          ..write('id: $id, ')
+          ..write('bestDays: $bestDays')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -5615,7 +5924,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final Favorites favorites = Favorites(this);
   late final Trigger favoriteInsertTarget = Trigger(
-    'CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN SELECT RAISE (ABORT, \'Unknown favorite target\') WHERE(NEW.type = \'surah\' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id))OR(NEW.type = \'passage\' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id));END',
+    'CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN SELECT RAISE (ABORT, \'Unknown favorite target\') WHERE(NEW.type = \'surah\' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id))OR(NEW.type = \'passage\' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id))OR(NEW.type = \'recording\' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.target_id AND edition_id IN (\'origin-nasir-v1\', \'origin-abdulrahman-v1\')));END',
     'favorite_insert_target',
   );
   late final Trigger favoriteUpdateTarget = Trigger(
@@ -5629,6 +5938,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final Trigger surahDeleteFavorite = Trigger(
     'CREATE TRIGGER surah_delete_favorite AFTER DELETE ON surahs BEGIN DELETE FROM favorites WHERE type = \'surah\' AND target_id = CAST(OLD.number AS TEXT);END',
     'surah_delete_favorite',
+  );
+  late final Trigger recordingDeleteFavorite = Trigger(
+    'CREATE TRIGGER recording_delete_favorite AFTER DELETE ON audio_assets BEGIN DELETE FROM favorites WHERE type = \'recording\' AND target_id = OLD.id;END',
+    'recording_delete_favorite',
   );
   late final Downloads downloads = Downloads(this);
   late final Trigger downloadInsertVerified = Trigger(
@@ -5653,6 +5966,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final ListeningSessions listeningSessions = ListeningSessions(this);
   late final DailyActivity dailyActivity = DailyActivity(this);
   late final ActivityEvents activityEvents = ActivityEvents(this);
+  late final ListeningStreakRecords listeningStreakRecords =
+      ListeningStreakRecords(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -5672,6 +5987,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     favoriteUpdateTarget,
     passageDeleteFavorite,
     surahDeleteFavorite,
+    recordingDeleteFavorite,
     downloads,
     downloadInsertVerified,
     downloadUpdateVerified,
@@ -5681,6 +5997,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     listeningSessions,
     dailyActivity,
     activityEvents,
+    listeningStreakRecords,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -5729,6 +6046,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     WritePropagation(
       on: TableUpdateQuery.onTableName(
         'surahs',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('favorites', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'audio_assets',
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('favorites', kind: UpdateKind.delete)],
@@ -6190,6 +6514,8 @@ typedef $AppSettingsCreateCompanionBuilder = AppSettingsCompanion Function({
   Value<int> preferencesVersion,
   Value<int> updatedUtcMs,
   Value<int> auroraEnabled,
+  Value<int> alternateHomeText,
+  Value<String> homeTextLanguage,
 });
 typedef $AppSettingsUpdateCompanionBuilder = AppSettingsCompanion Function({
   Value<int> id,
@@ -6201,6 +6527,8 @@ typedef $AppSettingsUpdateCompanionBuilder = AppSettingsCompanion Function({
   Value<int> preferencesVersion,
   Value<int> updatedUtcMs,
   Value<int> auroraEnabled,
+  Value<int> alternateHomeText,
+  Value<String> homeTextLanguage,
 });
 
 final class $AppSettingsReferences
@@ -6270,6 +6598,16 @@ class $AppSettingsFilterComposer extends Composer<_$AppDatabase, AppSettings> {
 
   ColumnFilters<int> get auroraEnabled => $composableBuilder(
     column: $table.auroraEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get alternateHomeText => $composableBuilder(
+    column: $table.alternateHomeText,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get homeTextLanguage => $composableBuilder(
+    column: $table.homeTextLanguage,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6346,6 +6684,16 @@ class $AppSettingsOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get alternateHomeText => $composableBuilder(
+    column: $table.alternateHomeText,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get homeTextLanguage => $composableBuilder(
+    column: $table.homeTextLanguage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $RecitersOrderingComposer get defaultReciterId {
     final $RecitersOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -6415,6 +6763,16 @@ class $AppSettingsAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get alternateHomeText => $composableBuilder(
+    column: $table.alternateHomeText,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get homeTextLanguage => $composableBuilder(
+    column: $table.homeTextLanguage,
+    builder: (column) => column,
+  );
+
   $RecitersAnnotationComposer get defaultReciterId {
     final $RecitersAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -6476,6 +6834,8 @@ class $AppSettingsTableManager
                 Value<int> preferencesVersion = const Value.absent(),
                 Value<int> updatedUtcMs = const Value.absent(),
                 Value<int> auroraEnabled = const Value.absent(),
+                Value<int> alternateHomeText = const Value.absent(),
+                Value<String> homeTextLanguage = const Value.absent(),
               }) => AppSettingsCompanion(
                 id: id,
                 theme: theme,
@@ -6486,6 +6846,8 @@ class $AppSettingsTableManager
                 preferencesVersion: preferencesVersion,
                 updatedUtcMs: updatedUtcMs,
                 auroraEnabled: auroraEnabled,
+                alternateHomeText: alternateHomeText,
+                homeTextLanguage: homeTextLanguage,
               ),
           createCompanionCallback:
               ({
@@ -6498,6 +6860,8 @@ class $AppSettingsTableManager
                 Value<int> preferencesVersion = const Value.absent(),
                 Value<int> updatedUtcMs = const Value.absent(),
                 Value<int> auroraEnabled = const Value.absent(),
+                Value<int> alternateHomeText = const Value.absent(),
+                Value<String> homeTextLanguage = const Value.absent(),
               }) => AppSettingsCompanion.insert(
                 id: id,
                 theme: theme,
@@ -6508,6 +6872,8 @@ class $AppSettingsTableManager
                 preferencesVersion: preferencesVersion,
                 updatedUtcMs: updatedUtcMs,
                 auroraEnabled: auroraEnabled,
+                alternateHomeText: alternateHomeText,
+                homeTextLanguage: homeTextLanguage,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -11064,6 +11430,160 @@ typedef $ActivityEventsProcessedTableManager =
       ActivityEvent,
       PrefetchHooks Function({bool sessionId, bool localDate})
     >;
+typedef $ListeningStreakRecordsCreateCompanionBuilder =
+    ListeningStreakRecordsCompanion Function({
+      Value<int> id,
+      Value<int> bestDays,
+    });
+typedef $ListeningStreakRecordsUpdateCompanionBuilder =
+    ListeningStreakRecordsCompanion Function({
+      Value<int> id,
+      Value<int> bestDays,
+    });
+
+class $ListeningStreakRecordsFilterComposer
+    extends Composer<_$AppDatabase, ListeningStreakRecords> {
+  $ListeningStreakRecordsFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bestDays => $composableBuilder(
+    column: $table.bestDays,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $ListeningStreakRecordsOrderingComposer
+    extends Composer<_$AppDatabase, ListeningStreakRecords> {
+  $ListeningStreakRecordsOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bestDays => $composableBuilder(
+    column: $table.bestDays,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $ListeningStreakRecordsAnnotationComposer
+    extends Composer<_$AppDatabase, ListeningStreakRecords> {
+  $ListeningStreakRecordsAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get bestDays =>
+      $composableBuilder(column: $table.bestDays, builder: (column) => column);
+}
+
+class $ListeningStreakRecordsTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          ListeningStreakRecords,
+          ListeningStreakRecord,
+          $ListeningStreakRecordsFilterComposer,
+          $ListeningStreakRecordsOrderingComposer,
+          $ListeningStreakRecordsAnnotationComposer,
+          $ListeningStreakRecordsCreateCompanionBuilder,
+          $ListeningStreakRecordsUpdateCompanionBuilder,
+          (
+            ListeningStreakRecord,
+            BaseReferences<
+              _$AppDatabase,
+              ListeningStreakRecords,
+              ListeningStreakRecord
+            >,
+          ),
+          ListeningStreakRecord,
+          PrefetchHooks Function()
+        > {
+  $ListeningStreakRecordsTableManager(
+    _$AppDatabase db,
+    ListeningStreakRecords table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $ListeningStreakRecordsFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $ListeningStreakRecordsOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $ListeningStreakRecordsAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> bestDays = const Value.absent(),
+          }) => ListeningStreakRecordsCompanion(id: id, bestDays: bestDays),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> bestDays = const Value.absent(),
+              }) => ListeningStreakRecordsCompanion.insert(
+                id: id,
+                bestDays: bestDays,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<ListeningStreakRecords, ListeningStreakRecord>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    ListeningStreakRecords,
+                    ListeningStreakRecord
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $ListeningStreakRecordsProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      ListeningStreakRecords,
+      ListeningStreakRecord,
+      $ListeningStreakRecordsFilterComposer,
+      $ListeningStreakRecordsOrderingComposer,
+      $ListeningStreakRecordsAnnotationComposer,
+      $ListeningStreakRecordsCreateCompanionBuilder,
+      $ListeningStreakRecordsUpdateCompanionBuilder,
+      (
+        ListeningStreakRecord,
+        BaseReferences<
+          _$AppDatabase,
+          ListeningStreakRecords,
+          ListeningStreakRecord
+        >,
+      ),
+      ListeningStreakRecord,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -11091,4 +11611,6 @@ class $AppDatabaseManager {
       $DailyActivityTableManager(_db, _db.dailyActivity);
   $ActivityEventsTableManager get activityEvents =>
       $ActivityEventsTableManager(_db, _db.activityEvents);
+  $ListeningStreakRecordsTableManager get listeningStreakRecords =>
+      $ListeningStreakRecordsTableManager(_db, _db.listeningStreakRecords);
 }

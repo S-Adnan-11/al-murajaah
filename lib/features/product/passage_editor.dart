@@ -240,7 +240,8 @@ class _PassageEditorState extends State<PassageEditor> {
       );
     } catch (_) {
       setState(
-        () => error = 'Name the passage, set A/B at least one second apart within the surah, and use 1–999 total plays.',
+        () => error =
+            'Name the passage, set A/B at least one second apart within the ${widget.spec.isOrigin ? 'recording' : 'surah'}, and use 1–999 total plays.',
       );
     }
   }
@@ -309,8 +310,8 @@ class _PassageEditorState extends State<PassageEditor> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
               const SizedBox(height: 12),
-              const Text(
-                'Full surah timeline',
+              Text(
+                '${widget.spec.isOrigin ? 'Recording' : 'Full surah'} timeline',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text(
@@ -327,7 +328,7 @@ class _PassageEditorState extends State<PassageEditor> {
                 enabled: widget.onSeek != null,
                 onSeek: widget.onSeek ?? (_) async {},
                 semanticFormatter: (v) =>
-                    '${playbackTime(v.round())} in full surah',
+                    '${playbackTime(v.round())} in ${widget.spec.sourceLabel}',
                 positionLabels: (value) => Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -436,7 +437,7 @@ class _PassageEditorState extends State<PassageEditor> {
                       ),
                       if (validRange)
                         Text(
-                          'Passage length ${passageLengthLabel(end - start)}',
+                          'Passage length: ${passageLengthLabel(end - start)}',
                         ),
                     ],
                   ),
@@ -472,12 +473,12 @@ class _PassageEditorState extends State<PassageEditor> {
                 subtitle: const Text('Exact times and small adjustments'),
                 childrenPadding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
-                  const Text(
-                    'Times are measured from the start of the full surah.',
+                  Text(
+                    'Times are measured from the start of the ${widget.spec.sourceLabel}.',
                   ),
                   for (final field in [
-                    (a, 'A · time in full surah', true),
-                    (b, 'B · time in full surah', false),
+                    (a, 'A · time in ${widget.spec.sourceLabel}', true),
+                    (b, 'B · time in ${widget.spec.sourceLabel}', false),
                   ]) ...[
                     const SizedBox(height: 12),
                     TextField(

@@ -25,16 +25,17 @@ void main() {
       ),
     );
     await tester.pump();
-    expect(find.text('Verifying retained recording…'), findsOneWidget);
-    expect(find.byType(LinearProgressIndicator), findsOneWidget);
-    await tester.drag(find.byType(ListView), const Offset(0, -100));
+    expect(find.text('Verifying retained recording…'), findsNothing);
+    expect(find.text('Al-Murāja’ah'), findsOneWidget);
+    await tester.drag(
+      find.byType(SingleChildScrollView),
+      const Offset(0, -100),
+    );
     await tester.pump();
     pending.completeError(StateError('fixture initialization failure'));
-    await tester.pump();
-    expect(
-      find.textContaining('fixture initialization failure'),
-      findsOneWidget,
-    );
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 2500));
+    expect(find.text('Your library could not be opened.'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

@@ -5,11 +5,12 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
-        android:label="Al-Muraja'ah"
+        android:label="Al-Murāja'ah"
         android:allowBackup="false"
         android:enableOnBackInvokedCallback="true"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_al_murajaah"
+        android:roundIcon="@mipmap/ic_al_murajaah_round">
         <activity
             android:name=".MainActivity"
             android:exported="true"

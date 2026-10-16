@@ -26,12 +26,12 @@ void main() {
           () => Future<void>.delayed(const Duration(milliseconds: 100)),
         );
         await tester.pumpAndSettle();
-        final goal = find.widgetWithText(ListTile, 'Daily goal');
+        final goal = find.widgetWithText(ListTile, 'Min. fulfillment');
         await tester.ensureVisible(goal);
         await tester.pumpAndSettle();
         await tester.tap(goal);
         await tester.pumpAndSettle();
-        expect(find.text('Daily goal'), findsNWidgets(2));
+        expect(find.text('Min. fulfillment'), findsNWidgets(2));
         await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
         expect(

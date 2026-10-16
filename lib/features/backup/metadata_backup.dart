@@ -48,6 +48,8 @@ class MetadataBackup {
     'network_policy',
     'daily_goal_ms',
     'aurora_enabled',
+    'alternate_home_text',
+    'home_text_language',
   };
 
   Future<BackupRow> _settings() async {
@@ -61,9 +63,12 @@ class MetadataBackup {
 
   Future<String> export() async {
     final data = await db.transaction(() async {
+      await db.reconcileBestListeningStreak();
       final snapshot = <String, Object?>{
         'format': 'al-murajaah-metadata',
-        'version': 1,
+        'version': 4,
+        'best_listening_streak':
+            (await db.select(db.listeningStreakRecords).getSingle()).bestDays,
         'exported_utc_ms': DateTime.now().toUtc().millisecondsSinceEpoch,
         'settings': await _settings(),
       };
@@ -77,7 +82,7 @@ class MetadataBackup {
           (await db
                   .customSelect(
                     'SELECT DISTINCT a.id,a.sha256,a.duration_ms FROM audio_assets a '
-                    'WHERE a.id IN (SELECT asset_id FROM saved_passages UNION SELECT asset_id FROM listening_sessions)',
+                    'WHERE a.id IN (SELECT asset_id FROM saved_passages UNION SELECT asset_id FROM listening_sessions UNION SELECT target_id FROM favorites WHERE type=\'recording\')',
                   )
                   .get())
               .map((r) => Map<String, Object?>.of(r.data))
@@ -158,6 +163,13 @@ class MetadataBackup {
       }
     }
     for (final star in rows(data, 'stars')) {
+      if (star['type'] == 'recording' &&
+          !{
+            'origin-nasir-v1',
+            'origin-abdulrahman-v1',
+          }.contains(assets[star['target_id']]?.editionId)) {
+        throw const FormatException('Unknown starred recitation.');
+      }
       if (star['type'] == 'surah' &&
           await (db.select(db.surahs)..where(
                     (s) =>
@@ -239,18 +251,23 @@ class MetadataBackup {
       if (applySettings) {
         final settings = data['settings'] as BackupRow;
         await db.customStatement(
-          'UPDATE app_settings SET theme=?,reduced_motion=?,network_policy=?,daily_goal_ms=?,aurora_enabled=?,updated_utc_ms=? WHERE id=1',
+          'UPDATE app_settings SET theme=?,reduced_motion=?,network_policy=?,daily_goal_ms=?,aurora_enabled=?,alternate_home_text=?,home_text_language=?,updated_utc_ms=? WHERE id=1',
           [
             settings['theme'],
             settings['reduced_motion'],
             settings['network_policy'],
             settings['daily_goal_ms'],
             settings['aurora_enabled'],
+            settings['alternate_home_text'],
+            settings['home_text_language'],
             DateTime.now().toUtc().millisecondsSinceEpoch,
           ],
         );
         db.markTablesUpdated([db.appSettings]);
       }
+      await db.reconcileBestListeningStreak(
+        importedBest: data['best_listening_streak'] as int? ?? 0,
+      );
       return ImportResult(
         current.newPassages,
         current.conflicts.length,
@@ -357,6 +374,8 @@ Map<String, Object?> validateBackup(String text) {
   const epochMax = 253402300799999;
   const wallMax = 3155760000000; // 100 years; no unbounded integer arithmetic.
   final data = object(decoded, {
+    if (decoded is Map && {3, 4}.contains(decoded['version']))
+      'best_listening_streak',
     'format',
     'version',
     'exported_utc_ms',
@@ -368,11 +387,31 @@ Map<String, Object?> validateBackup(String text) {
     'sessions',
     'events',
   });
-  if (data['format'] != 'al-murajaah-metadata' || data['version'] != 1) {
+  if (data['format'] != 'al-murajaah-metadata' ||
+      !{1, 2, 3, 4}.contains(data['version'])) {
     invalid('Unsupported backup format or version.');
   }
   integer(data, 'exported_utc_ms', 0, epochMax);
-  final settings = object(data['settings'], MetadataBackup._settingKeys);
+  if ({3, 4}.contains(data['version'])) {
+    integer(data, 'best_listening_streak', 0, 3652059);
+  }
+  final settingsInput = data['settings'];
+  if (settingsInput is Map<String, Object?> &&
+      !settingsInput.containsKey('network_policy')) {
+    data['settings'] = {...settingsInput, 'network_policy': 'any'};
+  }
+  final settings = object(data['settings'], {
+    for (final key in MetadataBackup._settingKeys)
+      if (data['version'] == 4 ||
+          !{'alternate_home_text', 'home_text_language'}.contains(key))
+        key,
+  });
+  if (data['version'] != 4) {
+    settings['alternate_home_text'] = 1;
+    settings['home_text_language'] = 'english';
+  }
+  integer(settings, 'alternate_home_text', 0, 1);
+  choice(settings, 'home_text_language', {'english', 'arabic'});
   choice(settings, 'theme', {'system', 'light', 'dark'});
   choice(settings, 'network_policy', {'wifi', 'any'});
   integer(settings, 'daily_goal_ms', 0, 14400000);
@@ -480,11 +519,20 @@ Map<String, Object?> validateBackup(String text) {
   }
   final starKeys = <String>{};
   for (final row in rows(data, 'stars')) {
-    choice(row, 'type', {'surah', 'passage'});
+    choice(
+      row,
+      'type',
+      data['version'] == 1
+          ? {'surah', 'passage'}
+          : {'surah', 'passage', 'recording'},
+    );
     final target = id(row, 'target_id');
     if (!starKeys.add('${row['type']}/$target')) invalid('Duplicate star.');
     if (row['type'] == 'passage' && !passages.containsKey(target)) {
       invalid('Missing starred passage.');
+    }
+    if (row['type'] == 'recording' && !recordings.containsKey(target)) {
+      invalid('Missing starred recording identity.');
     }
     if (row['type'] == 'surah' &&
         (int.tryParse(target) == null ||
@@ -556,5 +604,9 @@ Map<String, Object?> validateBackup(String text) {
       invalid('Session total does not match measured events.');
     }
   }
+  // Canonicalize after validating the original version's allowed identities.
+  // A preview is validated again at import, so it must remain self-consistent.
+  data['version'] = 4;
+  data['best_listening_streak'] ??= 0;
   return data;
 }

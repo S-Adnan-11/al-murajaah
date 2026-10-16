@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import '../../core/audio/recording_source.dart';
+import '../../core/audio/sample_catalog.dart';
+
 /// A fully validated, offline-readable catalog candidate. Loading it does not
 /// install database rows, overwrite retained asset metadata or start a player.
 class Catalog {
@@ -43,6 +46,7 @@ class Catalog {
           r.name,
           r.arabicName,
           ...r.searchAliases,
+          if (r.number == 3) 'Aal Imran Ali Imran Aal-e-Imran',
         ].any((name) => _searchKey(name).contains(key)),
       ),
     );
@@ -61,7 +65,7 @@ class Catalog {
       .replaceAll('ii', 'i');
 }
 
-class CatalogRecording {
+class CatalogRecording extends RecordingSource {
   CatalogRecording._({
     required this.number,
     required this.version,
@@ -76,13 +80,30 @@ class CatalogRecording {
     required this.available,
     required this.unavailableReason,
   });
-  final int number, version, byteSize;
-  final String arabicName, name, assetId, sha256;
+  @override
+  final int number;
+  final int version;
+  @override
+  final int byteSize;
+  @override
+  final String arabicName;
+  @override
+  final String name;
+  @override
+  final String assetId;
+  final String sha256;
   final List<String> searchAliases;
   final Uri url;
+  @override
   final int? durationMs;
+  @override
   final bool available;
+  @override
   final String? unavailableReason;
+
+  @override
+  SampleAsset get audioAsset =>
+      SampleAsset(assetId, name, url.toString(), byteSize, sha256);
 
   static CatalogRecording _parse(Map<String, dynamic> json) {
     int integer(String key) {
@@ -134,7 +155,7 @@ class CatalogRecording {
       number: number,
       version: version,
       arabicName: text('arabicName'),
-      name: text('name'),
+      name: number == 3 ? "Aali 'Imran" : text('name'),
       searchAliases: List.unmodifiable(aliases.cast<String>()),
       assetId: id,
       url: Uri.parse(rawUrl),

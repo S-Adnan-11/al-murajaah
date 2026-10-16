@@ -2,12 +2,14 @@ CREATE TABLE app_settings (
   id INTEGER NOT NULL PRIMARY KEY CHECK (id = 1),
   theme TEXT NOT NULL DEFAULT 'system' CHECK (theme IN ('system','light','dark')),
   reduced_motion INTEGER NOT NULL DEFAULT 0 CHECK (reduced_motion IN (0,1)),
-  network_policy TEXT NOT NULL DEFAULT 'wifi' CHECK (network_policy IN ('wifi','any')),
+  network_policy TEXT NOT NULL DEFAULT 'any' CHECK (network_policy IN ('wifi','any')),
   default_reciter_id TEXT REFERENCES reciters(id),
   daily_goal_ms INTEGER NOT NULL DEFAULT 300000 CHECK (daily_goal_ms >= 0),
   preferences_version INTEGER NOT NULL DEFAULT 1 CHECK (preferences_version > 0),
   updated_utc_ms INTEGER NOT NULL DEFAULT 0,
-  aurora_enabled INTEGER NOT NULL DEFAULT 0 CHECK (aurora_enabled IN (0,1))
+  aurora_enabled INTEGER NOT NULL DEFAULT 0 CHECK (aurora_enabled IN (0,1)),
+  alternate_home_text INTEGER NOT NULL DEFAULT 1 CHECK (alternate_home_text IN (0,1)),
+  home_text_language TEXT NOT NULL DEFAULT 'english' CHECK (home_text_language IN ('english','arabic'))
 );
 
 CREATE TABLE surahs (
@@ -74,7 +76,7 @@ CREATE TRIGGER asset_identity_immutable BEFORE UPDATE ON audio_assets BEGIN
     NEW.byte_size IS NOT OLD.byte_size OR NEW.duration_ms IS NOT OLD.duration_ms OR NEW.url IS NOT OLD.url));
 END;
 CREATE TABLE favorites (
-  type TEXT NOT NULL CHECK (type IN ('surah','passage')),
+  type TEXT NOT NULL CHECK (type IN ('surah','passage','recording')),
   target_id TEXT NOT NULL,
   created_utc_ms INTEGER NOT NULL,
   PRIMARY KEY (type,target_id)
@@ -82,7 +84,8 @@ CREATE TABLE favorites (
 CREATE TRIGGER favorite_insert_target BEFORE INSERT ON favorites BEGIN
   SELECT RAISE(ABORT, 'Unknown favorite target') WHERE
     (NEW.type = 'surah' AND NOT EXISTS (SELECT 1 FROM surahs WHERE CAST(number AS TEXT) = NEW.target_id)) OR
-    (NEW.type = 'passage' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id));
+    (NEW.type = 'passage' AND NOT EXISTS (SELECT 1 FROM saved_passages WHERE id = NEW.target_id)) OR
+    (NEW.type = 'recording' AND NOT EXISTS (SELECT 1 FROM audio_assets WHERE id = NEW.target_id AND edition_id IN ('origin-nasir-v1','origin-abdulrahman-v1')));
 END;
 CREATE TRIGGER favorite_update_target BEFORE UPDATE ON favorites BEGIN
   SELECT RAISE(ABORT, 'Favorite target is immutable') WHERE NEW.type <> OLD.type OR NEW.target_id <> OLD.target_id;
@@ -92,6 +95,9 @@ CREATE TRIGGER passage_delete_favorite AFTER DELETE ON saved_passages BEGIN
 END;
 CREATE TRIGGER surah_delete_favorite AFTER DELETE ON surahs BEGIN
   DELETE FROM favorites WHERE type = 'surah' AND target_id = CAST(OLD.number AS TEXT);
+END;
+CREATE TRIGGER recording_delete_favorite AFTER DELETE ON audio_assets BEGIN
+  DELETE FROM favorites WHERE type = 'recording' AND target_id = OLD.id;
 END;
 CREATE TABLE downloads (
   asset_id TEXT NOT NULL PRIMARY KEY REFERENCES audio_assets(id),
@@ -158,4 +164,9 @@ CREATE TABLE activity_events (
   local_date TEXT NOT NULL REFERENCES daily_activity(local_date),
   played_wall_ms INTEGER NOT NULL CHECK (played_wall_ms > 0),
   utc_ms INTEGER NOT NULL
+);
+
+CREATE TABLE listening_streak_records (
+  id INTEGER NOT NULL PRIMARY KEY CHECK (id = 1),
+  best_days INTEGER NOT NULL DEFAULT 0 CHECK (best_days >= 0)
 );

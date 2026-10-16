@@ -17,7 +17,29 @@ class AppDatabase extends _$AppDatabase {
       AppDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 7;
+
+  /// Calendar-day groups, independent of goals. Max retains legitimate older
+  /// records if daily detail is later pruned; imports never add streak lengths.
+  Future<void> reconcileBestListeningStreak({int importedBest = 0}) async {
+    await customStatement(
+      'INSERT OR IGNORE INTO listening_streak_records (id) VALUES (1)',
+    );
+    await customStatement(
+      '''
+      UPDATE listening_streak_records SET best_days = MAX(best_days, ?, COALESCE((
+        SELECT MAX(days) FROM (
+          SELECT COUNT(*) AS days FROM (
+            SELECT julianday(local_date) - ROW_NUMBER() OVER (ORDER BY local_date) AS run
+            FROM daily_activity WHERE played_wall_ms > 0
+          ) GROUP BY run
+        )
+      ), 0)) WHERE id = 1
+    ''',
+      [importedBest],
+    );
+    markTablesUpdated([listeningStreakRecords]);
+  }
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -42,6 +64,33 @@ class AppDatabase extends _$AppDatabase {
               await m.alterTable(TableMigration(schema.savedPassages));
               await m.alterTable(TableMigration(schema.listeningSessions));
             },
+            from4To5: (m, schema) async {
+              await customStatement(
+                'DROP TRIGGER IF EXISTS favorite_insert_target',
+              );
+              await customStatement(
+                'DROP TRIGGER IF EXISTS favorite_update_target',
+              );
+              await m.alterTable(TableMigration(schema.favorites));
+              await m.create(schema.favoriteInsertTarget);
+              await m.create(schema.favoriteUpdateTarget);
+              await m.create(schema.recordingDeleteFavorite);
+            },
+            from5To6: (m, schema) =>
+                m.createTable(schema.listeningStreakRecords),
+            from6To7: (m, schema) async {
+              await m.addColumn(
+                schema.appSettings,
+                schema.appSettings.alternateHomeText,
+              );
+              await m.addColumn(
+                schema.appSettings,
+                schema.appSettings.homeTextLanguage,
+              );
+              // Rebuild only to change the SQL default. Every stored choice,
+              // including Wi-Fi-only from an earlier default, is retained.
+              await m.alterTable(TableMigration(schema.appSettings));
+            },
           )(m, from, to);
           if ((await customSelect(
             'PRAGMA foreign_key_check',
@@ -62,6 +111,7 @@ class AppDatabase extends _$AppDatabase {
         // Existing and imported settings, including Wi-Fi-only, are untouched.
         'INSERT OR IGNORE INTO app_settings (id,network_policy) VALUES (1,\'any\')',
       );
+      if (schemaVersion >= 6) await reconcileBestListeningStreak();
     },
   );
 }

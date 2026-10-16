@@ -11,37 +11,40 @@ DailyActivityData day(String date, int ms, {int goalQualified = 0}) =>
       qualified: goalQualified,
     );
 void main() {
-  test('one-minute listening streak stays separate from recorded goal qualification', () {
-    final today = DateTime(2026, 10, 9);
-    final days = [
-      day('2026-10-07', 60000),
-      day('2026-10-08', 60001),
-      day('2026-10-09', 59999),
-    ];
-    expect(currentListeningStreak(days, today), 2);
-    expect(listeningStreak(days, today), 0);
-    expect(
-      currentListeningStreak([
-        ...days.take(2),
-        day('2026-10-09', 60000),
-      ], today),
-      3,
-    );
-    expect(
-      currentListeningStreak([
-        day('2026-10-07', 300000, goalQualified: 1),
-      ], today),
-      0,
-    );
-    expect(currentListeningStreak([], today), 0);
-    expect(
-      currentListeningStreak([
-        day('2026-10-09', 60000),
+  test(
+    'credited listening streak stays separate from recorded goal qualification',
+    () {
+      final today = DateTime(2026, 10, 9);
+      final days = [
         day('2026-10-07', 60000),
-      ], today),
-      1,
-    );
-  });
+        day('2026-10-08', 60001),
+        day('2026-10-09', 59999),
+      ];
+      expect(currentListeningStreak(days, today), 3);
+      expect(listeningStreak(days, today), 0);
+      expect(
+        currentListeningStreak([
+          ...days.take(2),
+          day('2026-10-09', 60000),
+        ], today),
+        3,
+      );
+      expect(
+        currentListeningStreak([
+          day('2026-10-07', 300000, goalQualified: 1),
+        ], today),
+        0,
+      );
+      expect(currentListeningStreak([], today), 0);
+      expect(
+        currentListeningStreak([
+          day('2026-10-09', 60000),
+          day('2026-10-07', 60000),
+        ], today),
+        1,
+      );
+    },
+  );
   test('calendar steps handle month/year, leap-day, DST and fixed recorded travel dates', () {
     expect(
       currentListeningStreak([
