@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: App feedback, bug reports and suggestions
+    url: https://github.com/S-Adnan-11/al-murajaah-feedback/issues
+    about: Use the separate public feedback tracker. Contributor pull requests belong in the source repository.

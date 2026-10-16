@@ -26,19 +26,30 @@ jobs:
       - name: Prepare Android SDK
         shell: bash
         run: |
-          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
-          flutter config --android-sdk "$ANDROID_HOME" --jdk-dir "$JAVA_HOME"
+          android_sdk="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          sdkmanager_bin="$android_sdk/cmdline-tools/latest/bin/sdkmanager"
+          if [[ ! -x "$sdkmanager_bin" ]]; then
+            candidates=("$android_sdk"/cmdline-tools/*/bin/sdkmanager)
+            sdkmanager_bin="${candidates[0]}"
+          fi
+          test -x "$sdkmanager_bin"
+          "$sdkmanager_bin" --sdk_root="$android_sdk" "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.22.1"
+          echo "ANDROID_HOME=$android_sdk" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$android_sdk" >> "$GITHUB_ENV"
+          flutter config --android-sdk "$android_sdk" --jdk-dir "$JAVA_HOME"
           flutter --version
       - name: Resolve locked dependencies
         run: flutter pub get --enforce-lockfile
       - name: Check generated database code
         run: |
           dart run build_runner build
-          git diff --exit-code -- lib/core/database/app_database.g.dart
+          git diff --exit-code -- lib/core/database/app_database.g.dart lib/core/database/app_database.steps.dart
       - name: Analyze
         run: flutter analyze --no-pub
       - name: Test repositories, migrations and UI
         run: flutter test --no-pub
+      - name: Test feedback relay (mocked upstream)
+        run: node --test services/feedback-worker/test/relay.test.mjs
       - name: Build Android debug APK
         run: flutter build apk --debug --no-pub
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

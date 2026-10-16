@@ -1,3 +1,6 @@
 # Preserve the vendored upstream font and license bytes across checkouts.
 assets/fonts/noto-sans-arabic/*.ttf binary
 assets/fonts/noto-sans-arabic/OFL.txt -text whitespace=-blank-at-eol
+assets/fonts/cairo/*.ttf binary
+assets/fonts/cairo/OFL.txt -text whitespace=-blank-at-eol
+android/gradlew text eol=lf
