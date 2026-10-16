@@ -48,6 +48,12 @@ Contributor debug builds use their own local development key and generally canno
 - Use Light, Dark or System appearance, reduced motion and the alternating English/Arabic Home reminder, which can be frozen in the current language.
 - Export and preview/import metadata backups, view credits and the origin story, and submit text feedback after reviewing its public-submission notice.
 
+## Start revising
+
+1. Open **Surahs**, choose a recording and press **Play**. Browsing another recording leaves the active session alone until you explicitly play it.
+2. In the player, choose **Set passage**, set the A and B times, name the passage and choose repeat options. **Save** keeps current playback; **Save & play** starts the new passage at A.
+3. Return to the passage from **Library**. For offline listening, download its recording and wait for verification to complete before disconnecting.
+
 ## Build and run
 
 Use the existing pinned toolchain; do not upgrade dependencies to prepare a release:
