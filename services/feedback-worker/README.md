@@ -1,6 +1,6 @@
 # Al-Murāja’ah text feedback relay
 
-Source, protocol tests and sanitized configuration for the existing feedback service.
+We use this Worker to relay text feedback from the app to our public GitHub feedback tracker. This directory contains its source, tests and deployment configuration.
 [App source and setup](../../README.md) · [Public feedback tracker](https://github.com/S-Adnan-11/al-murajaah-feedback).
 
 The app build requires no service credentials. Without a `FEEDBACK_ENDPOINT`
@@ -26,30 +26,29 @@ Absent token or `FEEDBACK_ENABLED=false` returns 503 without contacting GitHub.
 ## Prepare and deploy from the workspace root
 
 ```powershell
-npm.cmd install --prefix artifacts/feedback-worker-tools --no-audit --no-fund wrangler@4.149.0
 node services/feedback-worker/prepare.mjs
+npm.cmd ci --prefix artifact-private/feedback-worker-tools --no-audit --no-fund
 node --test services/feedback-worker/test/relay.test.mjs
 node services/feedback-worker/test/runtime.mjs
 ```
 
 The protocol and workerd/SQLite runtime checks above mock GitHub and create no real issue.
-The installed Wrangler tools are disposable; their pinned direct version is shown above, but transitive downloads are not locked by the app lockfile.
-The runtime test reads Miniflare from that prepared tools directory.
+The committed `package.json` and `package-lock.json` pin Wrangler, Miniflare and their transitive dependencies. Preparation copies both manifests into the ignored tools directory; `npm ci` installs that exact dependency graph there. Runtime tests read Miniflare from that directory. The mocked protocol tests need only Node.js, with no npm install.
 Use `.cmd` launchers on Windows; on macOS/Linux use `npm` and the corresponding launcher without `.cmd`.
 
-Deployment is a separate maintainer operation and needs the owner's Cloudflare access and dashboard-managed secret:
+Deployment is a separate maintainer operation and needs Cloudflare access and a configured secret:
 
 ```powershell
-artifacts/feedback-worker-tools/node_modules/.bin/wrangler.cmd --cwd artifacts/feedback-worker-deploy login --device --browser=false
-artifacts/feedback-worker-tools/node_modules/.bin/wrangler.cmd --cwd artifacts/feedback-worker-deploy deploy --config wrangler.jsonc
+artifact-private/feedback-worker-tools/node_modules/.bin/wrangler.cmd --cwd artifact-private/feedback-worker-deploy login --device --browser=false
+artifact-private/feedback-worker-tools/node_modules/.bin/wrangler.cmd --cwd artifact-private/feedback-worker-deploy deploy --config wrangler.jsonc
 ```
 
-Preparation copies the reviewed configuration into already-ignored artifacts,
-using absolute source paths. Run Wrangler from that prepared directory to
-keep generated state, logs and bundles out of source. Repository publication does not deploy the Worker. This setup is for deliberate service administration; preserve the working production service and state.
+Preparation copies the configuration into ignored `artifact-private/` using absolute
+source paths. Run Wrangler from that prepared directory to keep generated
+state, logs and bundles out of source. Retain the production service's bindings
+and state when deploying an update.
 The deployment creates one SQLite Durable Object class and an edge rate-limit
-binding. Both bindings were accepted on the owner account. Check account quotas
-before wider distribution; no pricing or unlimited-capacity promise is made here.
+binding. Check account quotas before deployment and wider distribution.
 
 ## Abuse and retry behavior
 
@@ -68,7 +67,7 @@ Pending state is persisted before GitHub POST. GitHub requests have an 8-second
 timeout and do not follow redirects. Ambiguous results return 202 and never
 automatically repeat the POST. A later retry, at most every 30 seconds, searches
 up to three pages of repository issues for the exact submission marker. An
-absent marker leaves the submission pending. This can require owner investigation;
+absent marker leaves the submission pending. This can require maintainer investigation;
 it is not a guarantee of exactly-once delivery.
 
 Deduplication records expire after 30 days. Daily counters/digests expire after
@@ -82,11 +81,11 @@ Set `FEEDBACK_ENABLED=false` in the Worker settings to stop submissions. Before
 redeploying, also change that value in the reviewed template if the service must
 remain stopped; the template's plain variables are deployed again. Rotate the
 GitHub token directly in Cloudflare before expiry or after revocation. Never put
-the token in Flutter defines, assets, the owner-input file, chat, logs or source.
+the token in Flutter defines, assets, logs or source.
 Rotation requires no APK update. Preserve the Durable Object namespace/migration
 history during updates so pending and confirmed results survive.
 
-After configuring the secret, submit one clearly labeled review test from the
+After configuring the secret, submit one clearly labeled manual test from the
 installed app, inspect its issue and reference, then exercise errors/offline and
 retry. Confirm audio continues. Local tests mock GitHub and create no real issue.
 

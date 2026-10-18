@@ -1,4 +1,4 @@
-import { Miniflare, convertV4MiniflareOptions } from '../../../artifacts/feedback-worker-tools/node_modules/miniflare/dist/src/index.js';
+import { Miniflare, convertV4MiniflareOptions } from '../../../artifact-private/feedback-worker-tools/node_modules/miniflare/dist/src/index.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -6,6 +6,8 @@ import assert from 'node:assert/strict';
 const source = path.resolve(import.meta.dirname, '../src');
 let posts = 0;
 const mf = new Miniflare(convertV4MiniflareOptions({
+  // Request.cf metadata is unused here; avoid its network fetch and local cache.
+  cf: false,
   workers: [{
   name: 'feedback-test',
   modules: [

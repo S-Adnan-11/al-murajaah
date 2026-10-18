@@ -7,7 +7,7 @@
 <p align="center"><strong>Listen. Repeat. Return.</strong></p>
 
 <p align="center">
-  Al-Murāja’ah helps you memorise and revise the Qur’an through listening. Choose a passage, repeat it, save it and return to it whenever you need. Stream recordings from the complete 114-surah Zarami/Hafs catalogue or download them for offline listening.
+  Al-Murāja’ah helps you memorise and revise the Qur’an through listening. Choose a passage, repeat it, save it and return to it whenever you need. We built it with Flutter. Background playback and verified offline downloads support revision across the complete 114-surah Zarami/Hafs catalogue.
 </p>
 
 <p align="center">
@@ -17,12 +17,14 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/S-Adnan-11/al-murajaah/releases/tag/v1.0.1"><strong>Download</strong></a> ·
+  <a href="https://github.com/S-Adnan-11/al-murajaah/releases/latest"><strong>Download</strong></a> ·
   <a href="https://github.com/S-Adnan-11/al-murajaah-feedback/issues"><strong>Feedback</strong></a> ·
   <a href="CONTRIBUTING.md"><strong>Contribute</strong></a>
 </p>
 
 <p align="center">Current Android release: <strong>1.0.1+36</strong>.</p>
+
+[Set up for development](#build-and-run) · [Architecture and contribution guide](CONTRIBUTING.md#how-the-app-fits-together) · [Checks](#checks)
 
 ## See it in action
 
@@ -49,7 +51,7 @@
 
 Captured from the released **1.0.1+36** APK on a disposable emulator. Passage names and listening history are demonstration data. Select any screenshot to view it at full size.
 
-## What V1 does
+## What the app does
 
 - Browse and search the complete catalogue while the current playback session continues independently.
 - Play full surahs or saved A–B passages, with finite total plays or Continuous, speed controls, passage gaps and a sleep timer.
@@ -59,85 +61,25 @@ Captured from the released **1.0.1+36** APK on a disposable emulator. Passage na
 - Use Light, Dark or System appearance, reduced motion and the alternating English/Arabic Home reminder, which can be frozen in the current language.
 - Export and preview/import metadata backups, view credits and the origin story, and submit text feedback after reviewing its public-submission notice.
 
-## Start revising
+## How it works
 
-1. Open **Surahs**, choose a recording and press **Play**. Browsing another recording leaves the active session alone until you explicitly play it.
-2. In the player, choose **Set passage**, set the A and B times, name the passage and choose repeat options. **Save** keeps current playback; **Save & play** starts the new passage at A.
-3. Return to the passage from **Library**. For offline listening, download its recording and wait for verification to complete before disconnecting.
+We use Flutter and Dart for the interface and application logic, with Riverpod for shared dependencies and go_router for navigation. Drift/SQLite stores passages, preferences and listening activity locally.
 
-## Technology stack
+Playback runs independently of navigation. One `PrototypeHandler` coordinates just_audio and audio_service, so browsing another surah doesn't interrupt your session. Explicit Play starts a different session. Downloads are checked against the catalogue's byte size and SHA-256 before we use them offline.
 
-<p>
-  <strong>App</strong><br>
-  <a href="https://flutter.dev/"><img src="screenshots/stack/flutter.svg" alt="Flutter"></a>
-  <a href="https://dart.dev/"><img src="screenshots/stack/dart.svg" alt="Dart"></a>
-  <a href="https://kotlinlang.org/"><img src="screenshots/stack/kotlin.svg" alt="Kotlin"></a>
-  <a href="https://developer.android.com/"><img src="screenshots/stack/android.svg" alt="Android"></a>
-  <a href="https://sqlite.org/"><img src="screenshots/stack/sqlite.svg" alt="SQLite"></a>
-</p>
-
-<p>
-  <strong>Services</strong><br>
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="screenshots/stack/javascript.svg" alt="JavaScript"></a>
-  <a href="https://cloudinary.com/documentation"><img src="screenshots/stack/cloudinary.svg" alt="Cloudinary"></a>
-  <a href="https://developers.cloudflare.com/workers/"><img src="screenshots/stack/cloudflare.svg" alt="Cloudflare"></a>
-</p>
-
-<p>
-  <strong>Tooling</strong><br>
-  <a href="https://nodejs.org/"><img src="screenshots/stack/nodejs.svg" alt="Node.js"></a>
-  <a href="https://gradle.org/"><img src="screenshots/stack/gradle.svg" alt="Gradle"></a>
-  <a href="https://docs.github.com/en/actions"><img src="screenshots/stack/github-actions.svg" alt="GitHub Actions"></a>
-</p>
-
-### Mobile app and audio
-
-| Technology | Actual role |
+| Part | Technology and role |
 | --- | --- |
-| Flutter / Dart | Material UI, app logic, asynchronous work and shared application source |
-| Kotlin / Android APIs | Native MethodChannel adapters for DownloadManager transfers, document export/import, device details and diagnostics |
-| audio_service | Background playback service, media notifications and system media controls |
-| just_audio | Streaming/local playback, clipping, seeking and playback speed under one playback handler |
-| audio_session | Audio-focus and interruption handling for the playback session |
-| Riverpod | Shared dependencies and reactive provider composition |
-| go_router | Application routes and navigation |
-| SQL / Drift / sqlite3 / SQLite | Generated database access, local preferences, passages and listening activity, with versioned migrations |
-| Swift / UIKit — prepared | iOS runner and limited support-channel source. iOS builds, native adapters and device behavior remain unverified; Xcode/macOS validation is pending |
+| Android integration | Kotlin adapters for DownloadManager, document import/export and device information |
+| Audio delivery | Cloudinary HTTPS URLs for streaming and downloads; recording bytes are not bundled |
+| Feedback | JavaScript on Cloudflare Workers, with SQLite Durable Objects for quotas and retry tracking; relays reviewed text to a separate public GitHub tracker |
+| Tests and builds | Flutter tests, Drift migrations, Gradle and GitHub Actions; Node.js protocol tests and Miniflare/workerd runtime checks for the relay |
+| Typography | Bundled Cairo and Noto Sans Arabic fonts, with notices in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
 
-### Media hosting and feedback
-
-| Technology | Actual role |
-| --- | --- |
-| Cloudinary | HTTPS delivery of configured recitations for streaming and verified downloads |
-| JavaScript / Cloudflare Workers | ES-module feedback endpoint, payload validation and public-issue relay |
-| Cloudflare Durable Objects | Serialized quotas, deduplication and retry references in SQLite-backed storage; edge rate limiting supplements the relay |
-| GitHub Issues REST API | Public feedback destination; the scoped token stays in Cloudflare Secrets |
-
-### Build, testing and automation
-
-| Technology | Actual role |
-| --- | --- |
-| Flutter SDK / Dart SDK / Pub | App commands, package resolution and the committed pubspec.lock |
-| Gradle / Android Gradle Plugin / R8 | Kotlin DSL build configuration, Android packaging, R8 code shrinking and resource shrinking for releases |
-| JDK / Android SDK / NDK / CMake | Android and native-dependency toolchain; JDK 21 runs builds, while Java/Kotlin bytecode targets JVM 17 |
-| build_runner / drift_dev | Database access code, versioned schema sources and migration-test generation |
-| Dart analyzer / formatter / flutter_lints | Static analysis, Dart formatting and configured lint rules |
-| flutter_test / integration_test | Unit, widget and migration tests, plus bounded Android runtime checks with required fixtures |
-| Node.js / node:test / node:assert/strict | Worker preparation scripts and mocked protocol/concurrency assertions |
-| npm / Wrangler / Miniflare / workerd | Separate Worker tools, deliberate deployment and local runtime/SQLite Durable Object tests; installed under ignored artifacts |
-| Git / GitHub Actions / Bash / Windows batch | SDK commit pinning, Android CI, mocked Worker tests and cross-platform Gradle launch scripts |
-
-Pinned versions and copyable commands are in [Build and run](#build-and-run); Worker administration and runtime checks are in the [relay README](services/feedback-worker/README.md). The CI artifact is a debug APK; production signing and service deployment remain separate maintainer operations.
-
-### Supporting packages and assets
-
-- **Files and paths:** path_provider locates app storage; path joins and normalizes local paths.
-- **Integrity:** crypto supplies SHA-256 verification for audio files and hashes for diagnostic exports.
-- **Icons and typography:** Flutter Material Icons and the bundled Cairo / Noto Sans Arabic fonts supply UI icons and Arabic text. Their notices and the other asset permissions remain in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Android is the released platform. The iOS runner and some support-channel code are present, but builds, native integrations and device behaviour still need macOS/Xcode and device testing. See [where contributions help](CONTRIBUTING.md#where-help-is-welcome).
 
 ## Install on Android
 
-1. Open the [v1.0.1 release](https://github.com/S-Adnan-11/al-murajaah/releases/tag/v1.0.1) and download **Al-Murāja’ah.apk**. The adjacent **Al-Murāja’ah.apk.sha256** verifies that file’s bytes.
+1. Open the [latest release](https://github.com/S-Adnan-11/al-murajaah/releases/latest) and download the APK and its matching `.sha256` file. Compare the APK’s SHA-256 with that file before installing.
 2. Allow your browser or file manager to install this APK when Android prompts you. No split installer is needed.
 3. Open the downloaded APK and follow Android’s installation prompts. If you already have an earlier private test build, read the migration section below first.
 
@@ -150,7 +92,7 @@ The release APK is non-debuggable and uses a dedicated production signing certif
 
 Android rejects an ordinary update from the previous debug-origin signer to the new production signer. Keep the old app until you have paused playback, exported through **Settings → Backup & restore → Export metadata backup**, received the saved-and-verified confirmation, and copied the JSON off the device to private storage. Verify the backup and keep a second copy before deciding to remove the old installation.
 
-To migrate the same package, the owner must then manually remove the old test installation, install the production APK, select **Choose backup to import**, review its contents, enable **Apply settings from backup** if wanted, and import. Removing the old app erases its private data and downloads. Metadata restores passages, stars, listening records/best streak and supported preferences; recordings must be downloaded again. Playback checkpoints, transfer state, feedback drafts and discovery state do not transfer. Stop if backup verification fails; there is no automatic signer-migration path in this release.
+To migrate the same package, manually remove the old test installation, install the production APK, select **Choose backup to import**, review its contents, enable **Apply settings from backup** if wanted, and import. Removing the old app erases its private data and downloads. Metadata restores passages, stars, listening records/best streak and supported preferences; recordings must be downloaded again. Playback checkpoints, transfer state, feedback drafts and discovery state do not transfer. Stop if backup verification fails; there is no automatic signer-migration path in this release.
 
 </details>
 
@@ -158,7 +100,7 @@ Contributor debug builds use their own local development key and generally canno
 
 ## Build and run
 
-Use the existing pinned toolchain; do not upgrade dependencies to prepare a release:
+These versions match our Android CI. Use them for a reproducible starting point:
 
 | Prerequisite | Version |
 | --- | --- |
@@ -168,7 +110,7 @@ Use the existing pinned toolchain; do not upgrade dependencies to prepare a rele
 | Android SDK | Platform **36**, Build Tools **36.0.0** |
 | Android native tooling | NDK **28.2.13676358**, CMake **3.22.1** |
 | Gradle / Android Gradle Plugin | **9.3.1** / **9.1.0**, configured in `android/` |
-| Optional Worker tests | Node.js **22 or newer**; locally checked with **26.10.0** |
+| Optional Worker tests | Node.js **22 or newer**; npm for locked runtime tools |
 
 Install the pinned Flutter SDK, put its `bin` on PATH, and install JDK/Android SDK components. Accept Android SDK licences with `flutter doctor --android-licenses`. Set `JAVA_HOME` and configure Flutter for your local JDK and Android SDK if automatic discovery needs help:
 
@@ -179,7 +121,6 @@ git clone https://github.com/S-Adnan-11/al-murajaah.git
 cd al-murajaah
 flutter --version
 flutter pub get --enforce-lockfile
-dart run build_runner build
 flutter analyze --no-pub
 flutter test --no-pub
 flutter build apk --debug --no-pub
@@ -191,7 +132,7 @@ Replace the directory and device placeholders with your own observed values. Flu
 
 The existing [CI workflow](.github/workflows/android.yml) shows the exact Flutter commit checkout and Android `sdkmanager` component commands. In `flutter run`, use the terminal’s hot-reload commands while developing and press `q` to end the run.
 
-**No owner signing key, GitHub token or Cloudflare credential is needed to develop, test or build a debug APK.** Leave `android/production/key.properties` absent. The established application ID is `dev.almurajaah.al_murajaah.diagnostic`; avoid installing a differently signed development APK over personal data. Use an emulator or a separate test device/profile.
+**No production signing key, GitHub token or Cloudflare credential is needed to develop, test or build a debug APK.** Leave `android/production/key.properties` absent. The established application ID is `dev.almurajaah.al_murajaah.diagnostic`; avoid installing a differently signed development APK over personal data. Use an emulator or a separate test device/profile.
 
 For local feedback UI testing, an optional compile-time `FEEDBACK_ENDPOINT` can point to an HTTPS `/feedback` endpoint you control:
 
@@ -199,36 +140,19 @@ For local feedback UI testing, an optional compile-time `FEEDBACK_ENDPOINT` can 
 flutter run -d DEVICE_ID --dart-define=FEEDBACK_ENDPOINT=https://YOUR_WORKER_HOST/feedback
 ```
 
-Without the define, feedback sending is unavailable; other development features remain usable. Do not use the production tracker for automated tests. The accepted release’s endpoint is public configuration, and all service credentials stay server-side. See [feedback relay setup and tests](services/feedback-worker/README.md).
+Without the define, feedback sending is unavailable; other development features remain usable. Do not use the production tracker for automated tests. The release endpoint is public configuration, and all service credentials stay server-side. See [feedback relay setup and tests](services/feedback-worker/README.md).
 
-Release builds intentionally require private `android/production/key.properties` and the approved production certificate. They fail without it; there is no fallback to development or legacy signing. A maintainer production update must retain package identity, use the same production signer and increase the build number beyond distributed builds. Private release keys, credentials and distribution artifacts are outside source history.
+Release builds intentionally require private `android/production/key.properties` and the production certificate. They fail without it; there is no fallback to development or legacy signing. A maintainer production update must retain package identity, use the same production signer and increase the build number beyond distributed builds. Private release keys, credentials and distribution artifacts are outside source history.
 
 ## Checks
 
-The [Android workflow](.github/workflows/android.yml) resolves the lockfile, checks generated database code, analyzes Dart, runs unit/widget/migration tests and builds a debug APK. Its artifact is development build evidence. Worker protocol tests use mocked GitHub requests:
+The [Android workflow](.github/workflows/android.yml) runs on pushes and pull requests, including fork contributions, with read-only repository access and no private credentials. It resolves the lockfile, checks generated database code, analyzes Dart, runs unit/widget/migration tests and uploads a debug APK for development testing. Worker protocol tests use mocked GitHub requests:
 
 ```text
 node --test services/feedback-worker/test/relay.test.mjs
 ```
 
-Native playback checks live in `integration_test/` and `test_driver/`. Read each check’s fixtures and bounds before running; some need private audio fixtures and are not a blanket fresh-checkout test suite. Keep existing installations and data intact. Use `--keep-app-running` when driving integration checks. Playback-state assertions do not establish audible quality.
-
-## Architecture
-
-| Area | Responsibility |
-| --- | --- |
-| `lib/main.dart`, `lib/app/` | Startup, shared dependencies, Riverpod composition and go_router routes |
-| `lib/core/audio/` | One `PrototypeHandler` via audio_service/just_audio, audio-session handling, repeat/transport intent and diagnostic support |
-| `lib/core/database/` | Drift/SQLite schema, migrations and persisted preferences/library/activity |
-| `lib/core/theme/` | Shared theme, branding, Arabic typography and Home-language state |
-| `lib/features/` | Catalogue, downloads, player/Library, activity, backup, settings and support screens |
-| `android/` | Native media integration, DownloadManager/file verification and document adapters |
-| `ios/` | Prepared native source/configuration; runtime adapters and verification remain incomplete |
-| `assets/` | Immutable catalogue metadata, fonts/notices, approved brand artwork and credits portrait |
-| `services/feedback-worker/` | Cloudflare Worker and SQLite Durable Object relay, sanitized deployment template and mocked tests |
-| `test/`, `integration_test/`, `test_driver/` | Unit/widget/migration coverage and bounded Android runtime checks |
-
-Browsing is separate from playback authority. Only explicit Play replaces the active session. Recording IDs, delivered byte hashes and saved time ranges are persistent contracts; replacing recording bytes requires a new identity rather than silently remapping existing saves.
+Native playback checks live in `integration_test/` and `test_driver/`. Read each check’s fixtures and bounds before running; some need audio fixtures that are not distributed in this repository. The unit/widget suite above runs without them. Keep existing installations and data intact. Use `--keep-app-running` when driving integration checks. Playback-state assertions do not establish audible quality.
 
 ## Data, downloads and backup
 
@@ -240,9 +164,7 @@ Metadata backup format 4 includes passages, stars, listening records, supported 
 
 ## Platform and verification limits
 
-Android is the distribution target. V1 has automated tests and bounded Android emulator/device evidence, with owner acceptance at the supplied scope. Minor crackling on Redmi 12C remains a known non-blocking issue; no acoustic cure is claimed. OEM background behavior, interruptions, TalkBack and long phone sessions still need broader verification. Physical battery drain and universal cold-start timing have not been established.
-
-iOS sources, icons and configuration are prepared. No iOS build, signing, device compatibility or completed native download/document/power adapters are claimed. Building or validating iOS requires deliberate follow-up on macOS with Xcode.
+Android is the released platform. We run automated tests and have tested selected Android emulator and device scenarios. Minor crackling has been reported on Redmi 12C and remains unresolved. We welcome reports on background playback, interruptions, TalkBack and long listening sessions across more devices. Battery drain and startup timing still need broader measurement.
 
 ## Troubleshooting
 
@@ -255,7 +177,10 @@ iOS sources, icons and configuration are prepared. No iOS build, signing, device
 
 ## Contribute and give feedback
 
-Interested developers, including Muslim developers, are welcome; participation is open to everyone. Read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution scope and practical checks. Contributor pull requests belong in this source repository. User bug reports and suggestions belong in the separate [feedback repository](https://github.com/S-Adnan-11/al-murajaah-feedback).
+We welcome focused fixes, clearer documentation, accessibility testing and device-specific playback reports. Read [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture, suggested starting points and PR checks. Before starting a substantial change, open an issue in the [feedback tracker](https://github.com/S-Adnan-11/al-murajaah-feedback/issues) so we can agree on the approach. Pull requests belong in this source repository. You can also send feedback through the app; review the public-submission notice before sending.
+
+For published changes, see the [changelog](CHANGELOG.md). Maintainers preparing
+an Android update can follow the [release checklist](artifact/RELEASING.md).
 
 ## Licence and attribution
 

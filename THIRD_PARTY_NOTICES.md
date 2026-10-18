@@ -1,6 +1,6 @@
 # Third-party notices and asset scope
 
-The [MIT licence](LICENSE) covers the owner’s first-party source code. It does not replace dependency licences or grant rights to separately governed content.
+The [MIT licence](LICENSE) covers this project's first-party source code. It does not replace dependency licences or grant rights to separately governed content.
 
 | Material | Attribution and terms |
 | --- | --- |
@@ -9,8 +9,8 @@ The [MIT licence](LICENSE) covers the owner’s first-party source code. It does
 | Chapter names/transliterations | Tanzil Quran Metadata v1.0; source declares `cc-by` without a version. Attribution and extraction changes remain in [ATTRIBUTION.txt](assets/catalog/ATTRIBUTION.txt) |
 | Flutter/Dart and packages | Their upstream licences remain applicable. Versions are recorded in `pubspec.lock`; Flutter’s in-app software licence viewer retains registered dependency/font notices |
 | Gradle wrapper | Gradle project, Apache License 2.0; see the bundled [licence](android/gradle/wrapper/LICENSE.txt) |
-| Recitations | Owner-configured Zarami/Hafs collection and separately credited origin recordings. Audio is fetched from configured public delivery URLs; no recording bytes are committed or bundled in the APK |
-| Brand artwork and credits portrait | Approved app assets retained for this project; no general downstream reuse grant is asserted here |
+| Recitations | The configured Zarami/Hafs collection and separately credited origin recordings. Audio is fetched from configured public delivery URLs; no recording bytes are committed or bundled in the APK |
+| Brand artwork and credits portrait | Included for use in this project; no general downstream reuse grant is asserted here |
 
 The app’s Credits and origin content supply recording attribution. Permission for recitations to be used by this app does not establish permission for forks or other parties to redistribute them. Obtain permission from the relevant rights holders before republishing recordings, portrait or brand assets. Do not overwrite audio under an existing immutable recording ID.
 
@@ -28,4 +28,4 @@ The repository includes the assets needed to build this project locally. Availab
 | assets/credits/zarami.png (reciter portrait) | Requires permission before redistribution | Obtain the portrait rights holder’s permission or replace/remove it before distributing a fork |
 | Recitation audio, including files obtained through catalogue URLs | Requires permission before redistribution | Obtain the recording rights holders’ permission or use recordings you are permitted to distribute, with new recording identities for changed bytes |
 
-The supplied brand/portrait files remain available as project inputs for local development; this statement grants no general artwork or recording licence. Audio is neither committed nor bundled. Catalogue URLs and hashes describe delivery and integrity, not downstream audio rights. Rehosting recordings or distributing a fork that uses the owner’s delivery service requires separate permission; do not treat a publicly accessible URL as that permission. Preserve font and metadata notices even when replacing restricted assets.
+The supplied brand/portrait files remain available as project inputs for local development; this statement grants no general artwork or recording licence. Audio is neither committed nor bundled. Catalogue URLs and hashes describe delivery and integrity, not downstream audio rights. Rehosting recordings or distributing a fork that uses this project's delivery service requires separate permission; do not treat a publicly accessible URL as that permission. Preserve font and metadata notices even when replacing restricted assets.

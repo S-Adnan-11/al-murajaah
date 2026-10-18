@@ -15,10 +15,10 @@ The app bundles the font and copyright/license, without runtime font downloads.
 Appearance → Font and software licenses opens Flutter's license viewer with the
 full notice registered lazily. ArabicName uses regular weight 400, normal width,
 explicit right-to-left direction and Arabic layout/accessibility locale inside
-the English interface. Other variable weights and full Arabic localization are
-not part of this checkpoint.
+the English interface. Bundling this font does not provide full Arabic
+localization.
 
 Upstream Arabic coverage and substitution/positioning tables are checked;
 rendering at larger text sizes is tested. These checks do not certify every
-Arabic name or screen-reader pronunciation. Human visual and TalkBack review
-remain separate evidence.
+Arabic name or screen-reader pronunciation. We welcome visual and TalkBack
+testing, especially for Arabic names and larger text sizes.

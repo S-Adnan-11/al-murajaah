@@ -2,5 +2,14 @@
   "name": "al-murajaah-feedback",
   "private": true,
   "type": "module",
-  "scripts": { "test": "node --test test/*.test.mjs" }
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "tools:prepare": "node prepare.mjs",
+    "test:runtime": "node test/runtime.mjs"
+  },
+  "devDependencies": {
+    "miniflare": "5.20261006.1-alpha",
+    "wrangler": "4.149.0"
+  }
 }

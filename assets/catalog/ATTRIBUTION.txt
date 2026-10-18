@@ -5,5 +5,5 @@ Documentation: https://tanzil.net/docs/quran_metadata
 The source XML declares "cc-by"; it does not specify a license version.
 Changes: extracted chapter names/transliterations, added common spelling aliases.
 
-Recording collection: Zarami, Hafs. Public delivery supplied by the owner.
+Recording collection: Zarami, Hafs. Public delivery configured for this project.
 Delivery metadata describes the distributed MP3 bytes; no audio is bundled.

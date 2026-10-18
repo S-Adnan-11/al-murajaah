@@ -1,32 +1,76 @@
 # Contributing
 
-Developers interested in Qur’an revision tools, including Muslim developers, are welcome. Participation is open to everyone. Please keep discussions respectful and practical.
+We welcome developers interested in Qur’an revision tools. Participation is open to everyone.
 
-V1 is accepted and product development is frozen. Discuss a proposed fix, maintenance change or future feature before starting substantial work. User reports and suggestions belong in the [feedback tracker](https://github.com/S-Adnan-11/al-murajaah-feedback/issues); source changes and pull requests belong in [this repository](https://github.com/S-Adnan-11/al-murajaah).
+We are concentrating on maintaining the Android release. Focused fixes, documentation and testing are useful contributions. Before starting a substantial change, open an issue in the [feedback tracker](https://github.com/S-Adnan-11/al-murajaah-feedback/issues) so we can agree on the approach. Pull requests belong in [this source repository](https://github.com/S-Adnan-11/al-murajaah).
 
-## Make a focused change
+## Start here
 
-1. Follow the pinned prerequisites and setup in the [README](README.md). Keep `pubspec.lock`; avoid unrelated dependency upgrades.
-2. Work on a branch and use a disposable emulator/test profile. Debug builds need no distribution key. Never uninstall or clear an existing owner installation to make a check pass.
-3. Preserve one `PrototypeHandler`, independent browsing, explicit Play session changes, immutable recording IDs, saved ranges, database compatibility and backup formats. Keep the current story and approved branding intact. Future product work needs a deliberate V2 decision.
-4. Use formatter-controlled two-space Dart indentation and existing Flutter/Kotlin conventions. For a Drift schema change, provide an additive migration, preserve historical fixtures, regenerate derived files and cover data preservation.
-5. Run relevant checks and explain the results in your PR:
+1. Follow [Build and run](README.md#build-and-run) for the pinned Flutter, Java and Android tools. Debug builds and the unit/widget suite need no production keys, service credentials or private audio.
+2. Work on a branch. Keep `pubspec.lock` and avoid unrelated dependency upgrades. Use an emulator or a test device/profile: a development signing key generally cannot update the distributed app.
+3. Choose a small change and find its source and tests using the map below. Run a related test before editing, then check your change.
+
+## How the app fits together
+
+| Area | Start reading | Related tests |
+| --- | --- | --- |
+| Startup and shared dependencies | [main.dart](lib/main.dart), [foundation_app.dart](lib/app/foundation_app.dart), [product_dependencies.dart](lib/app/product_dependencies.dart) | `test/foundation_navigation_test.dart`, `test/product_shell_test.dart` |
+| Playback and session intent | [prototype_handler.dart](lib/core/audio/prototype_handler.dart), [session_spec.dart](lib/core/audio/session_spec.dart), [product_controller.dart](lib/features/product/product_controller.dart) | `test/session_spec_test.dart`, `test/playback_intent_test.dart` |
+| Catalogue and recording identity | [catalog_repository.dart](lib/features/catalog/catalog_repository.dart), `assets/catalog/` | `test/catalog_repository_test.dart` |
+| Passages and local data | [foundation.drift](lib/core/database/foundation.drift), [foundation_repository.dart](lib/core/database/foundation_repository.dart), `lib/features/product/` | `test/passage_editor_test.dart`, `test/passage_library_test.dart`, `test/database/` |
+| Downloads and offline files | `lib/features/downloads/`, `android/app/src/main/kotlin/` | `test/download_queue_test.dart` |
+| Listening activity and backups | `lib/features/activity/`, `lib/features/backup/` | `test/listening_meter_test.dart`, `test/metadata_backup_test.dart` |
+| Appearance and accessibility | `lib/core/theme/`, `lib/features/settings/` | `test/settings_semantics_test.dart`, `test/stage5_accessibility_test.dart` |
+| Feedback | `lib/features/support/`, [Worker setup](services/feedback-worker/README.md) | `services/feedback-worker/test/relay.test.mjs` |
+
+Playback has one authority: `PrototypeHandler`, backed by just_audio and audio_service. Screens can browse a different recording while the active session continues. Explicit Play changes the session; navigation and saving a passage must not do so. Keep that distinction when changing controls or routes.
+
+Drift/SQLite stores passages, recording references, preferences and listening activity. Recording IDs identify particular bytes: changing a recording requires a new identity so saved passages keep their meaning. Downloads are usable offline only after size and SHA-256 verification.
+
+Database changes need a migration and tests that preserve existing data. Keep historical schema fixtures and regenerate derived files with `dart run build_runner build`; don't edit generated Dart by hand. Backup compatibility also matters when changing stored data.
+
+## Where help is welcome
+
+- **Documentation:** try setup from a fresh clone and improve any unclear step, with the OS and tool versions you used.
+- **Accessibility:** test TalkBack, large text and focus order on a named screen. Include concrete reproduction steps and a focused fix where possible.
+- **Playback:** investigate device-specific interruptions, media controls or offline recovery. Include device/Android versions and steps that separate UI state from what you actually heard.
+- **iOS investigation:** the runner is present, but builds and native integrations are unverified. A macOS/Xcode build report would help establish the remaining work; discuss implementation scope before starting.
+
+These are areas to explore, not commitments to a feature or release date. Some older test filenames reflect development stages; use their assertions and the map above to find relevant coverage.
+
+## Check your change
+
+For a focused Dart check, for example:
+
+```text
+flutter test --no-pub test/session_spec_test.dart
+```
+
+For an app change, format the Dart source, run analysis and the unit/widget suite, and build a debug APK:
 
 ```text
 dart format lib test integration_test test_driver
-dart run build_runner build
 flutter analyze --no-pub
 flutter test --no-pub
 flutter build apk --debug --no-pub
+```
+
+Use the existing two-space Dart format, lints and Kotlin conventions. Add tests for changed behaviour and persistence. Only regenerate database code when the change needs it.
+
+For feedback relay changes, the protocol tests mock GitHub and need only Node.js 22 or newer:
+
+```text
 node --test services/feedback-worker/test/relay.test.mjs
 ```
 
-Only regenerate database code when relevant. Add meaningful tests for changed behavior and persistence. Native checks need their stated fixtures and bounded runs; use `--keep-app-running` with `flutter drive`. Distinguish an actual failure from a check you did not execute. An emulator transport pass does not establish acoustic quality, phone battery life or iOS compatibility.
+Follow the [Worker README](services/feedback-worker/README.md) for locked runtime tools and workerd/SQLite checks. Never point automated tests at the production tracker.
+
+Android CI runs on pushes and pull requests without private credentials. Native playback checks in `integration_test/` need the fixtures and bounds described by each check; some fixtures aren't distributed here. Use `--keep-app-running` with `flutter drive` to avoid its cleanup uninstall. Keep existing installations and user data intact. Playback-state assertions alone don't establish audible quality, battery life or iOS compatibility.
 
 ## Submit a pull request
 
-Explain the problem, resulting behavior, rationale and validation. Link the relevant issue and include sanitized screenshots for UI changes. Keep commits coherent with imperative messages such as `fix(audio): ...` or `docs: ...`. Do not include co-author trailers.
+Explain the problem, resulting behaviour and why the change helps. Link the issue or discussion, list checks actually run and their outcomes, and distinguish unexecuted checks from failures. Include sanitized screenshots for UI changes. Use focused commits with imperative messages such as `fix(audio): ...` or `docs: ...`.
 
-Keep private plans, evidence, diagnostics, audio, backups, APKs, local SDK paths and credentials out of Git. Do not weaken ignore rules or include personal saves in screenshots. Worker changes must never embed a GitHub token in source or Flutter configuration; local tests mock upstream requests. Deployment and production state changes require separate maintainer coordination.
+Keep credentials, diagnostics, personal backups, audio and build artifacts out of Git and public reports. Use demonstration data in screenshots. Service deployment and release signing are separate from contributor checks; the app needs no GitHub token or Cloudflare secret to build.
 
-Your first-party source contribution is provided under this repository’s [MIT licence](LICENSE). Preserve third-party notices. Before distributing a fork, follow the [asset permissions table](THIRD_PARTY_NOTICES.md#building-and-distributing-a-fork): retain font and metadata notices, and obtain permission for or replace restricted brand/portrait/audio assets.
+Source contributions use this repository's [MIT licence](LICENSE). Preserve third-party notices. Before distributing a fork, follow the [asset permissions table](THIRD_PARTY_NOTICES.md#building-and-distributing-a-fork): retain font and metadata notices, and obtain permission for or replace restricted brand, portrait and audio assets.
