@@ -24,7 +24,7 @@
 
 <p align="center">Current Android release: <strong>1.0.1+36</strong>.</p>
 
-[Set up for development](#build-and-run) · [Architecture and contribution guide](CONTRIBUTING.md#how-the-app-fits-together) · [Checks](#checks)
+[Start revising](#start-revising) · [Technology stack](#technology-stack) · [Set up for development](#build-and-run) · [Architecture and contribution guide](CONTRIBUTING.md#how-the-app-fits-together) · [Checks](#checks)
 
 ## See it in action
 
@@ -61,25 +61,96 @@ Captured from the released **1.0.1+36** APK on a disposable emulator. Passage na
 - Use Light, Dark or System appearance, reduced motion and the alternating English/Arabic Home reminder, which can be frozen in the current language.
 - Export and preview/import metadata backups, view credits and the origin story, and submit text feedback after reviewing its public-submission notice.
 
+## Start revising
+
+1. Open **Surahs**, choose a recording and press **Play**. Browsing another recording leaves the active session alone until you explicitly play it.
+2. In the player, choose **Set passage**, set the A and B times, name the passage and choose repeat options. **Save** keeps current playback; **Save & play** starts the new passage at A.
+3. Return to the passage from **Library**. For offline listening, download its recording and wait for verification to complete before disconnecting.
+
 ## How it works
 
 We use Flutter and Dart for the interface and application logic, with Riverpod for shared dependencies and go_router for navigation. Drift/SQLite stores passages, preferences and listening activity locally.
 
 Playback runs independently of navigation. One `PrototypeHandler` coordinates just_audio and audio_service, so browsing another surah doesn't interrupt your session. Explicit Play starts a different session. Downloads are checked against the catalogue's byte size and SHA-256 before we use them offline.
 
-| Part | Technology and role |
-| --- | --- |
-| Android integration | Kotlin adapters for DownloadManager, document import/export and device information |
-| Audio delivery | Cloudinary HTTPS URLs for streaming and downloads; recording bytes are not bundled |
-| Feedback | JavaScript on Cloudflare Workers, with SQLite Durable Objects for quotas and retry tracking; relays reviewed text to a separate public GitHub tracker |
-| Tests and builds | Flutter tests, Drift migrations, Gradle and GitHub Actions; Node.js protocol tests and Miniflare/workerd runtime checks for the relay |
-| Typography | Bundled Cairo and Noto Sans Arabic fonts, with notices in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) |
+## Technology stack
 
-Android is the released platform. The iOS runner and some support-channel code are present, but builds, native integrations and device behaviour still need macOS/Xcode and device testing. See [where contributions help](CONTRIBUTING.md#where-help-is-welcome).
+<p>
+  <strong>App</strong><br>
+  <a href="https://flutter.dev/"><img src="screenshots/stack/flutter.svg" alt="Flutter"></a>
+  <a href="https://dart.dev/"><img src="screenshots/stack/dart.svg" alt="Dart"></a>
+  <a href="https://kotlinlang.org/"><img src="screenshots/stack/kotlin.svg" alt="Kotlin"></a>
+  <a href="https://developer.android.com/"><img src="screenshots/stack/android.svg" alt="Android"></a>
+  <a href="https://sqlite.org/"><img src="screenshots/stack/sqlite.svg" alt="SQLite"></a>
+</p>
+
+<p>
+  <strong>Services</strong><br>
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="screenshots/stack/javascript.svg" alt="JavaScript"></a>
+  <a href="https://cloudinary.com/documentation"><img src="screenshots/stack/cloudinary.svg" alt="Cloudinary"></a>
+  <a href="https://developers.cloudflare.com/workers/"><img src="screenshots/stack/cloudflare.svg" alt="Cloudflare"></a>
+</p>
+
+<p>
+  <strong>Tooling</strong><br>
+  <a href="https://nodejs.org/"><img src="screenshots/stack/nodejs.svg" alt="Node.js"></a>
+  <a href="https://gradle.org/"><img src="screenshots/stack/gradle.svg" alt="Gradle"></a>
+  <a href="https://docs.github.com/en/actions"><img src="screenshots/stack/github-actions.svg" alt="GitHub Actions"></a>
+</p>
+
+### Mobile app and audio
+
+| Technology | Actual role |
+| --- | --- |
+| Flutter / Dart | Material UI, app logic, asynchronous work and shared application source |
+| Kotlin / Android APIs | Native MethodChannel adapters for DownloadManager transfers, document export/import, device details and diagnostics |
+| audio_service | Background playback service, media notifications and system media controls |
+| just_audio | Streaming/local playback, clipping, seeking and playback speed under one playback handler |
+| audio_session | Audio-focus and interruption handling for the playback session |
+| Riverpod | Shared dependencies and reactive provider composition |
+| go_router | Application routes and navigation |
+| SQL / Drift / sqlite3 / SQLite | Generated database access, local preferences, passages and listening activity, with versioned migrations |
+| Swift / UIKit — prepared | iOS runner and limited support-channel source. iOS builds, native adapters and device behavior remain unverified; Xcode/macOS validation is pending |
+
+### Media hosting and feedback
+
+| Technology | Actual role |
+| --- | --- |
+| Cloudinary | HTTPS delivery of configured recitations for streaming and verified downloads |
+| JavaScript / Cloudflare Workers | ES-module feedback endpoint, payload validation and public-issue relay |
+| Cloudflare Durable Objects | Serialized quotas, deduplication and retry references in SQLite-backed storage; edge rate limiting supplements the relay |
+| GitHub Issues REST API | Public feedback destination; the scoped token stays in Cloudflare Secrets |
+
+<details>
+<summary>Build, testing and supporting packages</summary>
+
+### Build, testing and automation
+
+| Technology | Actual role |
+| --- | --- |
+| Flutter SDK / Dart SDK / Pub | App commands, package resolution and the committed pubspec.lock |
+| Gradle / Android Gradle Plugin / R8 | Kotlin DSL build configuration, Android packaging, R8 code shrinking and resource shrinking for releases |
+| JDK / Android SDK / NDK / CMake | Android and native-dependency toolchain; JDK 21 runs builds, while Java/Kotlin bytecode targets JVM 17 |
+| build_runner / drift_dev | Database access code, versioned schema sources and migration-test generation |
+| Dart analyzer / formatter / flutter_lints | Static analysis, Dart formatting and configured lint rules |
+| flutter_test / integration_test | Unit, widget and migration tests, plus bounded Android runtime checks with required fixtures |
+| Node.js / node:test / node:assert/strict | Worker preparation scripts and mocked protocol/concurrency assertions |
+| npm / Wrangler / Miniflare / workerd | Separate Worker tools, deliberate deployment and local runtime/SQLite Durable Object tests; installed under ignored artifacts |
+| Git / GitHub Actions / Bash / Windows batch | SDK commit pinning, Android CI, mocked Worker tests and cross-platform Gradle launch scripts |
+
+Pinned versions and copyable commands are in [Build and run](#build-and-run); Worker administration and runtime checks are in the [relay README](services/feedback-worker/README.md). The CI artifact is a debug APK; production signing and service deployment remain separate maintainer operations.
+
+### Supporting packages and assets
+
+- **Files and paths:** path_provider locates app storage; path joins and normalizes local paths.
+- **Integrity:** crypto supplies SHA-256 verification for audio files and hashes for diagnostic exports.
+- **Icons and typography:** Flutter Material Icons and the bundled Cairo / Noto Sans Arabic fonts supply UI icons and Arabic text. Their notices and the other asset permissions remain in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+</details>
 
 ## Install on Android
 
-1. Open the [latest release](https://github.com/S-Adnan-11/al-murajaah/releases/latest) and download the APK and its matching `.sha256` file. Compare the APK’s SHA-256 with that file before installing.
+1. Open the [latest release](https://github.com/S-Adnan-11/al-murajaah/releases/latest) and download the APK and its matching `.sha256` file. For **1.0.1+36**, GitHub stores them as **Al-Muraja.ah.apk** and **Al-Muraja.ah.apk.sha256**, beneath the displayed Al-Murāja’ah labels. Compare the downloaded APK’s SHA-256 with the digest in that file before installing. The checksum’s embedded filename retains the original **Al-Murāja’ah.apk** spelling; rename the APK to that exact name if using `sha256sum -c`.
 2. Allow your browser or file manager to install this APK when Android prompts you. No split installer is needed.
 3. Open the downloaded APK and follow Android’s installation prompts. If you already have an earlier private test build, read the migration section below first.
 
@@ -129,6 +200,8 @@ flutter run -d DEVICE_ID
 ```
 
 Replace the directory and device placeholders with your own observed values. Flutter generates ignored local SDK/plugin configuration. The repository supplies the Gradle wrapper, native project files, fonts/catalogue/brand assets, generated database sources and migration fixtures. Internet access is needed for initial SDK/dependency downloads. The development APK is `build/app/outputs/flutter-apk/app-debug.apk`.
+
+Generated database sources are included. After a schema change, regenerate them with `dart run build_runner build` and check the migrations and generated diff.
 
 The existing [CI workflow](.github/workflows/android.yml) shows the exact Flutter commit checkout and Android `sdkmanager` component commands. In `flutter run`, use the terminal’s hot-reload commands while developing and press `q` to end the run.
 
